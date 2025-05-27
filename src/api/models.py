@@ -11,10 +11,10 @@ class User(db.Model):
     lastname = db.Column(db.String(120), nullable=False)
     postal_code = db.Column(db.String(10), nullable=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(128), nullable=False) #password hasheada bcrypt
+    password = db.Column(db.String(128), nullable=False)  
     is_active = db.Column(db.Boolean, nullable=False, default=True)
 
-    favorites = db.relationship('Favoritos', backref='user', lazy=True)
+    favorites = db.relationship('Favorite', backref='user', lazy=True)
 
     def serialize(self):
         return {
@@ -24,7 +24,6 @@ class User(db.Model):
             "postal_code": self.postal_code,
             "email": self.email,
             "is_active": self.is_active
-            # Nunca poner password por seguridad
         }
 
 
@@ -34,10 +33,10 @@ class Store(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     postal_code = db.Column(db.String(10))
-    product = db.Column(db.Integer)
+    product = db.Column(db.Integer) 
     is_active = db.Column(db.Boolean, default=True)
 
-    favorites = db.relationship('Favoritos', backref='store', lazy=True)
+    favorites = db.relationship('Favorite', backref='store', lazy=True)
 
     def serialize(self):
         return {
@@ -59,10 +58,10 @@ class Product(db.Model):
     rate = db.Column(db.Float)
     category = db.Column(db.String(100))
     created_at = db.Column(db.Date)
-    stock = db.Column(db.Boolean, default=true)
+    stock = db.Column(db.Boolean, default=True) 
 
-    favorites = db.relationship('Favorit', backref='product', lazy=True)
-        
+    favorites = db.relationship('Favorite', backref='product', lazy=True)
+
     def serialize(self):
         return {
             "id": self.id,
