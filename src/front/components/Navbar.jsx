@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/img/logo.png";
+
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -29,9 +32,11 @@ export const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg bg-success">
       <div className="container-fluid">
-        <a className="navbar-brand" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
+
+        <a className="navbar-brand" onClick={() => navigate("/Home")} style={{ cursor: "pointer" }}>
           <img
-            src="https://equalengineers.com/wp-content/uploads/2024/04/dummy-logo-5b.png"
+            src={logo}
+
             alt="Logo"
             width="50"
             height="50"
@@ -98,4 +103,3 @@ export const Navbar = () => {
     </nav>
   );
 };
-
