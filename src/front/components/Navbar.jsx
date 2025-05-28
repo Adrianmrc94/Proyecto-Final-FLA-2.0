@@ -1,19 +1,101 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import logo from "../assets/img/logo.png";
+
 
 export const Navbar = () => {
+  const navigate = useNavigate();
+  const [darkMode, setDarkMode] = useState(
+    JSON.parse(localStorage.getItem("darkMode")) || false
+  );
+  const [searchTerm, setSearchTerm] = useState("");
 
-	return (
-		<nav className="navbar navbar-light bg-light">
-			<div className="container">
-				<Link to="/">
-					<span className="navbar-brand mb-0 h1">React Boilerplate</span>
-				</Link>
-				<div className="ml-auto">
-					<Link to="/demo">
-						<button className="btn btn-primary">Check the Context in action</button>
-					</Link>
-				</div>
-			</div>
-		</nav>
-	);
+  useEffect(() => {
+    document.body.classList.toggle("dark-mode", darkMode);
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+  }, [darkMode]);
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/search?query=${searchTerm}`);
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user"); 
+    navigate("/"); 
+  };
+
+  return (
+    <nav className="navbar navbar-expand-lg bg-success">
+      <div className="container-fluid">
+        <a className="navbar-brand" onClick={() => navigate("/Home")} style={{ cursor: "pointer" }}>
+          <img
+            src={logo}
+            alt="Logo"
+            width="50"
+            height="50"
+          />
+        </a>
+
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button>
+
+        <div className="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
+          <form className="d-flex w-50 justify-content-center" role="search" onSubmit={handleSearch}>
+            <input
+              className="form-control border-end-0 flex-grow-1"
+              type="search"
+              placeholder="Buscar"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button className="btn btn-outline-light border-0" type="submit">
+              Buscar
+            </button>
+          </form>
+
+          <div className="form-check form-switch">
+            <input
+              className="form-check-input"
+              type="checkbox"
+              id="darkModeSwitch"
+              checked={darkMode}
+              onChange={() => setDarkMode(!darkMode)}
+            />
+            <label className="form-check-label text-white" htmlFor="darkModeSwitch">
+              {darkMode ? "Modo Claro" : "Modo Oscuro"}
+            </label>
+          </div>
+
+          <ul className="navbar-nav">
+            <li className="nav-item dropdown">
+              <a
+                className="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+              >
+                Menú
+              </a>
+              <ul className="dropdown-menu dropdown-menu-end">
+                <li><button className="dropdown-item" onClick={() => navigate("/")}>Inicio</button></li>
+                <li><button className="dropdown-item" onClick={() => navigate("/favorites")}>Productos Favoritos</button></li>
+                <li><button className="dropdown-item" onClick={() => navigate("/user")}>Perfil</button></li>
+                <li><hr className="dropdown-divider" /></li>
+                <li><button className="dropdown-item text-danger" onClick={handleLogout}>Cerrar Sesión</button></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  );
 };
