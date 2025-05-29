@@ -1,20 +1,21 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, Integer, Boolean, Float, Date, ForeignKey
 
 db = SQLAlchemy()
-
 
 class User(db.Model):
     __tablename__ = 'user'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    lastname = db.Column(db.String(120), nullable=False)
-    postal_code = db.Column(db.String(10), nullable=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(128), nullable=False)  
-    is_active = db.Column(db.Boolean, nullable=False, default=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    lastname: Mapped[str] = mapped_column(String(120), nullable=False)
+    postal_code: Mapped[str] = mapped_column(String(10), nullable=True)
+    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(String(128), nullable=False)
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
-    favorites = db.relationship('Favorite', backref='user', lazy=True)
+    favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="user")
 
     def serialize(self):
         return {
@@ -30,13 +31,13 @@ class User(db.Model):
 class Store(db.Model):
     __tablename__ = 'store'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    postal_code = db.Column(db.String(10))
-    product = db.Column(db.Integer) 
-    is_active = db.Column(db.Boolean, default=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    postal_code: Mapped[str] = mapped_column(String(10))
+    product: Mapped[int] = mapped_column(Integer)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    favorites = db.relationship('Favorite', backref='store', lazy=True)
+    favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="store")
 
     def serialize(self):
         return {
@@ -51,16 +52,16 @@ class Store(db.Model):
 class Product(db.Model):
     __tablename__ = 'product'
 
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    price = db.Column(db.Float, nullable=False)
-    image = db.Column(db.String(255))
-    rate = db.Column(db.Float)
-    category = db.Column(db.String(100))
-    created_at = db.Column(db.Date)
-    stock = db.Column(db.Boolean, default=True) 
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(120), nullable=False)
+    price: Mapped[float] = mapped_column(Float, nullable=False)
+    image: Mapped[str] = mapped_column(String(255))
+    rate: Mapped[float] = mapped_column(Float)
+    category: Mapped[str] = mapped_column(String(100))
+    created_at: Mapped[Date] = mapped_column(Date)
+    stock: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    favorites = db.relationship('Favorite', backref='product', lazy=True)
+    favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="product")
 
     def serialize(self):
         return {
@@ -78,11 +79,15 @@ class Product(db.Model):
 class Favorite(db.Model):
     __tablename__ = 'favorite'
 
-    id = db.Column(db.Integer, primary_key=True)
-    store_id = db.Column(db.Integer, db.ForeignKey('store.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'), nullable=False)
-    date_ad = db.Column(db.Date)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    store_id: Mapped[int] = mapped_column(ForeignKey("store.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    product_id: Mapped[int] = mapped_column(ForeignKey("product.id"), nullable=False)
+    date_ad: Mapped[Date] = mapped_column(Date)
+
+    user: Mapped["User"] = relationship("User", back_populates="favorites")
+    store: Mapped["Store"] = relationship("Store", back_populates="favorites")
+    product: Mapped["Product"] = relationship("Product", back_populates="favorites")
 
     def serialize(self):
         return {
