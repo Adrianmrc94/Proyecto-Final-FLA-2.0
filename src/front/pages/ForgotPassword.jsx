@@ -6,6 +6,7 @@ const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [emailSent, setEmailSent] = useState(false); 
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -24,6 +25,7 @@ const ForgotPassword = () => {
             const data = await response.json();
             if (response.ok) {
                 setMessage('Instrucciones enviadas al correo');
+                setEmailSent(true);
             } else {
                 setError(data.error || 'Error al enviar solicitud');
             }
@@ -34,31 +36,35 @@ const ForgotPassword = () => {
 
     return (
         <div className="container mt-5 mb-5">
-            {/* Logo */}
             <div className="text-center mb-4">
                 <img src={logo} alt="Logo FLA" className="logo" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
             </div>
 
-            {/* Contenido principal */}
             <div className="row flex-grow-1 align-items-center">
-                {/* Formulario de recuperación */}
                 <div className="col-12 col-md-6 d-flex align-items-center">
                     <div className="w-100">
                         <h2 className="mb-4">Recuperar Contraseña</h2>
                         <form onSubmit={handleSubmit}>
-                            <div className="mb-3">
-                                <input
-                                    type="email"
-                                    placeholder="Tu email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="form-control"
-                                    required
-                                />
-                            </div>
+                            {!emailSent && (
+                                <div className="mb-3">
+                                    <input
+                                        type="email"
+                                        placeholder="Tu email"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="form-control"
+                                        required
+                                    />
+                                </div>
+                            )}
                             {error && <div className="alert alert-danger">{error}</div>}
                             {message && <div className="alert alert-success">{message}</div>}
-                            <button type="submit" className="btn btn-primary w-100">Enviar instrucciones</button>
+
+                            {!emailSent ? (
+                                <button type="submit" className="btn btn-primary w-100">Enviar instrucciones</button>
+                            ) : (
+                                <p className="text-muted text-center">Revisa tu bandeja de entrada.</p>
+                            )}
                         </form>
                         <div className="mt-3">
                             <small>
@@ -68,7 +74,6 @@ const ForgotPassword = () => {
                     </div>
                 </div>
 
-                {/* Descripción/resumen */}
                 <div className="col-12 col-md-6 d-flex align-items-center mt-4 mt-md-0">
                     <div className="bg-light p-4 rounded shadow w-100">
                         <h4 className="mb-3">¿Cómo funciona?</h4>

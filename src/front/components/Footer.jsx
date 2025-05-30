@@ -6,7 +6,6 @@ export const Footer = () => {
             <div className="container">
                 <div className="row align-items-center">
 
-                    {/* Sobre Nosotros */}
                     <div className="col-md-4 mb-3 mb-md-0">
                         <h5 className="text-uppercase fw-bold mb-2">Sobre nosotros</h5>
                         <p className="text-light small">
@@ -14,7 +13,6 @@ export const Footer = () => {
                         </p>
                     </div>
 
-                    {/* Contacto */}
                     <div className="col-md-4 text-center mb-3 mb-md-0">
                         <h5 className="text-uppercase fw-bold mb-2">Contacto</h5>
                         <p className="text-light mb-1">
@@ -23,7 +21,6 @@ export const Footer = () => {
                         <p className="text-muted mt-2">&copy; {new Date().getFullYear()} FLA PROYECT</p>
                     </div>
 
-                    {/* Redes Sociales - Alineado a la derecha */}
                     <div className="col-md-4 d-flex flex-column align-items-md-end justify-content-center text-end">
                         <h5 className="text-uppercase fw-bold mb-3">Síguenos</h5>
                         <div className="d-flex gap-2">

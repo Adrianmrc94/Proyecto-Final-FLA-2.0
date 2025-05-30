@@ -26,7 +26,7 @@ const Login = () => {
             const data = await response.json();
             if (response.ok) {
                 localStorage.setItem('token', data.access_token);
-                navigate('/');
+                navigate('/home');
             } else {
                 setError(data.error || 'Error al iniciar sesión');
             }
@@ -37,14 +37,11 @@ const Login = () => {
 
     return (
         <div className="container mt-5 mb-5 d-flex flex-column justify-content-between" style={{ minHeight: '100vh' }}>
-            {/* Logo */}
             <div className="mb-4 text-center">
                 <img src={logo} alt="Logo FLA" className="logo" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
             </div>
 
-            {/* Contenido principal: login y resumen */}
             <div className="row flex-grow-1">
-                {/* Login */}
                 <div className="col-12 col-md-6 d-flex align-items-center">
                     <div className="w-100">
                         <h2 className="mb-4">Iniciar Sesión</h2>
@@ -72,7 +69,7 @@ const Login = () => {
                                 />
                             </div>
                             {error && <div className="alert alert-danger">{error}</div>}
-                            <button type="submit" className="btn btn-primary w-100">Iniciar Sesión</button>
+                            <button type="submit" onClick={() => navigate("/Home")} className="btn btn-primary w-100">Iniciar Sesión</button>
                         </form>
                         <div className="mt-3">
                             <small>
@@ -87,9 +84,7 @@ const Login = () => {
                     </div>
                 </div>
 
-                {/* Descripción/resumen */}
                 <div className="col-12 col-md-6 d-flex align-items-center mt-4 mt-md-0">
-                    {/* mt-4 para separar en móviles, mt-md-0 quita margen en desktop */}
                     <div className="bg-light p-4 rounded shadow w-100">
                         <h4 className="mb-3">¿Qué es FLA?</h4>
                         <p><strong>FLA (Find Lowest App)</strong> es una plataforma que te permite comparar precios de productos entre diferentes supermercados usando tu código postal.</p>

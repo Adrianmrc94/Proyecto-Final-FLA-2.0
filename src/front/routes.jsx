@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import ResetPasswordTest from './pages/ResetPasswordTest'; 
+import SearchPage from "./pages/SearchPage";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -17,6 +18,7 @@ export const router = createBrowserRouter(
       <Route path="/reset-password/:token" element={<ResetPassword />} />
       <Route path="/reset-test" element={<ResetPasswordTest />} />
       <Route path="/home" element={<Home />} /> 
+      <Route path="/search" element={<SearchPage />} />
     </Route>
   )
 );

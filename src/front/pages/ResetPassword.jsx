@@ -44,14 +44,11 @@ const ResetPassword = () => {
 
     return (
         <div className="container mt-5 mb-5">
-            {/* Logo */}
             <div className="text-center mb-4">
                 <img src={logo} alt="Logo FLA" className="logo" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
             </div>
 
-            {/* Contenido principal */}
             <div className="row align-items-center">
-                {/* Formulario de restablecimiento */}
                 <div className="col-12 col-md-6 d-flex align-items-center">
                     <div className="w-100">
                         <h2 className="mb-4">Nueva Contraseña</h2>
@@ -88,7 +85,6 @@ const ResetPassword = () => {
                     </div>
                 </div>
 
-                {/* Descripción/resumen */}
                 <div className="col-12 col-md-6 d-flex align-items-center mt-4 mt-md-0">
                     <div className="bg-light p-4 rounded shadow w-100">
                         <h4 className="mb-3">¿Cómo funciona?</h4>

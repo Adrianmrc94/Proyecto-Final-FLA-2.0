@@ -7,7 +7,7 @@ export const Layout = () => {
     const location = useLocation();
     const path = location.pathname;
 
-    // Ocultar solo en login, register, forgot-password y reset-password/:token
+    // Ocultar
     const hideNavbar =
         path === '/' ||
         path === '/login' || 

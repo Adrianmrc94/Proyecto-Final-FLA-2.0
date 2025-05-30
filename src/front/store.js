@@ -1,38 +1,58 @@
-export const initialStore=()=>{
-  return{
-    message: null,
-    todos: [
-      {
-        id: 1,
-        title: "Make the bed",
-        background: null,
-      },
-      {
-        id: 2,
-        title: "Do my homework",
-        background: null,
-      }
-    ]
-  }
-}
+// --- Acciones disponibles ---
+export const actionTypes = {
+  SET_PRODUCTS: "SET_PRODUCTS",
+  SET_LOADING_PRODUCTS: "SET_LOADING_PRODUCTS",
+  SET_ERROR_LOADING_PRODUCTS: "SET_ERROR_LOADING_PRODUCTS",
+  SET_FEATURED_PRODUCTS: "SET_FEATURED_PRODUCTS",
+  SET_RANDOM_PRODUCT: "SET_RANDOM_PRODUCT",
+  SET_FILTERS: "SET_FILTERS",
+};
 
-export default function storeReducer(store, action = {}) {
-  switch(action.type){
-    case 'set_hello':
+// --- Estado inicial ---
+export const initialStore = () => ({
+  products: [],
+  loadingProducts: false,
+  errorLoadingProducts: null,
+  featuredProducts: [],
+  randomProduct: null,
+  filters: {
+    category: "",
+    minPrice: 0,
+    maxPrice: 1000,
+    searchQuery: "",
+    rating: 0,
+    inStock: null,
+  },
+});
+
+// --- Reducer ---
+export default function storeReducer(store, action) {
+  switch (action.type) {
+    case actionTypes.SET_PRODUCTS:
+      return { ...store, products: action.payload };
+
+    case actionTypes.SET_LOADING_PRODUCTS:
+      return { ...store, loadingProducts: action.payload };
+
+    case actionTypes.SET_ERROR_LOADING_PRODUCTS:
+      return { ...store, errorLoadingProducts: action.payload };
+
+    case actionTypes.SET_FEATURED_PRODUCTS:
+      return { ...store, featuredProducts: action.payload };
+
+    case actionTypes.SET_RANDOM_PRODUCT:
+      return { ...store, randomProduct: action.payload };
+
+    case actionTypes.SET_FILTERS:
       return {
         ...store,
-        message: action.payload
+        filters: {
+          ...store.filters,
+          ...action.payload,
+        },
       };
-      
-    case 'add_task':
 
-      const { id,  color } = action.payload
-
-      return {
-        ...store,
-        todos: store.todos.map((todo) => (todo.id === id ? { ...todo, background: color } : todo))
-      };
     default:
-      throw Error('Unknown action.');
-  }    
+      throw new Error(`Acción desconocida: ${action.type}`);
+  }
 }

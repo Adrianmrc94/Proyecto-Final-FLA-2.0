@@ -41,7 +41,6 @@ export default function ProductModal({ product, show, onClose, onFavorite }) {
               >
                 ❤️
               </button>
-              {/* Quitar el botón de cierre X */}
             </div>
           </div>
 
