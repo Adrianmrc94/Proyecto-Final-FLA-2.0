@@ -1,52 +1,80 @@
-import React, { useEffect } from "react"
-import rigoImageUrl from "../assets/img/rigo-baby.jpg";
-import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import React, { useState } from "react";
+import FeaturedProducts from "../components/FeaturedProducts";
+import CategoryList from "../components/CategoryList";
+import HowItWorksSection from "../components/HowItWorksSection";
+import ModalsManager from "../components/ModalsManager";
+import usePagination from "../hooks/usePagination";
+import useGlobalProducts from "../hooks/useGlobalProducts";
+import { allCategories } from "../hooks/categories";
+import { useNavigate } from "react-router-dom";
 
-export const Home = () => {
+export default function Home() {
+    const navigate = useNavigate();
+    const {
+        products,
+        featuredProducts: featured,
+        randomProduct,
+        setFilters
+    } = useGlobalProducts();
 
-	const { store, dispatch } = useGlobalReducer()
+    const categories = allCategories;
 
-	const loadMessage = async () => {
-		try {
-			const backendUrl = import.meta.env.VITE_BACKEND_URL
+    const {
+        currentPage,
+        totalPages,
+        goToNextPage,
+        goToPrevPage,
+        goToPage,
+        currentItems: currentCategories,
+    } = usePagination({
+        items: categories,
+        itemsPerPage: 8,
+    });
 
-			if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined in .env file")
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [showProductModal, setShowProductModal] = useState(false);
+    const [showComparativeModal, setShowComparativeModal] = useState(false);
 
-			const response = await fetch(backendUrl + "/api/hello")
-			const data = await response.json()
+    const handleCategoryClick = (category) => {
+        setFilters({ category });
+        navigate(`/search`);
+    };
 
-			if (response.ok) dispatch({ type: "set_hello", payload: data.message })
+    const handleProductClick = (product) => {
+        setSelectedProduct(product);
+        setShowProductModal(true);
+    };
 
-			return data
+    return (
+        <div className="container mt-4">
+            <h2 className="mb-4">Productos Destacados</h2>
+            <FeaturedProducts
+                featured={featured}
+                onProductClick={handleProductClick}
+            />
+            <CategoryList
+                categories={currentCategories}
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onCategoryClick={handleCategoryClick}
+                goToNextPage={goToNextPage}
+                goToPrevPage={goToPrevPage}
+                goToPage={goToPage}
+            />
 
-		} catch (error) {
-			if (error.message) throw new Error(
-				`Could not fetch the message from the backend.
-				Please check if the backend is running and the backend port is public.`
-			);
-		}
+            <HowItWorksSection
+                onTryMeClick={() => setShowComparativeModal(true)}
+                disabled={!randomProduct}
+            />
 
-	}
-
-	useEffect(() => {
-		loadMessage()
-	}, [])
-
-	return (
-		<div className="text-center mt-5">
-			<h1 className="display-4">Hello Rigo!!</h1>
-			<p className="lead">
-				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
-			</p>
-			<div className="alert alert-info">
-				{store.message ? (
-					<span>{store.message}</span>
-				) : (
-					<span className="text-danger">
-						Loading message from the backend (make sure your python 🐍 backend is running)...
-					</span>
-				)}
-			</div>
-		</div>
-	);
-}; 
+            <ModalsManager
+                selectedProduct={selectedProduct}
+                showProductModal={showProductModal}
+                setShowProductModal={setShowProductModal}
+                productToCompare={randomProduct}
+                showComparativeModal={showComparativeModal}
+                setShowComparativeModal={setShowComparativeModal}
+            />
+        </div>
+    );
+}
