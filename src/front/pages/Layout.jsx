@@ -8,7 +8,7 @@ export const Layout = () => {
     const path = location.pathname;
 
     // Ocultar
-    const hideNavbar =
+    const hide =
         path === '/' ||
         path === '/login' || 
         path === '/register' || 
@@ -17,9 +17,9 @@ export const Layout = () => {
 
     return (
         <ScrollToTop>
-            {!hideNavbar && <Navbar />}
+            {!hide && <Navbar />}
             <Outlet />
-            <Footer /> 
+            {!hide && <Footer />}
         </ScrollToTop>
     );
 };
