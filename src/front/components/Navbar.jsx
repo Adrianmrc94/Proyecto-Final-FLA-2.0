@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/img/logo.png";
@@ -90,7 +89,7 @@ export const Navbar = () => {
                 Menú
               </a>
               <ul className="dropdown-menu dropdown-menu-end">
-                <li><button className="dropdown-item" onClick={() => navigate("/")}>Inicio</button></li>
+                <li><button className="dropdown-item" onClick={() => navigate("/home")}>Inicio</button></li>
                 <li><button className="dropdown-item" onClick={() => navigate("/favorites")}>Productos Favoritos</button></li>
                 <li><button className="dropdown-item" onClick={() => navigate("/user")}>Perfil</button></li>
                 <li><hr className="dropdown-divider" /></li>

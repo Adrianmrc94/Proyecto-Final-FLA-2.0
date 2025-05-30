@@ -7,8 +7,8 @@ export const Layout = () => {
     const location = useLocation();
     const path = location.pathname;
 
-    // Ocultar solo en login, register, forgot-password y reset-password/:token
-    const hideNavbar =
+    // Ocultar
+    const hide =
         path === '/' ||
         path === '/login' || 
         path === '/register' || 
@@ -17,9 +17,9 @@ export const Layout = () => {
 
     return (
         <ScrollToTop>
-            {!hideNavbar && <Navbar />}
+            {!hide && <Navbar />}
             <Outlet />
-            <Footer /> 
+            {!hide && <Footer />}
         </ScrollToTop>
     );
 };
