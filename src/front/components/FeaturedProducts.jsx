@@ -23,7 +23,7 @@ export default function FeaturedProducts({ featured, onProductClick }) {
                                 alt={product.title}
                             />
                             <div className="card-body">
-                                <h5 className="card-title">{product.title}</h5>
+                                <h5 className="card-title">{product.name || product.title || "Producto sin nombre"}</h5>
                                 <p className="card-text text-success">${product.price}</p>
                             </div>
                         </div>

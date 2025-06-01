@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, Boolean, Float, Date, ForeignKey
+from sqlalchemy import String, Integer, Boolean, Float, Date, ForeignKey, UniqueConstraint
 
 db = SQLAlchemy()
 
@@ -34,7 +34,7 @@ class Store(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     postal_code: Mapped[str] = mapped_column(String(10))
-    product: Mapped[int] = mapped_column(Integer)
+    product: Mapped[int] = mapped_column(Integer, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="store")
@@ -53,26 +53,36 @@ class Product(db.Model):
     __tablename__ = 'product'
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    external_id: Mapped[str] = mapped_column(String(100), unique=True, nullable=True) 
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     price: Mapped[float] = mapped_column(Float, nullable=False)
     image: Mapped[str] = mapped_column(String(255))
     rate: Mapped[float] = mapped_column(Float)
     category: Mapped[str] = mapped_column(String(100))
-    created_at: Mapped[Date] = mapped_column(Date)
-    stock: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[Date] = mapped_column(Date, nullable=True)
+    stock: Mapped[int] = mapped_column(Integer, default=True)
+    description: Mapped[str] = mapped_column(String(500), nullable=True)
+    source: Mapped[str] = mapped_column(String(50), nullable=True)
+    store_id: Mapped[int] = mapped_column(ForeignKey("store.id"), nullable=True)
 
     favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="product")
+    store: Mapped["Store"] = relationship("Store")
 
     def serialize(self):
         return {
             "id": self.id,
+            "external_id": self.external_id,
             "name": self.name,
             "price": self.price,
             "image": self.image,
             "rate": self.rate,
             "category": self.category,
             "created_at": self.created_at,
-            "stock": self.stock
+            "stock": self.stock,
+            "description": self.description,
+            "source": self.source,
+            "store_id": self.store_id,
+            "store_name": self.store.name if self.store else None
         }
 
 

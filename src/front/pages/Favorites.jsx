@@ -5,20 +5,26 @@ const Favorites = () => {
   const [favoriteProducts, setFavoriteProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     const fetchFavoriteProducts = async () => {
       setIsLoading(true);
       setError(null);
       try {
-        const response = await fetch('https://dummyjson.com/products?limit=12'); // Carga 10 productos de ejemplo
+        const token = localStorage.getItem("token");
+        const BACKEND_URL = "https://glowing-engine-g47g9q94v665hpwq5-3001.app.github.dev/";
+        const response = await fetch(`${BACKEND_URL}/api/favorites`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!response.ok) {
           throw new Error(`Error HTTP: ${response.status}`);
         }
         const data = await response.json();
-        setFavoriteProducts(data.products || []); // La API devuelve un objeto con una propiedad 'products' que es un array
+        setFavoriteProducts(data); // El backend devuelve un array de favoritos
       } catch (err) {
-        console.error("Error al cargar productos favoritos:", err);
         setError(err.message);
       } finally {
         setIsLoading(false);
@@ -27,6 +33,39 @@ const Favorites = () => {
 
     fetchFavoriteProducts();
   }, []); // para impedir bucle
+
+    // Nueva función para eliminar favorito del estado
+  const handleRemoveFavorite = (favoriteId) => {
+    setFavoriteProducts(prev => prev.filter(fav => fav.id !== favoriteId));
+    setProducts(prev => prev.filter(prod => {
+      // Busca el favorito eliminado para obtener el product_id
+      const fav = favoriteProducts.find(f => f.id === favoriteId);
+      return fav ? prod.id !== fav.product_id : true;
+    }));
+  };
+
+  useEffect(() => {
+    if (favoriteProducts.length === 0) return;
+    const fetchProducts = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const BACKEND_URL = "https://glowing-engine-g47g9q94v665hpwq5-3001.app.github.dev/";
+        const productDetails = await Promise.all(
+          favoriteProducts.map(async (fav) => {
+            const res = await fetch(`${BACKEND_URL}/api/products/${fav.product_id}`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            if (!res.ok) return null;
+            return await res.json();
+          })
+        );
+        setProducts(productDetails.filter(Boolean));
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+    fetchProducts();
+  }, [favoriteProducts]);
 
   if (isLoading) {
     return (
@@ -48,26 +87,32 @@ const Favorites = () => {
     );
   }
 
-  if (favoriteProducts.length === 0) {
-    return (
+  const uniqueProducts = products.filter(
+    (prod, idx, arr) => prod && arr.findIndex(p => p && p.id === prod.id) === idx
+  );
+
+  return (
+    uniqueProducts.length === 0 ? (
       <div className="container text-center mt-5">
         <p>Aún no tienes productos favoritos.</p>
       </div>
-    );
-  }
-
-  return (
-    <div className="container mt-4">
-      <h1 className="mb-4 text-center">Mis Productos Favoritos</h1>
-      <div className="row justify-content-center">
-        {favoriteProducts.map(product => (
-          // Pasamos cada objeto 'product' al componente FavoriteProduct
-          // Aseguramos que product no sea undefined antes de renderizar
-          product ? <FavoriteProduct key={product.id} product={product} /> : null
-        ))}
+    ) : (
+      <div className="container mt-4">
+        <h1 className="mb-4 text-center">Mis Productos Favoritos</h1>
+        <div className="row justify-content-center">
+          {uniqueProducts.map(product =>
+            product ? (
+              <FavoriteProduct
+                key={product.id}
+                product={product}
+                onRemoveFavorite={handleRemoveFavorite}
+              />
+            ) : null
+          )}
+        </div>
       </div>
-    </div>
-  );
+    )
+  )
 };
 
 export default Favorites;

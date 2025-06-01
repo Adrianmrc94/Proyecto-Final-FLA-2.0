@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import FeaturedProducts from "../components/FeaturedProducts";
 import CategoryList from "../components/CategoryList";
 import HowItWorksSection from "../components/HowItWorksSection";
@@ -10,6 +10,14 @@ import { useNavigate } from "react-router-dom";
 
 export default function Home() {
     const navigate = useNavigate();
+    
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            navigate("/login");
+        }
+    }, [navigate]);
+    
     const {
         products,
         featuredProducts: featured,

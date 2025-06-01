@@ -1,24 +1,111 @@
-// src/components/FavoriteProduct.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const FavoriteProduct = ({ product }) => {
+const FavoriteProduct = ({ product, onRemoveFavorite }) => {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [favoriteId, setFavoriteId] = useState(null);
 
-    // Comprobación para asegurarnos de que 'product' existe y tiene las propiedades esperadas
-    if (!product || !product.id) {
-        // Si el producto es inválido, no renderizamos nada o un placeholder
-        // console.warn("FavoriteProduct recibió un producto inválido:", product);
-        return null;
-    }
+    if (!product || !product.id) return null;
 
-    // dummyjson.com devuelve un array 'images'. Usaremos la primera.
-    const imageUrl = product.images && product.images.length > 0 ? product.images[0] : 'https://via.placeholder.com/150?text=No+Image';
-    const productName = product.title || "Nombre no disponible"; // 'title' en lugar de 'name'
-    const productRating = product.rating || 0;
+    // Usa la estructura real de tu backend
+    const imageUrl = product.image || (product.images && product.images[0]) || 'https://placehold.co/150x150?text=No+Image';
+    const productName = product.name || product.title || "Nombre no disponible";
+    const productRating = product.rate || product.rating || 0;
     const productDescription = product.description || "Descripción no disponible.";
-    const productPrice = product.price || 0; // dummyjson tiene 'price'
+    const productPrice = product.price || 0;
+
+    // Detectar si el producto ya está en favoritos
+    useEffect(() => {
+        if (!showModal || !product) return;
+        const checkFavorite = async () => {
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setIsFavorite(false);
+                setFavoriteId(null);
+                return;
+            }
+            const BACKEND_URL = "https://glowing-engine-g47g9q94v665hpwq5-3001.app.github.dev/";
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/favorites`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    const found = data.find(fav => fav.product_id === product.id);
+                    setIsFavorite(!!found);
+                    setFavoriteId(found ? found.id : null);
+                } else {
+                    setIsFavorite(false);
+                    setFavoriteId(null);
+                }
+            } catch (e) {
+                setIsFavorite(false);
+                setFavoriteId(null);
+            }
+        };
+        checkFavorite();
+    }, [showModal, product]);
+
+    // Función para agregar/quitar favorito
+    const handleToggleFavorite = async () => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Debes iniciar sesión para gestionar favoritos.");
+            return;
+        }
+        const BACKEND_URL = "https://glowing-engine-g47g9q94v665hpwq5-3001.app.github.dev/";
+
+        if (isFavorite && favoriteId) {
+            // Quitar de favoritos usando el id del favorito
+            const response = await fetch(`${BACKEND_URL}/api/favorites/${favoriteId}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                setIsFavorite(false);
+                setFavoriteId(null);
+                alert("Producto eliminado de favoritos");
+                if (onRemoveFavorite) onRemoveFavorite(favoriteId); // Notifica al padre
+                setShowModal(false); // Cierra el modal automáticamente
+            } else {
+                alert("No se pudo eliminar de favoritos");
+            }
+        } else {
+            // Agregar a favoritos
+            const body = {
+                product_id: product.id,
+                store_id: product.store_id,
+                date_ad: new Date().toISOString().slice(0, 10)
+            };
+            const response = await fetch(`${BACKEND_URL}/api/favorites`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(body)
+            });
+            if (response.ok) {
+                setIsFavorite(true);
+                // Actualiza el favoriteId después de agregar
+                const favs = await fetch(`${BACKEND_URL}/api/favorites`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (favs.ok) {
+                    const data = await favs.json();
+                    const found = data.find(fav => fav.product_id === product.id);
+                    setFavoriteId(found ? found.id : null);
+                }
+                alert("Producto agregado a favoritos");
+            } else {
+                alert("No se pudo agregar a favoritos");
+            }
+        }
+    };
 
     return (
         <div className="col-lg-3 col-md-4 col-sm-6 p-3 d-flex align-items-stretch">
@@ -28,15 +115,15 @@ const FavoriteProduct = ({ product }) => {
                         src={imageUrl}
                         className="img-fluid rounded mb-3"
                         alt={productName}
-                        style={{ maxHeight: '150px', objectFit: 'contain' }} // Estilo para unificar tamaño de imagen
+                        style={{ maxHeight: '150px', objectFit: 'contain' }}
                     />
-                    <h5>{productName}</h5> {/* Título del producto */}
+                    <h5>{productName}</h5>
                     <h6>Puntuación</h6>
                     <div className="text-warning fs-4 mb-2">
-                        {productRating} ⭐ ({product.reviews ? product.reviews.length : 0} reseñas) {/* Ejemplo si tuvieras reviews */}
+                        {productRating} ⭐
                     </div>
                 </div>
-                <div className="mt-auto text-center"> {/* mt-auto para empujar botones abajo */}
+                <div className="mt-auto text-center">
                     <button
                         className="btn btn-outline-warning mt-2"
                         onClick={() => setShowModal(true)}
@@ -53,11 +140,21 @@ const FavoriteProduct = ({ product }) => {
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">{productName} - Comparación</h5>
-                                <button
-                                    type="button"
-                                    className="btn-close"
-                                    onClick={() => setShowModal(false)}
-                                ></button>
+                                <div className="d-flex align-items-center">
+                                    <button
+                                        className="btn btn-outline-danger me-2"
+                                        onClick={handleToggleFavorite}
+                                        title={isFavorite ? "Quitar de favoritos" : "Agregar a favoritos"}
+                                        style={{ fontSize: "1.5rem" }}
+                                    >
+                                        <i className={isFavorite ? "bi bi-heart-fill" : "bi bi-heart"} style={{ fontSize: "2rem" }}></i>
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="btn-close"
+                                        onClick={() => setShowModal(false)}
+                                    ></button>
+                                </div>
                             </div>
                             <div className="modal-body">
                                 <div className="row">

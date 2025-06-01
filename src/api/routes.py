@@ -4,7 +4,10 @@ from api.models import db, User, Product, Favorite
 from flask_cors import CORS
 import bcrypt
 import random
+from sqlalchemy.orm import joinedload
+from sqlalchemy import or_
 import requests
+
 
 api = Blueprint('api', __name__)
 
@@ -56,65 +59,13 @@ def register():
     token = create_access_token(identity=str(new_user.id))
     return jsonify({'msg': 'Registro exitoso', 'token': token, 'user': new_user.serialize()}), 201
 
-
-@api.route('/external-products', methods=['GET'])
-def get_external_products():
-    products = []
-
-    try:
-        resp1 = requests.get('https://dummyjson.com/products?limit=0')
-        if resp1.ok:
-            data1 = resp1.json()
-            print("DummyJSON productos:", len(data1.get('products', [])))
-            for p in data1.get('products', []):
-                products.append({
-                    "id": f"dummyjson-{p['id']}",
-                    "title": p.get("title"),
-                    "price": p.get("price"),
-                    "description": p.get("description"),
-                    "category": p.get("category"),
-                    "image": p.get("images", [""])[0] if p.get("images") else "",
-                    "rating": p.get("rating"),
-                    "stock": p.get("stock"),
-                    "source": "dummyjson"
-                })
-    except Exception as e:
-        print("Error dummyjson:", e)
-
-    try:
-        resp2 = requests.get('https://fakestoreapi.in/api/products?limit=150')
-        if resp2.ok:
-            data2 = resp2.json()
-            # Busca la clave correcta que contiene los productos
-            if isinstance(data2, dict) and "products" in data2:
-                productos_fakestore = data2["products"]
-            else:
-                productos_fakestore = data2  # fallback por si ya es lista
-            print("FakeStoreAPI productos:", len(productos_fakestore))
-            for p in productos_fakestore:
-                products.append({
-                    "id": f"fakestore-{p.get('id')}",
-                    "title": p.get("title"),
-                    "price": p.get("price"),
-                    "description": p.get("description"),
-                    "category": p.get("category"),
-                    "image": p.get("image"),
-                    "rating": p.get("rating", 0),
-                    "stock": p.get("stock", 0),
-                    "source": "fakestore"
-                })
-    except Exception as e:
-        print("Error fakestore:", e)
-
-    return jsonify(products), 200
-
 @api.route('/products', methods=['GET'])
 def get_products():
     price_min = request.args.get('price_min', type=float)
     price_max = request.args.get('price_max', type=float)
     category = request.args.get('category')
 
-    query = Product.query
+    query = Product.query.options(joinedload(Product.store))
     if price_min is not None:
         query = query.filter(Product.price >= price_min)
     if price_max is not None:
@@ -126,7 +77,7 @@ def get_products():
     return jsonify([p.serialize() for p in products]), 200
 
 @api.route('/products/<int:product_id>', methods=['GET'])
-def get_product_detail(product_id):
+def get_product_by_id(product_id):
     product = Product.query.get(product_id)
     if not product:
         return jsonify({'msg': 'Producto no encontrado'}), 404
@@ -140,18 +91,28 @@ def get_categories():
 
 @api.route('/products/category/<string:category>', methods=['GET'])
 def get_products_by_category(category):
-    products = Product.query.filter(Product.category.ilike(f'%{category}%')).all()
+    # Normaliza la categoría: quita espacios, convierte a minúsculas, reemplaza guiones
+    normalized = category.replace("-", " ").strip().lower()
+    products = Product.query.options(joinedload(Product.store)).filter(
+        Product.category.ilike(f'%{normalized}%')
+    ).all()
     return jsonify([p.serialize() for p in products]), 200
 
-@api.route('/search', methods=['GET'])
+api.route('/search', methods=['GET'])
 def search_products():
     query = request.args.get('query', '')
-    products = Product.query.filter(Product.name.ilike(f'%{query}%')).all()
+    products = Product.query.options(joinedload(Product.store)).filter(
+        or_(
+            Product.name.ilike(f'%{query}%'),
+            Product.description.ilike(f'%{query}%'),
+            Product.category.ilike(f'%{query}%')
+        )
+    ).all()
     return jsonify([p.serialize() for p in products]), 200
 
 @api.route('/random-product', methods=['GET'])
 def get_random_product():
-    products = Product.query.all()
+    products = Product.query.options(joinedload(Product.store)).all()
     if not products:
         return jsonify({'msg': 'No hay productos disponibles'}), 404
     product = random.choice(products)

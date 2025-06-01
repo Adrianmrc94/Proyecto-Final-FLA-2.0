@@ -28,7 +28,7 @@ const Login = () => {
                 localStorage.setItem('token', data.token);
                 navigate('/home');
             } else {
-                setError(data.error || 'Error al iniciar sesión');
+                setError(data.error || 'Crea un usuario primero');
             }
         } catch {
             setError('Error de conexión con el servidor');
