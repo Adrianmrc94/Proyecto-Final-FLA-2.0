@@ -47,12 +47,19 @@ export default function ProductModal({ product, show, onClose, onFavorite }) {
           <div className="modal-body d-flex flex-column align-items-center">
             <div className="text-center mb-4">
               <img
-                src={images[0]}
+                src={
+                  (images && images[0]) ||
+                  product.image ||
+                  "https://via.placeholder.com/300x300?text=Sin+Imagen"
+                }
                 alt={title}
                 className="img-fluid rounded"
                 style={{ maxWidth: "300px" }}
               />
-              <div className="text-warning fw-bold mt-2">⭐ {rating}/5</div>
+              <div className="text-warning fw-bold mt-2">
+                ⭐ {typeof rating === "object" && rating !== null ? rating.rate : rating}/5
+                {typeof rating === "object" && rating !== null && rating.count ? ` (${rating.count} votos)` : ""}
+              </div>
             </div>
 
             <div className="w-100 text-center">
@@ -62,7 +69,13 @@ export default function ProductModal({ product, show, onClose, onFavorite }) {
           </div>
 
           <div className="modal-footer justify-content-center">
-            <span className="text-muted">Tienda: dummyjson</span>
+            <span className="text-muted">
+              Tienda: {product.source === "dummyjson"
+                ? "DummyJSON"
+                : product.source === "fakestore"
+                ? "FakeStore"
+                : "Desconocida"}
+            </span>
           </div>
         </div>
       </div>

@@ -4,6 +4,7 @@ from api.models import db, User, Product, Favorite
 from flask_cors import CORS
 import bcrypt
 import random
+import requests
 
 api = Blueprint('api', __name__)
 
@@ -34,12 +35,12 @@ def login():
 def register():
     data = request.get_json()
     name = data.get('name')
-    lastname = data.get('lastname')
+    last_name = data.get('last_name')
     email = data.get('email')
     password = data.get('password')
     postal_code = data.get('postal_code')
 
-    if not name or not lastname or not email or not password:
+    if not name or not last_name or not email or not password:
         return jsonify({'msg': 'Todos los campos obligatorios deben estar completos'}), 400
     if len(password) < 6:
         return jsonify({'msg': 'La contraseña debe tener al menos 6 caracteres'}), 400
@@ -48,13 +49,64 @@ def register():
         return jsonify({'msg': 'El correo ya está registrado'}), 409
 
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-    new_user = User(name=name, lastname=lastname, email=email, password=hashed_password, postal_code=postal_code, is_active=True)
+    new_user = User(name=name, last_name=last_name, email=email, password=hashed_password, postal_code=postal_code, is_active=True)
     db.session.add(new_user)
     db.session.commit()
 
     token = create_access_token(identity=str(new_user.id))
     return jsonify({'msg': 'Registro exitoso', 'token': token, 'user': new_user.serialize()}), 201
 
+
+@api.route('/external-products', methods=['GET'])
+def get_external_products():
+    products = []
+
+    try:
+        resp1 = requests.get('https://dummyjson.com/products?limit=0')
+        if resp1.ok:
+            data1 = resp1.json()
+            print("DummyJSON productos:", len(data1.get('products', [])))
+            for p in data1.get('products', []):
+                products.append({
+                    "id": f"dummyjson-{p['id']}",
+                    "title": p.get("title"),
+                    "price": p.get("price"),
+                    "description": p.get("description"),
+                    "category": p.get("category"),
+                    "image": p.get("images", [""])[0] if p.get("images") else "",
+                    "rating": p.get("rating"),
+                    "stock": p.get("stock"),
+                    "source": "dummyjson"
+                })
+    except Exception as e:
+        print("Error dummyjson:", e)
+
+    try:
+        resp2 = requests.get('https://fakestoreapi.in/api/products?limit=150')
+        if resp2.ok:
+            data2 = resp2.json()
+            # Busca la clave correcta que contiene los productos
+            if isinstance(data2, dict) and "products" in data2:
+                productos_fakestore = data2["products"]
+            else:
+                productos_fakestore = data2  # fallback por si ya es lista
+            print("FakeStoreAPI productos:", len(productos_fakestore))
+            for p in productos_fakestore:
+                products.append({
+                    "id": f"fakestore-{p.get('id')}",
+                    "title": p.get("title"),
+                    "price": p.get("price"),
+                    "description": p.get("description"),
+                    "category": p.get("category"),
+                    "image": p.get("image"),
+                    "rating": p.get("rating", 0),
+                    "stock": p.get("stock", 0),
+                    "source": "fakestore"
+                })
+    except Exception as e:
+        print("Error fakestore:", e)
+
+    return jsonify(products), 200
 
 @api.route('/products', methods=['GET'])
 def get_products():

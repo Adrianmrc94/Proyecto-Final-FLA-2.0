@@ -9,7 +9,7 @@ class User(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
-    lastname: Mapped[str] = mapped_column(String(120), nullable=False)
+    last_name: Mapped[str] = mapped_column(String(120), nullable=False)
     postal_code: Mapped[str] = mapped_column(String(10), nullable=True)
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(128), nullable=False)
@@ -21,7 +21,7 @@ class User(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "lastname": self.lastname,
+            "last_name": self.last_name,
             "postal_code": self.postal_code,
             "email": self.email,
             "is_active": self.is_active

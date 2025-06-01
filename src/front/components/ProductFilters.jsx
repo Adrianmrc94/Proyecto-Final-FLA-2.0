@@ -1,29 +1,32 @@
 import React from "react";
-import { allCategories } from "../hooks/categories";
+import useCategories from "../hooks/useCategories";
 
-export default function ProductFilters({ filters, setFilters }) {
+export default function ProductFilters({ filters, setFilters, products }) {
+    console.log(products)
+    const categories = useCategories(products);
+
+    if (!categories.length) {
+        return <div>Cargando categorías...</div>;
+    }
+
     return (
         <div>
             <h5>Categorías</h5>
-            <div>
-                {allCategories.map((category, index) => (
-                    <div key={index} className="form-check">
-                        <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id={`category-${index}`}
-                            checked={filters.category === category}
-                            onChange={() =>
-                                setFilters({
-                                    category: filters.category === category ? "" : category,
-                                })
-                            }
-                        />
-                        <label className="form-check-label" htmlFor={`category-${index}`}>
+            <div className="mb-3">
+                <select
+                    className="form-select"
+                    value={filters.category || ""}
+                    onChange={e =>
+                        setFilters({ category: e.target.value || "" })
+                    }
+                >
+                    <option value="">Todas las categorías</option>
+                    {categories.map((category, index) => (
+                        <option key={index} value={category}>
                             {category.replace("-", " ")}
-                        </label>
-                    </div>
-                ))}
+                        </option>
+                    ))}
+                </select>
             </div>
 
             <hr />

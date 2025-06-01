@@ -20,8 +20,18 @@ export default function SearchPage() {
         const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase());
         const matchesCategory = !filters.category || product.category === filters.category;
         const matchesPrice = product.price >= filters.minPrice && product.price <= filters.maxPrice;
-        const matchesRating = !filters.rating || product.rating >= filters.rating;
-        const matchesStock = filters.inStock === null ? true : product.stock > 0 === filters.inStock;
+
+        // Soporte para rating como número o como objeto
+        let productRating = 0;
+        if (typeof product.rating === "object" && product.rating !== null) {
+            productRating = product.rating.rate;
+        } else {
+            productRating = product.rating;
+        }
+        const matchesRating = !filters.rating || productRating >= filters.rating;
+
+        // Soporte para stock (puede ser undefined en fakestoreapi)
+        const matchesStock = filters.inStock === null ? true : (product.stock ? product.stock > 0 : true) === filters.inStock;
 
         return matchesSearch && matchesCategory && matchesPrice && matchesRating && matchesStock;
     });
@@ -45,7 +55,7 @@ export default function SearchPage() {
 
             <div className="row m-3">
                 <div className="col-md-3">
-                    <ProductFilters filters={filters} setFilters={setFilters} />
+                    <ProductFilters filters={filters} setFilters={setFilters} products={products}/>
                 </div>
 
                 <div className="col-md-9">
@@ -59,7 +69,7 @@ export default function SearchPage() {
             <ModalsManager
                 selectedProduct={selectedProduct}
                 showProductModal={false}
-                setShowProductModal={() => {}}
+                setShowProductModal={() => { }}
                 showComparativeModal={showComparativeModal}
                 setShowComparativeModal={setShowComparativeModal}
                 productToCompare={selectedProduct}

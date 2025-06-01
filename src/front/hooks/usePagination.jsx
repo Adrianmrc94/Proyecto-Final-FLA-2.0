@@ -3,9 +3,12 @@ import { useState } from "react";
 export default function usePagination({ items = [], itemsPerPage = 8 }) {
     const [currentPage, setCurrentPage] = useState(0);
 
-    const totalPages = Math.ceil(items.length / itemsPerPage);
+    // Asegura que items siempre sea un array
+    const safeItems = Array.isArray(items) ? items : [];
 
-    const currentItems = items.slice(
+    const totalPages = Math.ceil(safeItems.length / itemsPerPage);
+
+    const currentItems = safeItems.slice(
         currentPage * itemsPerPage,
         (currentPage + 1) * itemsPerPage
     );

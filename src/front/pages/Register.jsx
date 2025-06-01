@@ -5,7 +5,7 @@ import logo from "../assets/img/logo.png";
 const Register = () => {
     const [formData, setFormData] = useState({
         name: '',
-        lastName: '',
+        last_name: '',
         postalCode: '',
         email: '',
         password: '',
@@ -23,9 +23,9 @@ const Register = () => {
         e.preventDefault();
         setError('');
 
-        const { name, lastName, postalCode, email, password, confirmPassword } = formData;
+        const { name, last_name, postalCode, email, password, confirmPassword } = formData;
 
-        if (!name || !lastName || !postalCode || !email || !password || !confirmPassword) {
+        if (!name || !last_name || !postalCode || !email || !password || !confirmPassword) {
             setError('Todos los campos son requeridos');
             return;
         }
@@ -53,7 +53,7 @@ const Register = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     name,
-                    last_name: lastName,
+                    last_name: last_name,
                     postal_code: postalCode,
                     email,
                     password
@@ -62,7 +62,7 @@ const Register = () => {
             const data = await response.json();
             if (response.ok) {
                 alert('Registro exitoso');
-                navigate('/login');
+                navigate('/');
             } else {
                 setError(data.error || 'Error al registrar');
             }
@@ -95,10 +95,10 @@ const Register = () => {
                             </div>
                             <div className="mb-3">
                                 <input
-                                    name="lastName"
+                                    name="last_name"
                                     type="text"
                                     placeholder="Apellido"
-                                    value={formData.lastName}
+                                    value={formData.last_name}
                                     onChange={handleChange}
                                     className="form-control"
                                     required
@@ -149,7 +149,7 @@ const Register = () => {
                                 />
                             </div>
                             {error && <div className="alert alert-danger">{error}</div>}
-                            <button type="submit" onClick={() => navigate("/")} className="btn btn-primary w-100">Aceptar y continuar</button>
+                            <button type="submit" className="btn btn-primary w-100">Aceptar y continuar</button>
                         </form>
                         <div className="mt-3">
                             <small>

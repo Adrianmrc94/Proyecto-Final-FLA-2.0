@@ -5,7 +5,7 @@ import HowItWorksSection from "../components/HowItWorksSection";
 import ModalsManager from "../components/ModalsManager";
 import usePagination from "../hooks/usePagination";
 import useGlobalProducts from "../hooks/useGlobalProducts";
-import { allCategories } from "../hooks/categories";
+import useCategories from "../hooks/useCategories";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
@@ -17,7 +17,7 @@ export default function Home() {
         setFilters
     } = useGlobalProducts();
 
-    const categories = allCategories;
+    const categories = useCategories(products);
 
     const {
         currentPage,
