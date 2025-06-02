@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import FeaturedProducts from "../components/FeaturedProducts";
-import CategoryList from "../components/CategoryList";
-import HowItWorksSection from "../components/HowItWorksSection";
-import ModalsManager from "../components/ModalsManager";
+import FeaturedProducts from "../components/home/FeaturedProducts";
+import CategoryList from "../components/home/CategoryList";
+import HowItWorksSection from "../components/home/HowItWorksSection";
+import ModalsManager from "../components/modales/ModalsManager";
 import usePagination from "../hooks/usePagination";
 import useGlobalProducts from "../hooks/useGlobalProducts";
 import useCategories from "../hooks/useCategories";
@@ -10,14 +10,14 @@ import { useNavigate } from "react-router-dom";
 
 export default function Home() {
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) {
             navigate("/login");
         }
     }, [navigate]);
-    
+
     const {
         products,
         featuredProducts: featured,

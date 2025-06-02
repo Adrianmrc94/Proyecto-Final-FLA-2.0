@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import ProductFilters from "../components/ProductFilters";
-import ProductResults from "../components/ProductResults";
-import ModalsManager from "../components/ModalsManager";
+import ProductFilters from "../components/search/ProductFilters";
+import ProductResults from "../components/search/ProductResults";
+import ModalsManager from "../components/modales/ModalsManager";
 import useGlobalProducts from "../hooks/useGlobalProducts";
 import useFilters from "../hooks/useFilters";
 import { useNavigate } from "react-router-dom";

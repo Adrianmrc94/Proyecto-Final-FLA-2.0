@@ -45,9 +45,9 @@ def import_products():
             if not store:
                 store = Store(name=store_name, postal_code="Unknown")
                 db.session.add(store)
-                db.session.flush()  # <-- Esto asegura que store.id esté disponible
+                db.session.flush()
 
-            db.session.refresh(store)  # <-- Esto asegura que el objeto esté actualizado
+            db.session.refresh(store)  # Esto asegura que el objeto esté actualizado
 
             if not Product.query.filter_by(external_id=f"dummyjson-{p['id']}").first():
                 product = Product(

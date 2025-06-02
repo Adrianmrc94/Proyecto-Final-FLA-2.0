@@ -1,6 +1,6 @@
 import React from "react";
-import FeaturedProducts from "./FeaturedProducts";
-import usePagination from "../hooks/usePagination";
+import FeaturedProducts from "../home/FeaturedProducts";
+import usePagination from "../../hooks/usePagination";
 
 export default function ProductResults({ filteredProducts, handleProductClick }) {
     const itemsPerPage = 9;

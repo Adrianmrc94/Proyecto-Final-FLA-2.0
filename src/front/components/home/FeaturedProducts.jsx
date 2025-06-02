@@ -1,5 +1,5 @@
 import React from "react";
-
+// productos destacados
 export default function FeaturedProducts({ featured, onProductClick }) {
     return (
         <div className="row">
