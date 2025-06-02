@@ -17,15 +17,15 @@ export default function ModalsManager({
                     product={selectedProduct}
                     show={showProductModal}
                     onClose={() => setShowProductModal(false)}
-                    onFavorite={() => {}}
+                    onFavorite={() => { }}
                 />
             )}
 
-            {productToCompare && (
+            {showComparativeModal && selectedProduct && (
                 <ComparativeModal3
                     isOpen={showComparativeModal}
-                    product={productToCompare}
                     onClose={() => setShowComparativeModal(false)}
+                    product={selectedProduct}
                 />
             )}
         </>

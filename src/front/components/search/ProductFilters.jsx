@@ -1,29 +1,32 @@
 import React from "react";
-import { allCategories } from "../hooks/categories";
+import useCategories from "../../hooks/useCategories";
 
-export default function ProductFilters({ filters, setFilters }) {
+export default function ProductFilters({ filters, setFilters, products }) {
+    console.log(products)
+    const categories = useCategories(products);
+
+    if (!categories.length) {
+        return <div>Cargando categorías...</div>;
+    }
+
     return (
         <div>
             <h5>Categorías</h5>
-            <div>
-                {allCategories.map((category, index) => (
-                    <div key={index} className="form-check">
-                        <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id={`category-${index}`}
-                            checked={filters.category === category}
-                            onChange={() =>
-                                setFilters({
-                                    category: filters.category === category ? "" : category,
-                                })
-                            }
-                        />
-                        <label className="form-check-label" htmlFor={`category-${index}`}>
+            <div className="mb-3">
+                <select
+                    className="form-select"
+                    value={filters.category || ""}
+                    onChange={e =>
+                        setFilters({ category: e.target.value || "" })
+                    }
+                >
+                    <option value="">Todas las categorías</option>
+                    {categories.map((category, index) => (
+                        <option key={index} value={category}>
                             {category.replace("-", " ")}
-                        </label>
-                    </div>
-                ))}
+                        </option>
+                    ))}
+                </select>
             </div>
 
             <hr />
@@ -34,9 +37,9 @@ export default function ProductFilters({ filters, setFilters }) {
                     Mínimo:
                     <input
                         type="number"
-                        value={filters.minPrice}
+                        value={filters.price_min}
                         onChange={(e) =>
-                            setFilters({ minPrice: Number(e.target.value) })
+                            setFilters({ ...filters, price_min: e.target.value })
                         }
                         className="form-control form-control-sm"
                     />
@@ -45,9 +48,9 @@ export default function ProductFilters({ filters, setFilters }) {
                     Máximo:
                     <input
                         type="number"
-                        value={filters.maxPrice}
+                        value={filters.price_max}
                         onChange={(e) =>
-                            setFilters({ maxPrice: Number(e.target.value) })
+                            setFilters({ ...filters, price_max: e.target.value })
                         }
                         className="form-control form-control-sm"
                     />
@@ -65,7 +68,7 @@ export default function ProductFilters({ filters, setFilters }) {
                     max="5"
                     value={filters.rating}
                     onChange={(e) =>
-                        setFilters({ rating: Number(e.target.value) })
+                        setFilters({ ...filters, rating: e.target.value })
                     }
                     className="form-control form-control-sm"
                 />
@@ -81,7 +84,7 @@ export default function ProductFilters({ filters, setFilters }) {
                     id="inStock"
                     checked={filters.inStock === true}
                     onChange={() =>
-                        setFilters({ inStock: filters.inStock === true ? null : true })
+                        setFilters({ ...filters, inStock: filters.inStock === true ? null : true })
                     }
                 />
                 <label className="form-check-label" htmlFor="inStock">

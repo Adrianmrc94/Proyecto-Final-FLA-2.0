@@ -24,8 +24,11 @@ export const Navbar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("user"); 
-    navigate("/"); 
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("darkMode");
+    localStorage.clear();
+    navigate("/");
   };
 
   return (

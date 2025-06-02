@@ -4,6 +4,11 @@ from api.models import db, User, Product, Favorite
 from flask_cors import CORS
 import bcrypt
 import random
+from sqlalchemy.orm import joinedload
+from sqlalchemy import or_
+import requests
+import secrets
+
 
 api = Blueprint('api', __name__)
 
@@ -34,12 +39,12 @@ def login():
 def register():
     data = request.get_json()
     name = data.get('name')
-    lastname = data.get('lastname')
+    last_name = data.get('last_name')
     email = data.get('email')
     password = data.get('password')
     postal_code = data.get('postal_code')
 
-    if not name or not lastname or not email or not password:
+    if not name or not last_name or not email or not password:
         return jsonify({'msg': 'Todos los campos obligatorios deben estar completos'}), 400
     if len(password) < 6:
         return jsonify({'msg': 'La contraseña debe tener al menos 6 caracteres'}), 400
@@ -48,13 +53,12 @@ def register():
         return jsonify({'msg': 'El correo ya está registrado'}), 409
 
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-    new_user = User(name=name, lastname=lastname, email=email, password=hashed_password, postal_code=postal_code, is_active=True)
+    new_user = User(name=name, last_name=last_name, email=email, password=hashed_password, postal_code=postal_code, is_active=True)
     db.session.add(new_user)
     db.session.commit()
 
     token = create_access_token(identity=str(new_user.id))
     return jsonify({'msg': 'Registro exitoso', 'token': token, 'user': new_user.serialize()}), 201
-
 
 @api.route('/products', methods=['GET'])
 def get_products():
@@ -62,7 +66,7 @@ def get_products():
     price_max = request.args.get('price_max', type=float)
     category = request.args.get('category')
 
-    query = Product.query
+    query = Product.query.options(joinedload(Product.store))
     if price_min is not None:
         query = query.filter(Product.price >= price_min)
     if price_max is not None:
@@ -74,7 +78,7 @@ def get_products():
     return jsonify([p.serialize() for p in products]), 200
 
 @api.route('/products/<int:product_id>', methods=['GET'])
-def get_product_detail(product_id):
+def get_product_by_id(product_id):
     product = Product.query.get(product_id)
     if not product:
         return jsonify({'msg': 'Producto no encontrado'}), 404
@@ -88,18 +92,37 @@ def get_categories():
 
 @api.route('/products/category/<string:category>', methods=['GET'])
 def get_products_by_category(category):
-    products = Product.query.filter(Product.category.ilike(f'%{category}%')).all()
+    normalized = category.replace("-", " ").strip().lower()
+    products = Product.query.options(joinedload(Product.store)).filter(
+        Product.category.ilike(f'%{normalized}%')
+    ).all()
     return jsonify([p.serialize() for p in products]), 200
 
-@api.route('/search', methods=['GET'])
+@api.route('/products/compare', methods=['POST'])
+def compare_products():
+    data = request.get_json()
+    product_ids = data.get('product_ids', [])
+    if not product_ids or not isinstance(product_ids, list):
+        return jsonify({'msg': 'Debes enviar una lista de IDs de productos'}), 400
+
+    products = Product.query.options(joinedload(Product.store)).filter(Product.id.in_(product_ids)).all()
+    return jsonify([p.serialize() for p in products]), 200
+
+api.route('/search', methods=['GET'])
 def search_products():
     query = request.args.get('query', '')
-    products = Product.query.filter(Product.name.ilike(f'%{query}%')).all()
+    products = Product.query.options(joinedload(Product.store)).filter(
+        or_(
+            Product.name.ilike(f'%{query}%'),
+            Product.description.ilike(f'%{query}%'),
+            Product.category.ilike(f'%{query}%')
+        )
+    ).all()
     return jsonify([p.serialize() for p in products]), 200
 
 @api.route('/random-product', methods=['GET'])
 def get_random_product():
-    products = Product.query.all()
+    products = Product.query.options(joinedload(Product.store)).all()
     if not products:
         return jsonify({'msg': 'No hay productos disponibles'}), 404
     product = random.choice(products)
@@ -158,3 +181,115 @@ def delete_favorite(favorite_id):
     db.session.delete(favorite)
     db.session.commit()
     return jsonify({'msg': 'Favorito eliminado'}), 200
+
+
+@api.route('/user/profile', methods=['GET'])
+@jwt_required()
+def get_user_profile():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+    return jsonify(user.serialize()), 200
+
+@api.route('/user/profile', methods=['PUT'])
+@jwt_required()
+def update_user_profile():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+
+    data = request.get_json()
+    user.name = data.get('name', user.name)
+    user.last_name = data.get('last_name', user.last_name)
+    user.email = data.get('email', user.email)
+    user.postal_code = data.get('postal_code', user.postal_code)
+    db.session.commit()
+    return jsonify({'msg': 'Perfil actualizado', 'user': user.serialize()}), 200
+
+@api.route('/user/change-password', methods=['POST'])
+@jwt_required()
+def change_password():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+
+    data = request.get_json()
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+
+    if not old_password or not new_password:
+        return jsonify({'msg': 'Faltan datos'}), 400
+
+    if not bcrypt.checkpw(old_password.encode('utf-8'), user.password.encode('utf-8')):
+        return jsonify({'msg': 'Contraseña actual incorrecta'}), 401
+
+    if len(new_password) < 6:
+        return jsonify({'msg': 'La nueva contraseña debe tener al menos 6 caracteres'}), 400
+
+    user.password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    db.session.commit()
+    return jsonify({'msg': 'Contraseña actualizada'}), 200
+
+@api.route('/user/delete-account', methods=['DELETE'])
+@jwt_required()
+def delete_account():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+
+    data = request.get_json()
+    password = data.get('password')
+    if not password:
+        return jsonify({'msg': 'Debes proporcionar la contraseña'}), 400
+
+    if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+        return jsonify({'msg': 'Contraseña incorrecta'}), 401
+
+    user.is_active = False
+    db.session.commit()
+    return jsonify({'msg': 'Cuenta eliminada correctamente'}), 200
+
+
+
+""" reset_tokens = {}
+@api.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    data = request.get_json()
+    email = data.get('email')
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+
+    # Genera un token simple (en producción usa JWT o similar)
+    token = secrets.token_urlsafe(32)
+    reset_tokens[token] = user.id
+
+    # Aquí deberías enviar el token por email al usuario
+    # Por ahora, solo lo devolvemos para pruebas
+    return jsonify({'msg': 'Token de recuperación generado', 'token': token}), 200
+
+@api.route('/reset-password/<token>', methods=['POST'])
+def reset_password(token):
+    user_id = reset_tokens.get(token)
+    if not user_id:
+        return jsonify({'msg': 'Token inválido o expirado'}), 400
+
+    data = request.get_json()
+    new_password = data.get('new_password')
+    if not new_password or len(new_password) < 6:
+        return jsonify({'msg': 'La nueva contraseña debe tener al menos 6 caracteres'}), 400
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+
+    user.password = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    db.session.commit()
+    # Elimina el token usado
+    del reset_tokens[token]
+    return jsonify({'msg': 'Contraseña restablecida correctamente'}), 200
+ """

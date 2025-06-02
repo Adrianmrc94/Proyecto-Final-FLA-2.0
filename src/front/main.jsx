@@ -6,6 +6,7 @@ import { router } from "./routes";  // Import the router configuration
 import { StoreProvider } from './context/StoreContext';  // Import the StoreProvider for global state management
 import { BackendURL } from './components/BackendURL';
 import useGlobalProducts from './hooks/useGlobalProducts';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const Main = () => {
     if (!import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_BACKEND_URL === "")
@@ -31,21 +32,20 @@ function AppWithEffects() {
         setProducts,
         setLoadingProducts,
         setErrorLoadingProducts,
-        setFeaturedProducts,    
-        setRandomProduct          
+        setFeaturedProducts,
+        setRandomProduct
     } = useGlobalProducts();
-    useEffect(() => {
 
+    useEffect(() => {
         if (products.length === 0 && !loadingProducts) {
             setLoadingProducts(true);
-            fetch("/products.json")
-                .then((res) => {
-                    return res.json();
-                })
+            const backendUrl = import.meta.env.VITE_BACKEND_URL?.replace(/['"]/g, "").replace(/\/$/, "");
+            fetch(`${backendUrl}/api/products`)
+                .then((res) => res.json())
                 .then((data) => {
-                    setProducts(data.products);
-                    
-                    const shuffled = [...data.products].sort(() => 0.5 - Math.random());
+                    setProducts(data);
+
+                    const shuffled = [...data].sort(() => 0.5 - Math.random());
                     const featured = shuffled.slice(0, 6);
                     const random = featured[0];
 

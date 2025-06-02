@@ -25,10 +25,10 @@ const Login = () => {
             });
             const data = await response.json();
             if (response.ok) {
-                localStorage.setItem('token', data.access_token);
+                localStorage.setItem('token', data.token);
                 navigate('/home');
             } else {
-                setError(data.error || 'Error al iniciar sesión');
+                setError(data.error || 'Crea un usuario primero o contacta con administración');
             }
         } catch {
             setError('Error de conexión con el servidor');
@@ -69,7 +69,7 @@ const Login = () => {
                                 />
                             </div>
                             {error && <div className="alert alert-danger">{error}</div>}
-                            <button type="submit" onClick={() => navigate("/Home")} className="btn btn-primary w-100">Iniciar Sesión</button>
+                            <button type="submit" className="btn btn-primary w-100">Iniciar Sesión</button>
                         </form>
                         <div className="mt-3">
                             <small>
