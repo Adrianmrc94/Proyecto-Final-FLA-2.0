@@ -255,7 +255,7 @@ def delete_account():
 
 
 
-reset_tokens = {}
+""" reset_tokens = {}
 @api.route('/forgot-password', methods=['POST'])
 def forgot_password():
     data = request.get_json()
@@ -292,3 +292,4 @@ def reset_password(token):
     # Elimina el token usado
     del reset_tokens[token]
     return jsonify({'msg': 'Contraseña restablecida correctamente'}), 200
+ """
