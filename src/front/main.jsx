@@ -46,7 +46,7 @@ function AppWithEffects() {
                     setProducts(data);
 
                     const shuffled = [...data].sort(() => 0.5 - Math.random());
-                    const featured = shuffled.slice(0, 6);
+                    const featured = shuffled.slice(0, 8);
                     const random = featured[0];
 
                     localStorage.setItem("featured", JSON.stringify(featured));

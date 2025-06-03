@@ -72,3 +72,25 @@
     transform: scale(1);
   }
 }
+
+/* index.css */
+
+/* Estilos por defecto para el modo claro */
+body {
+  /* Fondo sólido con tono verde claro */
+  background-color: #b3e5c4; /* Tono verde claro: ajústalo a tu gusto */
+  /* Fondo de imagen para el modo claro */
+  background-image: url('/images/light-mode-background.jpg'); /* Actualiza la ruta a tu imagen */
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  
+  /* Transiciones suaves para cambios en el fondo */
+  transition: background-color 0.5s ease, background-image 0.5s ease;
+}
+
+/* Cuando se activa el modo oscuro, el cuerpo recibe la clase "dark-mode" */
+body.dark-mode {
+  background-color: #004d00; /* Tono verde oscuro */
+  background-image: url('/images/dark-mode-background.jpg'); /* La imagen para modo oscuro */
+}
