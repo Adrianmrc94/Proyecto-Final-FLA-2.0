@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import PasswordResetForm from '../components/user/PasswordResetForm';
 import UserInfo from '../components/user/UserInfo';
 import DeleteAccountForm from '../components/user/DeleteAccountForm';
+import useDarkMode from '../hooks/useDarkMode';
 
 const UserPage = () => {
     const [activeTab, setActiveTab] = useState('info');
@@ -12,6 +13,7 @@ const UserPage = () => {
     const [deleteError, setDeleteError] = useState('');
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [deleteMessage, setDeleteMessage] = useState('');
+    const { darkMode } = useDarkMode();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -100,8 +102,8 @@ const UserPage = () => {
 
     return (
         <div className="container mt-5">
-            <div className="card shadow-lg p-3 mb-5 bg-white rounded">
-                <div className="card-header bg-primary text-white text-center">
+            <div className="card shadow-lg p-3 mb-5 shadow-lg rounded">
+                <div className="card-header text-center">
                     <h2>Configuración de Usuario</h2>
                 </div>
                 <div className="card-body">

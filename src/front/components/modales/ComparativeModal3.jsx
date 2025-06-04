@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import useDarkMode from "../../hooks/useDarkMode"; // Importamos el hook de modo oscuro
 
 const ComparativeModal3 = ({ isOpen, onClose, product }) => {
+  const { darkMode } = useDarkMode(); // Accedemos al estado del modo oscuro
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -12,6 +14,7 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
       try {
         const token = localStorage.getItem("token");
         const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://glowing-engine-g47g9q94v665hpwq5-3001.app.github.dev/";
+
 
         console.log("Initial product for comparison:", product);
 
@@ -124,6 +127,7 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
 
         // 3. Si aún no se encontró, buscar productos generales y elegir uno al azar
         if (!similar) {
+
           const generalSearchRes = await fetch(
             `${BACKEND_URL}/api/search?query=`,
             { headers: { Authorization: `Bearer ${token}` } }
@@ -151,9 +155,9 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ product_ids: [product.id, similar.id] })
+          body: JSON.stringify({ product_ids: [product.id, similar.id] }),
         });
         if (compareRes.ok) {
           const data = await compareRes.json();
@@ -175,6 +179,7 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
   }, [isOpen, product]);
 
   if (!isOpen || !product) return null;
+
 
   const modalDisplayClass = isOpen ? "d-block" : "d-none";
 

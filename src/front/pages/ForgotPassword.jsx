@@ -6,7 +6,7 @@ const ForgotPassword = () => {
     const [email, setEmail] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
-    const [emailSent, setEmailSent] = useState(false); 
+    const [emailSent, setEmailSent] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -35,18 +35,18 @@ const ForgotPassword = () => {
     };
 
     return (
-        <div className="container mt-5 mb-5">
-            <div className="text-center mb-4">
-                <img src={logo} alt="Logo FLA" className="logo" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
+        <div className="container m-auto d-flex flex-column justify-content-between" style={{ minHeight: '100vh' }}>
+            <div className="mt-5 mb-1 text-center">
+                <img src={logo} alt="Logo FLA" className="logo" style={{ width: '300px', height: '300px', objectFit: 'contain' }} />
             </div>
 
-            <div className="row flex-grow-1 align-items-center">
+            <div className="row flex-grow-1">
                 <div className="col-12 col-md-6 d-flex align-items-center">
                     <div className="w-100">
                         <h2 className="mb-4">Recuperar Contraseña</h2>
                         <form onSubmit={handleSubmit}>
                             {!emailSent && (
-                                <div className="mb-3">
+                                <div className="shadow-lg mb-3">
                                     <input
                                         type="email"
                                         placeholder="Tu email"
@@ -61,7 +61,7 @@ const ForgotPassword = () => {
                             {message && <div className="alert alert-success">{message}</div>}
 
                             {!emailSent ? (
-                                <button type="submit" className="btn btn-primary w-100">Enviar instrucciones</button>
+                                <button type="submit" className="btn btn-success shadow-lg w-100">Enviar instrucciones</button>
                             ) : (
                                 <p className="text-muted text-center">Revisa tu bandeja de entrada.</p>
                             )}
@@ -75,7 +75,7 @@ const ForgotPassword = () => {
                 </div>
 
                 <div className="col-12 col-md-6 d-flex align-items-center mt-4 mt-md-0">
-                    <div className="bg-light p-4 rounded shadow w-100">
+                    <div className="bg-light p-4 shadow-lg w-100">
                         <h4 className="mb-3">¿Cómo funciona?</h4>
                         <p>Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.</p>
                         <ul>

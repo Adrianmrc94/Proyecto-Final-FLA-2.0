@@ -74,7 +74,7 @@ const Register = () => {
     return (
         <div className="container mt-5 mb-5">
             <div className="text-center mb-4">
-                <img src={logo} alt="Logo FLA" className="logo" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
+                <img src={logo} alt="Logo FLA" className="logo" style={{ width: '300px', height: '300px', objectFit: 'contain' }} />
             </div>
 
             <div className="row flex-grow-1">
@@ -82,7 +82,7 @@ const Register = () => {
                     <div className="w-100">
                         <h2 className="mb-4">Registro</h2>
                         <form onSubmit={handleSubmit}>
-                            <div className="mb-3">
+                            <div className="mb-3 shadow-lg">
                                 <input
                                     name="name"
                                     type="text"
@@ -93,7 +93,7 @@ const Register = () => {
                                     required
                                 />
                             </div>
-                            <div className="mb-3">
+                            <div className="mb-3 shadow-lg">
                                 <input
                                     name="last_name"
                                     type="text"
@@ -104,7 +104,7 @@ const Register = () => {
                                     required
                                 />
                             </div>
-                            <div className="mb-3">
+                            <div className="mb-3 shadow-lg">
                                 <input
                                     name="postalCode"
                                     type="text"
@@ -115,7 +115,7 @@ const Register = () => {
                                     required
                                 />
                             </div>
-                            <div className="mb-3">
+                            <div className="mb-3 shadow-lg">
                                 <input
                                     name="email"
                                     type="email"
@@ -126,7 +126,7 @@ const Register = () => {
                                     required
                                 />
                             </div>
-                            <div className="mb-3">
+                            <div className="mb-3 shadow-lg">
                                 <input
                                     name="password"
                                     type="password"
@@ -137,7 +137,7 @@ const Register = () => {
                                     required
                                 />
                             </div>
-                            <div className="mb-3">
+                            <div className="mb-3 shadow-lg">
                                 <input
                                     name="confirmPassword"
                                     type="password"
@@ -149,7 +149,7 @@ const Register = () => {
                                 />
                             </div>
                             {error && <div className="alert alert-danger">{error}</div>}
-                            <button type="submit" className="btn btn-primary w-100">Aceptar y continuar</button>
+                            <button type="submit" className="btn shadow-lg btn-success w-100">Aceptar y continuar</button>
                         </form>
                         <div className="mt-3">
                             <small>
@@ -162,7 +162,7 @@ const Register = () => {
 
                 <div className="col-12 col-md-6 d-flex align-items-center mt-4 mt-md-0">
                     <div className="bg-light p-4 rounded shadow w-100">
-                        <h4 className="mb-3">¿Qué es FLA?</h4>
+                        <h4 className="mb-3 shadow-lg">¿Qué es FLA?</h4>
                         <p><strong>FLA (Find Lowest App)</strong> es una plataforma que te permite comparar precios de productos entre diferentes supermercados usando tu código postal.</p>
                         <ul>
                             <li>Compara precios fácilmente</li>

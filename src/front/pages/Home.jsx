@@ -65,7 +65,8 @@ export default function Home() {
 
     return (
         <div className="container mt-4">
-            <h2 className="mb-4">Productos Destacados</h2>
+            <h2 className="mb-4 text-center">Productos Destacados</h2>
+            
             <FeaturedProducts
                 featured={featured}
                 onProductClick={handleProductClick}

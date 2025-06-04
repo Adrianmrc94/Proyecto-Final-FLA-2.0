@@ -109,7 +109,7 @@ const FavoriteProduct = ({ product, onRemoveFavorite }) => {
 
     return (
         <div className="col-lg-3 col-md-4 col-sm-6 p-3 d-flex align-items-stretch">
-            <div className="card p-3 w-100 d-flex flex-column">
+            <div className="card shadow-lg p-3 w-100 d-flex flex-column">
                 <div className="text-center">
                     <img
                         src={imageUrl}
@@ -135,7 +135,7 @@ const FavoriteProduct = ({ product, onRemoveFavorite }) => {
 
             {/* Modal */}
             {showModal && (
-                <div className="modal show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+                <div className="modal show shadow-lg d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
                     <div className="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                         <div className="modal-content">
                             <div className="modal-header">
