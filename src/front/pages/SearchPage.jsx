@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ProductFilters from "../components/search/ProductFilters";
 import ProductResults from "../components/search/ProductResults";
-import ModalsManager from "../components/modales/ModalsManager";
+import ComparativeModal3 from "../components/modales/ComparativeModal3";
 import useGlobalProducts from "../hooks/useGlobalProducts";
 import useFilters from "../hooks/useFilters";
 import { useNavigate } from "react-router-dom";
@@ -15,30 +15,20 @@ export default function SearchPage() {
 
     const [searchQuery, setSearchQuery] = useState("");
 
-    // Filtrado de productos
+    // Filtrado de productos SOLO por nombre/título
     const filteredProducts = products.filter((product) => {
-        // Normaliza campos
         const title = (product.name || product.title || "").toLowerCase();
-        const description = (product.description || "").toLowerCase();
-        const category = (product.category || "").toLowerCase();
-
-        // Filtro de búsqueda
         const matchesSearch =
             !searchQuery ||
-            title.includes(searchQuery.toLowerCase()) ||
-            description.includes(searchQuery.toLowerCase()) ||
-            category.includes(searchQuery.toLowerCase());
+            title.includes(searchQuery.toLowerCase());
 
-        // Filtro de categoría
         const matchesCategory = !filters.category || product.category === filters.category;
 
-        // Filtro de precio
         const price = Number(product.price) || 0;
         const matchesPrice =
             (!filters.price_min || price >= Number(filters.price_min)) &&
             (!filters.price_max || price <= Number(filters.price_max));
 
-        // Filtro de rating
         let productRating = 0;
         if (typeof product.rating === "object" && product.rating !== null && typeof product.rating.rate === "number") {
             productRating = product.rating.rate;
@@ -49,7 +39,6 @@ export default function SearchPage() {
         }
         const matchesRating = !filters.rating || productRating >= Number(filters.rating);
 
-        // Filtro de stock
         const matchesStock = filters.inStock === null ? true : (product.stock ? product.stock > 0 : false);
 
         return matchesSearch && matchesCategory && matchesPrice && matchesRating && matchesStock;
@@ -85,14 +74,13 @@ export default function SearchPage() {
                 </div>
             </div>
 
-            <ModalsManager
-                selectedProduct={selectedProduct}
-                showProductModal={false}
-                setShowProductModal={() => { }}
-                showComparativeModal={showComparativeModal}
-                setShowComparativeModal={setShowComparativeModal}
-                productToCompare={selectedProduct}
-            />
+            {showComparativeModal && selectedProduct && (
+                <ComparativeModal3
+                    isOpen={showComparativeModal}
+                    onClose={() => setShowComparativeModal(false)}
+                    product={selectedProduct}
+                />
+            )}
         </div>
     );
 }
