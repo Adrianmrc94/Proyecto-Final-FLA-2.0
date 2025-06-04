@@ -13,7 +13,7 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://glowing-engine-g47g9q94v665hpwq5-3001.app.github.dev/";
+        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
 
 
         console.log("Initial product for comparison:", product);

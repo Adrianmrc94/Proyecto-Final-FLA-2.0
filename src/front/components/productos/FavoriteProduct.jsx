@@ -26,7 +26,7 @@ const FavoriteProduct = ({ product, onRemoveFavorite }) => {
                 setFavoriteId(null);
                 return;
             }
-            const BACKEND_URL = "https://glowing-engine-g47g9q94v665hpwq5-3001.app.github.dev/";
+            const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
             try {
                 const response = await fetch(`${BACKEND_URL}/api/favorites`, {
                     headers: { Authorization: `Bearer ${token}` }
@@ -55,7 +55,7 @@ const FavoriteProduct = ({ product, onRemoveFavorite }) => {
             alert("Debes iniciar sesión para gestionar favoritos.");
             return;
         }
-        const BACKEND_URL = "https://glowing-engine-g47g9q94v665hpwq5-3001.app.github.dev/";
+        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
         if (isFavorite && favoriteId) {
             // Quitar de favoritos usando el id del favorito
