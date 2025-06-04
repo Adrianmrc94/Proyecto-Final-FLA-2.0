@@ -15,6 +15,7 @@ from api.commands import setup_commands
 from datetime import timedelta
 from extensions import mail
 from api.scripts.import_external_products import import_products
+import threading
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 
@@ -80,11 +81,14 @@ def serve_any_other_file(path):
     response.cache_control.max_age = 0
     return response
 
-@app.before_first_request
+products_imported = threading.Event()
+@app.before_request
 def auto_import_products():
-    if Product.query.count() == 0:
-        print("No hay productos, importando productos externos...")
-        import_products(app)
+    if not products_imported.is_set():
+        if Product.query.count() == 0:
+            print("No hay productos, importando productos externos...")
+            import_products(app)
+        products_imported.set()
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
