@@ -22,7 +22,7 @@ flask-bcrypt = "*"
 flask = "*"
 flask-mail = "*"
 flask-jwt-extended = "*"
-flask = "*"
+
 
 [requires]
 python_version = "3.13"
