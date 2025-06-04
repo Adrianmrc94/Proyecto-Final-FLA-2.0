@@ -80,11 +80,12 @@ def serve_any_other_file(path):
     response.cache_control.max_age = 0
     return response
 
-@app.before_first_request
-def auto_import_products():
-    if Product.query.count() == 0:
-        print("No hay productos, importando productos externos...")
-        import_products(app)
+if os.getenv("RUN_MAIN", "true") == "true":
+    @app.before_first_request
+    def auto_import_products():
+        if Product.query.count() == 0:
+            print("No hay productos, importando productos externos...")
+            import_products(app)
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
