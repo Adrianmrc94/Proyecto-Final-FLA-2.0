@@ -24,13 +24,17 @@ const Login = () => {
                 body: JSON.stringify(formData),
             });
             const data = await response.json();
+            console.log('Login response:', data);
+            
             if (response.ok) {
                 localStorage.setItem('token', data.token);
+                console.log('Token stored:', data.token);
                 navigate('/home');
             } else {
-                setError(data.error || 'Crea un usuario primero o contacta con administración');
+                setError(data.msg || data.error || 'Crea un usuario primero o contacta con administración');
             }
-        } catch {
+        } catch (error) {
+            console.error('Login error:', error);
             setError('Error de conexión con el servidor');
         }
     };
@@ -45,7 +49,7 @@ const Login = () => {
                 <div className="col-12 col-md-6 d-flex align-items-center">
                     <div className="w-100">
                         <h2 className="mb-4">Iniciar Sesión</h2>
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit} autoComplete="off">
                             <div className="mb-3">
                                 <input
                                     name="email"

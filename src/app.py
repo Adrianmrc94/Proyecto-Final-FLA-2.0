@@ -13,6 +13,7 @@ from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 from datetime import timedelta
+from extensions import mail
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 
@@ -32,6 +33,16 @@ else:
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'adrianmrc943@gmail.com'
+app.config['MAIL_PASSWORD'] = os.getenv("MAIL_PASSWORD")
+app.config['MAIL_DEFAULT_SENDER'] = 'adrianmrc943@gmail.com'
+
+
+
 app.config['JWT_SECRET_KEY'] = os.getenv(
     'JWT_SECRET_KEY', 'super-secret-key') 
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=2)
@@ -41,6 +52,8 @@ jwt = JWTManager(app)
 
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
+
+mail.init_app(app)
 
 setup_admin(app)
 

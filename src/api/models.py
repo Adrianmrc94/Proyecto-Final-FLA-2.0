@@ -15,7 +15,7 @@ class User(db.Model):
     password: Mapped[str] = mapped_column(String(128), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
-    favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="user")
+    favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="user", cascade="all, delete-orphan")
 
     def serialize(self):
         return {
@@ -91,7 +91,7 @@ class Favorite(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     store_id: Mapped[int] = mapped_column(ForeignKey("store.id"), nullable=False)
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"), nullable=False)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
     product_id: Mapped[int] = mapped_column(ForeignKey("product.id"), nullable=False)
     date_ad: Mapped[Date] = mapped_column(Date)
 
