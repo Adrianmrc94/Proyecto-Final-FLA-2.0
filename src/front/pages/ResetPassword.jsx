@@ -1,19 +1,31 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import logo from "../assets/img/logo.png";
 
 const ResetPassword = () => {
-    const { token } = useParams();
+    const [searchParams] = useSearchParams();
+    const token = searchParams.get('token');
     const [password, setPassword] = useState('');
     const [confirm, setConfirm] = useState('');
     const [error, setError] = useState('');
     const [message, setMessage] = useState('');
     const navigate = useNavigate();
 
+    useEffect(() => {
+        if (!token) {
+            setError('Token no válido');
+        }
+    }, [token]);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setMessage('');
+
+        if (!token) {
+            setError('Token no válido');
+            return;
+        }
 
         if (password !== confirm) {
             setError('Las contraseñas no coinciden');
@@ -21,23 +33,32 @@ const ResetPassword = () => {
         }
 
         const backendUrl = import.meta.env.VITE_BACKEND_URL?.replace(/['"]/g, "").replace(/\/$/, "");
-
+        
         try {
-            const res = await fetch(`${backendUrl}/api/reset-password/${token}`, {
+            const res = await fetch(`${backendUrl}/api/reset-password`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ password })
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` 
+                },
+                body: JSON.stringify({ new_password: password })
             });
+            
+            console.log('Response status:', res.status);
+            
             const data = await res.json();
+            console.log('Response data:', data);
+            
             if (res.ok) {
                 setMessage('Contraseña actualizada correctamente');
                 setTimeout(() => {
                     navigate('/login');
                 }, 2000);
             } else {
-                setError(data.error || 'Error al actualizar contraseña');
+                setError(data.msg || 'Error al actualizar contraseña');
             }
-        } catch {
+        } catch (error) {
+            console.error('Fetch error:', error);
             setError('Error de conexión con el servidor');
         }
     };

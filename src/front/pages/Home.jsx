@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import FeaturedProducts from "../components/home/FeaturedProducts";
 import CategoryList from "../components/home/CategoryList";
 import HowItWorksSection from "../components/home/HowItWorksSection";
-import ModalsManager from "../components/modales/ModalsManager";
 import usePagination from "../hooks/usePagination";
 import useGlobalProducts from "../hooks/useGlobalProducts";
 import useCategories from "../hooks/useCategories";
+import ModalsManager from "../components/modales/ModalsManager";
 import { useNavigate } from "react-router-dom";
 
 export default function Home() {
@@ -48,9 +48,19 @@ export default function Home() {
         navigate(`/search`);
     };
 
+    // Al hacer click en "PRUÉBAME" - abre modal comparativo
+    const handleTryMeClick = async () => {
+        if (!randomProduct) return;
+        setSelectedProduct(randomProduct);
+        setShowComparativeModal(true);
+        setShowProductModal(false);
+    };
+
+    // Al hacer click en un producto destacado - abre modal de producto
     const handleProductClick = (product) => {
         setSelectedProduct(product);
         setShowProductModal(true);
+        setShowComparativeModal(false);
     };
 
     return (
@@ -72,7 +82,7 @@ export default function Home() {
             />
 
             <HowItWorksSection
-                onTryMeClick={() => setShowComparativeModal(true)}
+                onTryMeClick={handleTryMeClick}
                 disabled={!randomProduct}
             />
 
@@ -80,7 +90,6 @@ export default function Home() {
                 selectedProduct={selectedProduct}
                 showProductModal={showProductModal}
                 setShowProductModal={setShowProductModal}
-                productToCompare={randomProduct}
                 showComparativeModal={showComparativeModal}
                 setShowComparativeModal={setShowComparativeModal}
             />
