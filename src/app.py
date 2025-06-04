@@ -8,12 +8,13 @@ from flask_swagger import swagger
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import db, Product
 from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 from datetime import timedelta
 from extensions import mail
+from api.scripts.import_external_products import import_products
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 
@@ -78,6 +79,12 @@ def serve_any_other_file(path):
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0
     return response
+
+@app.before_first_request
+def auto_import_products():
+    if Product.query.count() == 0:
+        print("No hay productos, importando productos externos...")
+        import_products()
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
