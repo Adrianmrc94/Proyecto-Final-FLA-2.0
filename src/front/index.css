@@ -127,12 +127,31 @@ body.dark-mode {
 }
 
 .pagination .page-item.active .page-link {
-  background-color: #2E7D32 !important; /* Verde más oscuro para página activa */
+  background-color: #2E7D32 ; /* Verde más oscuro para página activa */
   border-color: #1B5E20;
 }
 
 .pagination .page-item.disabled .page-link {
-  background-color: #A5D6A7 !important; /* Verde apagado para deshabilitados */
+  background-color: #A5D6A7 ; /* Verde apagado para deshabilitados */
   cursor: not-allowed;
   color: #ffffff;
+}
+
+/* Estilos para el modo claro */
+.light-mode-card {
+    background-color: #B3E5C4; /* Verde claro */
+    border: 1px solid #8BC34A; /* Verde más oscuro */
+    color: #212529;
+}
+
+/* Estilos para el modo oscuro */
+.dark-mode-card {
+    background-color: #1B5E20; /* Verde oscuro */
+    border: 1px solid #388E3C;
+    color: white;
+}
+
+/* Transición suave para cambios de modo */
+.light-mode-card, .dark-mode-card {
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
