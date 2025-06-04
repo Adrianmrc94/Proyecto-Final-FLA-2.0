@@ -84,7 +84,7 @@ def serve_any_other_file(path):
 def auto_import_products():
     if Product.query.count() == 0:
         print("No hay productos, importando productos externos...")
-        import_products()
+        import_products(app)
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))

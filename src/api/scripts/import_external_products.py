@@ -5,7 +5,7 @@ from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 from api.models import db, Product, Store
-from app import app
+
 
 def fetch_dummyjson_products():
     url = 'https://dummyjson.com/products?limit=0'
@@ -29,7 +29,7 @@ def fetch_fakestore_products():
         print("Error fakestore:", e)
     return []
 
-def import_products():
+def import_products(app):
     with app.app_context():
         # DummyJSON
         for p in fetch_dummyjson_products():
