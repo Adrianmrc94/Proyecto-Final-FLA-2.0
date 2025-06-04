@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 export default function useDarkMode() {
-  // Función para obtener el modo inicial: del localStorage o de la preferencia del sistema
+  // Obtener el modo inicial del sistema o del localStorage
   const getInitialMode = () => {
     const storedMode = localStorage.getItem("darkMode");
     if (storedMode !== null) {
@@ -11,22 +11,27 @@ export default function useDarkMode() {
   };
 
   const [darkMode, setDarkMode] = useState(getInitialMode);
+  const [key, setKey] = useState(0); // Clave para forzar re-render
 
   useEffect(() => {
-    // Aplicar el atributo data-bs-theme para aprovechar el theming nativo de Bootstrap
+    // Aplicar el tema antes de actualizar localStorage
     document.body.setAttribute("data-bs-theme", darkMode ? "dark" : "light");
-    // También puedes aplicar o quitar una clase personalizada para tus estilos propios
+
     if (darkMode) {
       document.body.classList.add("dark-mode");
     } else {
       document.body.classList.remove("dark-mode");
     }
-    localStorage.setItem("darkMode", JSON.stringify(darkMode));
+
+    setTimeout(() => {
+      localStorage.setItem("darkMode", JSON.stringify(darkMode));
+      setKey((prevKey) => prevKey + 1); // Fuerza re-render global
+    }, 50);
   }, [darkMode]);
 
   const toggleDarkMode = () => {
     setDarkMode((prev) => !prev);
   };
 
-  return { darkMode, toggleDarkMode };
+  return { darkMode, toggleDarkMode, key };
 }

@@ -14,7 +14,6 @@
 
 /* Contenedor principal del modal */
 .modal1-container {
-  background: #fff;
   border-radius: 8px;
   width: 600px;
   max-width: 90%;
@@ -73,14 +72,12 @@
   }
 }
 
-/* index.css */
-
 /* Estilos por defecto para el modo claro */
 body {
   /* Fondo sólido con tono verde claro */
   background-color: #b3e5c4; /* Tono verde claro: ajústalo a tu gusto */
   /* Fondo de imagen para el modo claro */
-  background-image: url('/images/light-mode-background.jpg'); /* Actualiza la ruta a tu imagen */
+  background-image: url('https://img.freepik.com/vector-gratis/diseno-logotipo-icona-letra-e-creativa-colorida_474888-6382.jpg?ga=GA1.1.1508989412.1749036095&semt=ais_hybrid&w=740'); /* Actualiza la ruta a tu imagen */
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
@@ -92,5 +89,50 @@ body {
 /* Cuando se activa el modo oscuro, el cuerpo recibe la clase "dark-mode" */
 body.dark-mode {
   background-color: #004d00; /* Tono verde oscuro */
-  background-image: url('/images/dark-mode-background.jpg'); /* La imagen para modo oscuro */
+  background-image: url(https://img.freepik.com/vector-gratis/fondo-abstract-cortado-papel_474888-6378.jpg?ga=GA1.1.1508989412.1749036095&semt=ais_hybrid&w=740);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  
+  /* Transiciones suaves para cambios en el fondo */
+  transition: background-color 0.5s ease, background-image 0.5s ease;
+} /* La imagen para modo oscuro */
+
+.modal-content.dark-mode {
+  background-color: #1f3d1f; /* Un verde oscuro */
+  color: #fff;
+  transition: background-color 0.5s ease-in-out;
+}
+
+.modal-content.light-mode {
+  background-color: #b3e5c4; /* Un verde claro */
+  color: #212529;
+  transition: background-color 0.5s ease-in-out;
+}
+
+.card.dark-mode {
+  background-color: #065c34;
+  color: white;
+}
+
+.card.light-mode {
+  background-color: #29e433;
+  color: black;
+}
+
+.pagination .page-item .page-link {
+  background-color: #4CAF50; /* Verde intenso */
+  color: white; /* Texto blanco */
+  border: 1px solid #388E3C; /* Borde verde oscuro */
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #2E7D32 !important; /* Verde más oscuro para página activa */
+  border-color: #1B5E20;
+}
+
+.pagination .page-item.disabled .page-link {
+  background-color: #A5D6A7 !important; /* Verde apagado para deshabilitados */
+  cursor: not-allowed;
+  color: #ffffff;
 }

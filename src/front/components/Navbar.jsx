@@ -21,7 +21,7 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg">
+    <nav className="navbar shadow-lg navbar-expand-lg">
       <div className="container-fluid">
         <a className="navbar-brand" onClick={() => navigate("/Home")} style={{ cursor: "pointer" }}>
           <img src={logo} alt="Logo" width="50" height="50" />

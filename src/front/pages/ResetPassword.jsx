@@ -45,7 +45,7 @@ const ResetPassword = () => {
     return (
         <div className="container mt-5 mb-5">
             <div className="text-center mb-4">
-                <img src={logo} alt="Logo FLA" className="logo" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
+                <img src={logo} alt="Logo FLA" className="logo" style={{ width: '300px', height: '300px', objectFit: 'contain' }} />
             </div>
 
             <div className="row align-items-center">

@@ -98,7 +98,7 @@ const PasswordResetForm = ({ onPasswordChangeSuccess }) => {
                 </div>
                 {error && <div className="alert alert-danger">{error}</div>}
                 {message && <div className="alert alert-success">{message}</div>}
-                <button type="submit" className="btn btn-primary w-100">Actualizar Contraseña</button>
+                <button type="submit" className="btn btn-success w-100">Actualizar Contraseña</button>
             </form>
             <div className="mt-3">
                 <small className="text-muted">

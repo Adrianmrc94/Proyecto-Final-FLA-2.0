@@ -36,9 +36,9 @@ const Login = () => {
     };
 
     return (
-        <div className="container mt-5 mb-5 d-flex flex-column justify-content-between" style={{ minHeight: '100vh' }}>
-            <div className="mb-4 text-center">
-                <img src={logo} alt="Logo FLA" className="logo" style={{ width: '200px', height: '200px', objectFit: 'contain' }} />
+        <div className="container m-auto d-flex flex-column justify-content-between" style={{ minHeight: '100vh' }}>
+            <div className="mt-5 mb-1 text-center">
+                <img src={logo} alt="Logo FLA" className="logo" style={{ width: '300px', height: '300px', objectFit: 'contain' }} />
             </div>
 
             <div className="row flex-grow-1">
@@ -46,7 +46,7 @@ const Login = () => {
                     <div className="w-100">
                         <h2 className="mb-4">Iniciar Sesión</h2>
                         <form onSubmit={handleSubmit}>
-                            <div className="mb-3">
+                            <div className="shadow-lg mb-3">
                                 <input
                                     name="email"
                                     type="email"
@@ -57,7 +57,7 @@ const Login = () => {
                                     required
                                 />
                             </div>
-                            <div className="mb-3">
+                            <div className="shadow-lg mb-3">
                                 <input
                                     name="password"
                                     type="password"
@@ -69,7 +69,7 @@ const Login = () => {
                                 />
                             </div>
                             {error && <div className="alert alert-danger">{error}</div>}
-                            <button type="submit" className="btn btn-primary w-100">Iniciar Sesión</button>
+                            <button type="submit" className="btn btn-success shadow-lg w-100">Iniciar Sesión</button>
                         </form>
                         <div className="mt-3">
                             <small>
@@ -85,7 +85,7 @@ const Login = () => {
                 </div>
 
                 <div className="col-12 col-md-6 d-flex align-items-center mt-4 mt-md-0">
-                    <div className="bg-light p-4 rounded shadow w-100">
+                    <div className=" p-4 shadow-lg w-100">
                         <h4 className="mb-3">¿Qué es FLA?</h4>
                         <p><strong>FLA (Find Lowest App)</strong> es una plataforma que te permite comparar precios de productos entre diferentes supermercados usando tu código postal.</p>
                         <ul>

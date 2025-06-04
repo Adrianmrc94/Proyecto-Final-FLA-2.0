@@ -16,7 +16,7 @@ export default function FeaturedProducts({ featured, onProductClick }) {
                         onClick={() => onProductClick(product)}
                         style={{ cursor: "pointer" }}
                     >
-                        <div className="card h-100 shadow-sm">
+                        <div className="card h-100 shadow">
                             <img
                                 src={imgSrc}
                                 className="card-img-top"

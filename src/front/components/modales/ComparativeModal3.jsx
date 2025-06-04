@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
+import useDarkMode from "../../hooks/useDarkMode"; // Importamos el hook de modo oscuro
 
 const ComparativeModal3 = ({ isOpen, onClose, product }) => {
+  const { darkMode } = useDarkMode(); // Accedemos al estado del modo oscuro
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -13,27 +15,21 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
         const token = localStorage.getItem("token");
         const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "https://glowing-engine-g47g9q94v665hpwq5-3001.app.github.dev/";
 
-        // Buscar productos similares (por nombre o categoría)
-        const searchRes = await fetch(
-          `${BACKEND_URL}/api/search?query=${encodeURIComponent(product.name || product.title)}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        // Buscar productos similares
+        const searchRes = await fetch(`${BACKEND_URL}/api/search?query=${encodeURIComponent(product.name || product.title)}`, { headers: { Authorization: `Bearer ${token}` } });
         let similar = null;
         if (searchRes.ok) {
           const found = await searchRes.json();
           similar = found.find(
-            p => p.id !== product.id && (
-              (p.name && product.name && p.name.toLowerCase().includes(product.name.toLowerCase().split(" ")[0])) ||
-              (p.category && product.category && p.category === product.category)
-            )
+            (p) =>
+              p.id !== product.id &&
+              ((p.name && product.name && p.name.toLowerCase().includes(product.name.toLowerCase().split(" ")[0])) || (p.category && product.category && p.category === product.category))
           );
         }
 
         // Si no hay similar, elige uno aleatorio distinto
         if (!similar) {
-          const randomRes = await fetch(`${BACKEND_URL}/api/random-product`, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
+          const randomRes = await fetch(`${BACKEND_URL}/api/random-product`, { headers: { Authorization: `Bearer ${token}` } });
           if (randomRes.ok) {
             const randomProduct = await randomRes.json();
             if (randomProduct.id !== product.id) similar = randomProduct;
@@ -52,9 +48,9 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ product_ids: [product.id, similar.id] })
+          body: JSON.stringify({ product_ids: [product.id, similar.id] }),
         });
         if (compareRes.ok) {
           const data = await compareRes.json();
@@ -74,11 +70,10 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
 
   if (!isOpen || !product) return null;
 
-  // Renderiza la comparación si hay dos productos, o un mensaje si solo hay uno
   return (
     <div className="modal show d-block" tabIndex="-1">
       <div className="modal-dialog modal-lg">
-        <div className="modal-content">
+        <div className={`modal-content ${darkMode ? "dark-mode" : "light-mode"}`}> {/* 🔥 Estilos cambiando dinámicamente */}
           <div className="modal-header">
             <h5 className="modal-title">Comparativa de Productos</h5>
             <button type="button" className="btn-close" onClick={onClose}></button>
@@ -96,14 +91,11 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
                 Solo hay un producto disponible.
               </div>
             ) : (
-              <div className="text-center text-muted">
-                No hay productos para comparar.
-              </div>
+              <div className="text-center text-muted">No hay productos para comparar.</div>
             )}
           </div>
         </div>
-        <div className="modal-footer justify-content-center">
-        </div>
+        <div className="modal-footer justify-content-center"></div>
       </div>
     </div>
   );
