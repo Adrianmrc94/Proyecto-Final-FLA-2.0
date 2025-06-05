@@ -1,7 +1,3 @@
-"""
-API Routes - Endpoints principales de la aplicación.
-Contiene todas las rutas para autenticación, productos, favoritos y gestión de usuarios.
-"""
 from flask import request, jsonify, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from api.models import db, User, Product, Favorite
@@ -21,7 +17,6 @@ api = Blueprint('api', __name__)
 
 @api.route('/login', methods=['POST'])
 def login():
-    """Endpoint para login de usuarios con email y contraseña."""
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
@@ -46,7 +41,6 @@ def login():
 
 @api.route('/register', methods=['POST'])
 def register():
-    """Endpoint para registro de nuevos usuarios."""
     data = request.get_json()
     name = data.get('name')
     last_name = data.get('last_name')
@@ -83,7 +77,6 @@ def register():
 
 @api.route('/products', methods=['GET'])
 def get_products():
-    """Obtiene productos con filtros opcionales de precio y categoría."""
     price_min = request.args.get('price_min', type=float)
     price_max = request.args.get('price_max', type=float)
     category = request.args.get('category')
@@ -103,7 +96,6 @@ def get_products():
 
 @api.route('/products/<int:product_id>', methods=['GET'])
 def get_product_by_id(product_id):
-    """Obtiene un producto específico por su ID."""
     product = Product.query.get(product_id)
     if not product:
         return jsonify({'msg': 'Producto no encontrado'}), 404
@@ -111,14 +103,12 @@ def get_product_by_id(product_id):
 
 @api.route('/categories', methods=['GET'])
 def get_categories():
-    """Obtiene todas las categorías únicas de productos."""
     categories = db.session.query(Product.category).distinct().all()
     category_list = [c[0] for c in categories if c[0]]
     return jsonify(category_list), 200
 
 @api.route('/products/category/<string:category>', methods=['GET'])
 def get_products_by_category(category):
-    """Obtiene productos filtrados por categoría específica."""
     normalized = category.replace("-", " ").strip().lower()
     products = Product.query.options(joinedload(Product.store)).filter(
         Product.category.ilike(f'%{normalized}%')
@@ -127,7 +117,6 @@ def get_products_by_category(category):
 
 @api.route('/products/compare', methods=['POST'])
 def compare_products():
-    """Compara múltiples productos por sus IDs."""
     data = request.get_json()
     product_ids = data.get('product_ids', [])
     
@@ -141,7 +130,6 @@ def compare_products():
 
 @api.route('/search', methods=['GET'])
 def search_products():
-    """Búsqueda de productos por texto y/o categoría."""
     query = request.args.get('query', '')
     category = request.args.get('category', '')
     filters = []
@@ -161,13 +149,12 @@ def search_products():
     return jsonify([p.serialize() for p in products]), 200
 
 # ===== PRODUCTOS ALEATORIOS =====
-# Variable global para tracking de productos recientes (mejorar en futuras versiones)
+
 recent_random_products = []
 MAX_RECENT_PRODUCTS = 5
 
 @api.route('/random-product', methods=['GET'])
 def get_random_product():
-    """Obtiene un producto aleatorio evitando repeticiones recientes."""
     global recent_random_products
     
     exclude_ids = request.args.getlist('exclude_ids', type=int)
@@ -201,7 +188,6 @@ def get_random_product():
 @api.route('/favorites', methods=['POST'])
 @jwt_required()
 def add_favorite():
-    """Añade un producto a favoritos del usuario autenticado."""
     user_id = get_jwt_identity()
     data = request.get_json()
     product_id = data.get('product_id')
@@ -236,7 +222,6 @@ def add_favorite():
 @api.route('/favorites', methods=['GET'])
 @jwt_required()
 def get_favorites():
-    """Obtiene todos los favoritos del usuario autenticado."""
     user_id = get_jwt_identity()
     favorites = Favorite.query.filter_by(user_id=user_id).all()
     return jsonify([f.serialize() for f in favorites]), 200
@@ -244,7 +229,6 @@ def get_favorites():
 @api.route('/favorites/<int:favorite_id>', methods=['DELETE'])
 @jwt_required()
 def delete_favorite(favorite_id):
-    """Elimina un favorito específico del usuario autenticado."""
     user_id = get_jwt_identity()
     favorite = Favorite.query.filter_by(id=favorite_id, user_id=user_id).first()
 
@@ -260,7 +244,6 @@ def delete_favorite(favorite_id):
 @api.route('/user/profile', methods=['GET'])
 @jwt_required()
 def get_user_profile():
-    """Obtiene el perfil del usuario autenticado."""
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -270,7 +253,6 @@ def get_user_profile():
 @api.route('/user/profile', methods=['PUT'])
 @jwt_required()
 def update_user_profile():
-    """Actualiza el perfil del usuario autenticado."""
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -288,7 +270,6 @@ def update_user_profile():
 @api.route('/user/change-password', methods=['POST'])
 @jwt_required()
 def change_password():
-    """Cambia la contraseña del usuario autenticado."""
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -316,7 +297,6 @@ def change_password():
 @api.route('/user/delete-account', methods=['DELETE'])
 @jwt_required()
 def delete_account():
-    """Desactiva la cuenta del usuario autenticado (soft delete)."""
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -340,7 +320,6 @@ def delete_account():
 
 @api.route('/forgot-password', methods=['POST'])
 def forgot_password():
-    """Envía email para recuperación de contraseña."""
     data = request.get_json()
     email = data.get('email')
     
@@ -360,7 +339,7 @@ def forgot_password():
     )
 
     try:
-        frontend_url = os.getenv('VITE_FRONTEND_URL', 'https://glowing-engine-g47g9q94v665hpwq5-3000.app.github.dev/')
+        frontend_url = os.getenv('VITE_FRONTEND_URL')
         frontend_url = frontend_url.rstrip('/')
         reset_link = f"{frontend_url}/reset-password?token={reset_token}"
 
@@ -379,7 +358,6 @@ def forgot_password():
 @api.route('/reset-password', methods=['POST'])
 @jwt_required()
 def reset_password():
-    """Restablece la contraseña usando el token de recuperación."""
     data = request.get_json()
     new_password = data.get('new_password')
     

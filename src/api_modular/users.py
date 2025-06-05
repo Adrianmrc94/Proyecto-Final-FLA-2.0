@@ -1,6 +1,3 @@
-"""
-Módulo de Usuarios - Rutas de gestión de perfil, cambio de contraseña y eliminación de cuenta.
-"""
 from flask import request, jsonify, Blueprint
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from api.models import db, User
@@ -11,7 +8,6 @@ users_bp = Blueprint('users', __name__)
 @users_bp.route('/user/profile', methods=['GET'])
 @jwt_required()
 def get_user_profile():
-    """Obtiene el perfil del usuario autenticado."""
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -21,7 +17,6 @@ def get_user_profile():
 @users_bp.route('/user/profile', methods=['PUT'])
 @jwt_required()
 def update_user_profile():
-    """Actualiza el perfil del usuario autenticado."""
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -39,7 +34,6 @@ def update_user_profile():
 @users_bp.route('/user/change-password', methods=['POST'])
 @jwt_required()
 def change_password():
-    """Cambia la contraseña del usuario autenticado."""
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
@@ -67,7 +61,6 @@ def change_password():
 @users_bp.route('/user/delete-account', methods=['DELETE'])
 @jwt_required()
 def delete_account():
-    """Desactiva la cuenta del usuario autenticado (soft delete)."""
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:

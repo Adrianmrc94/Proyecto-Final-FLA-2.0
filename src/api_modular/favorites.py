@@ -10,7 +10,6 @@ favorites_bp = Blueprint('favorites', __name__)
 @favorites_bp.route('/favorites', methods=['POST'])
 @jwt_required()
 def add_favorite():
-    """Añade un producto a favoritos del usuario autenticado."""
     user_id = get_jwt_identity()
     data = request.get_json()
     product_id = data.get('product_id')
@@ -53,7 +52,6 @@ def add_favorite():
 @favorites_bp.route('/favorites', methods=['GET'])
 @jwt_required()
 def get_favorites():
-    """Obtiene todos los favoritos del usuario autenticado."""
     user_id = get_jwt_identity()
     favorites = Favorite.query.filter_by(user_id=user_id).all()
     return jsonify([f.serialize() for f in favorites]), 200
@@ -61,7 +59,6 @@ def get_favorites():
 @favorites_bp.route('/favorites/<int:favorite_id>', methods=['DELETE'])
 @jwt_required()
 def delete_favorite(favorite_id):
-    """Elimina un favorito específico del usuario autenticado."""
     user_id = get_jwt_identity()
     favorite = Favorite.query.filter_by(id=favorite_id, user_id=user_id).first()
 
@@ -75,7 +72,6 @@ def delete_favorite(favorite_id):
 @favorites_bp.route('/favorites/product/<int:product_id>', methods=['DELETE'])
 @jwt_required()
 def delete_favorite_by_product(product_id):
-    """Elimina un favorito específico por product_id del usuario autenticado."""
     user_id = get_jwt_identity()
     favorite = Favorite.query.filter_by(product_id=product_id, user_id=user_id).first()
 

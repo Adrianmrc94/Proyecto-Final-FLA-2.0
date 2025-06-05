@@ -1,6 +1,3 @@
-"""
-Módulo de Productos - Rutas de listado, búsqueda, filtrado y comparación.
-"""
 from flask import request, jsonify, Blueprint
 from api.models import db, Product
 from sqlalchemy.orm import joinedload
@@ -9,13 +6,11 @@ import random
 
 products_bp = Blueprint('products', __name__)
 
-# Variable global para tracking de productos recientes (mejorar en futuras versiones)
 recent_random_products = []
 MAX_RECENT_PRODUCTS = 5
 
 @products_bp.route('/products', methods=['GET'])
 def get_products():
-    """Obtiene productos con filtros opcionales de precio y categoría."""
     price_min = request.args.get('price_min', type=float)
     price_max = request.args.get('price_max', type=float)
     category = request.args.get('category')
@@ -35,7 +30,6 @@ def get_products():
 
 @products_bp.route('/products/<int:product_id>', methods=['GET'])
 def get_product_by_id(product_id):
-    """Obtiene un producto específico por su ID."""
     product = Product.query.get(product_id)
     if not product:
         return jsonify({'msg': 'Producto no encontrado'}), 404
@@ -43,14 +37,12 @@ def get_product_by_id(product_id):
 
 @products_bp.route('/categories', methods=['GET'])
 def get_categories():
-    """Obtiene todas las categorías únicas de productos."""
     categories = db.session.query(Product.category).distinct().all()
     category_list = [c[0] for c in categories if c[0]]
     return jsonify(category_list), 200
 
 @products_bp.route('/products/category/<string:category>', methods=['GET'])
 def get_products_by_category(category):
-    """Obtiene productos filtrados por categoría específica."""
     normalized = category.replace("-", " ").strip().lower()
     products = Product.query.options(joinedload(Product.store)).filter(
         Product.category.ilike(f'%{normalized}%')
@@ -59,7 +51,6 @@ def get_products_by_category(category):
 
 @products_bp.route('/products/compare', methods=['POST'])
 def compare_products():
-    """Compara múltiples productos por sus IDs."""
     data = request.get_json()
     product_ids = data.get('product_ids', [])
     
@@ -73,7 +64,6 @@ def compare_products():
 
 @products_bp.route('/search', methods=['GET'])
 def search_products():
-    """Búsqueda de productos por texto y/o categoría."""
     query = request.args.get('query', '')
     category = request.args.get('category', '')
     filters = []
@@ -94,7 +84,6 @@ def search_products():
 
 @products_bp.route('/random-product', methods=['GET'])
 def get_random_product():
-    """Obtiene un producto aleatorio evitando repeticiones recientes."""
     global recent_random_products
     
     exclude_ids = request.args.getlist('exclude_ids', type=int)

@@ -1,7 +1,3 @@
-"""
-Módulo principal de la aplicación Flask.
-Configura el servidor API, la base de datos y registra todos los endpoints.
-"""
 import os
 import threading
 from datetime import timedelta
@@ -20,7 +16,7 @@ from extensions import mail
 from api.scripts.import_external_products import import_products
 
 # ===== IMPORTACIÓN MODULAR =====
-# Importar sistema modular
+
 from api_modular.routes import register_modular_blueprints
 
 # Importar sistema legacy (fallback)
@@ -29,23 +25,21 @@ from api_modular.routes import register_modular_blueprints
 # Configuración del entorno
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 
-# Configuración de archivos estáticos
+
 static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 
-# Inicialización de la aplicación Flask
+
 app = Flask(__name__)
-CORS(app)  # Habilitar CORS para requests del frontend
+CORS(app)
 app.url_map.strict_slashes = False
 
 # ===== CONFIGURACIÓN DE BASE DE DATOS =====
 db_url = os.getenv("DATABASE_URL")
 if db_url is not None:
-    # Ajuste para compatibilidad con PostgreSQL en producción
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url.replace(
         "postgres://", "postgresql://")
 else:
-    # Base de datos SQLite para desarrollo local
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -108,31 +102,21 @@ def handle_invalid_usage(error):
 # ===== RUTAS PRINCIPALES =====
 @app.route('/')
 def sitemap():
-    """
-    Ruta principal:
-    - En desarrollo: muestra el sitemap de rutas disponibles
-    - En producción: sirve la aplicación React
-    """
     if ENV == "development":
         return generate_sitemap(app)
     return send_from_directory(static_file_dir, 'index.html')
 
 @app.route('/<path:path>', methods=['GET'])
 def serve_any_other_file(path):
-    """
-    Sirve archivos estáticos y maneja el routing del frontend.
-    Si el archivo no existe, sirve index.html para el routing de React.
-    """
     if not os.path.isfile(os.path.join(static_file_dir, path)):
         path = 'index.html'
     response = send_from_directory(static_file_dir, path)
-    response.cache_control.max_age = 0  # Sin caché en desarrollo
+    response.cache_control.max_age = 0
     return response
 
 # ===== ENDPOINT DE SALUD DE LA API =====
 @app.route('/api/health', methods=['GET'])
 def api_health():
-    """Endpoint de salud para verificar el estado de la API."""
     api_type = "Modular" if USE_MODULAR_API else "Legacy"
     return jsonify({
         'status': 'OK',
@@ -146,10 +130,7 @@ products_imported = threading.Event()
 
 @app.before_request
 def auto_import_products():
-    """
-    Importa productos externos automáticamente si la base de datos está vacía.
-    Se ejecuta solo una vez utilizando threading.Event para thread-safety.
-    """
+
     if not products_imported.is_set():
         if Product.query.count() == 0:
             print("Base de datos vacía. Importando productos externos...")

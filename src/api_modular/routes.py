@@ -1,7 +1,3 @@
-"""
-Registrador de blueprints modulares.
-Centraliza la importación y registro de todos los módulos de la API.
-"""
 from flask import Blueprint, jsonify
 
 # Importar todos los blueprints modulares
@@ -13,17 +9,11 @@ from api_modular.favorites import favorites_bp
 def register_modular_blueprints(app):
     """
     Registra todos los blueprints modulares en la aplicación Flask.
-    
-    Esta función centraliza el registro de rutas y permite una
-    arquitectura limpia y escalable para la API.
-    
-    Args:
-        app: Instancia de la aplicación Flask
+    Esta función centraliza el registro de rutas 
     """
     print("🔗 Registrando blueprints modulares...")
     
     try:
-        # Registrar cada módulo con su prefijo correspondiente
         app.register_blueprint(auth_bp, url_prefix='/api')
         app.register_blueprint(products_bp, url_prefix='/api') 
         app.register_blueprint(users_bp, url_prefix='/api')
@@ -47,7 +37,6 @@ info_bp = Blueprint('modular_info', __name__)
 
 @info_bp.route('/api/modular/info', methods=['GET'])
 def modular_info():
-    """Información sobre la arquitectura modular."""
     return jsonify({
         'status': 'active',
         'architecture': 'modular',
@@ -67,5 +56,4 @@ def modular_info():
     }), 200
 
 def register_info_blueprint(app):
-    """Registra el blueprint de información del sistema modular."""
     app.register_blueprint(info_bp)

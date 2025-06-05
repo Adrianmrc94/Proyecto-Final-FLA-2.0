@@ -1,6 +1,3 @@
-"""
-Módulo de Autenticación - Rutas de login, registro y recuperación de contraseña.
-"""
 from flask import request, jsonify, Blueprint
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
 from api.models import db, User
@@ -14,7 +11,6 @@ auth_bp = Blueprint('auth', __name__)
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    """Endpoint para login de usuarios con email y contraseña."""
     data = request.get_json()
     email = data.get('email')
     password = data.get('password')
@@ -39,7 +35,6 @@ def login():
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
-    """Endpoint para registro de nuevos usuarios."""
     data = request.get_json()
     name = data.get('name')
     last_name = data.get('last_name')
@@ -74,7 +69,6 @@ def register():
 
 @auth_bp.route('/forgot-password', methods=['POST'])
 def forgot_password():
-    """Envía email para recuperación de contraseña."""
     data = request.get_json()
     email = data.get('email')
     
@@ -94,7 +88,7 @@ def forgot_password():
     )
 
     try:
-        frontend_url = os.getenv('VITE_FRONTEND_URL', 'https://glowing-engine-g47g9q94v665hpwq5-3000.app.github.dev/')
+        frontend_url = os.getenv('VITE_FRONTEND_URL')
         frontend_url = frontend_url.rstrip('/')
         reset_link = f"{frontend_url}/reset-password?token={reset_token}"
 
@@ -113,7 +107,6 @@ def forgot_password():
 @auth_bp.route('/reset-password', methods=['POST'])
 @jwt_required()
 def reset_password():
-    """Restablece la contraseña usando el token de recuperación."""
     data = request.get_json()
     new_password = data.get('new_password')
     
