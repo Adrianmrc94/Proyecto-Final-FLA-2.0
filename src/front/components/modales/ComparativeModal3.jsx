@@ -13,7 +13,7 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
       setLoading(true);
       try {
         const token = localStorage.getItem("token");
-        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
+        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 
         console.log("Initial product for comparison:", product);

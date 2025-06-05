@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import FavoriteProduct from '../components/productos/FavoriteProduct';
+import FavoriteProduct from '../components/modales/FavoriteProduct';
 
 const Favorites = () => {
   const [favoriteProducts, setFavoriteProducts] = useState([]);
