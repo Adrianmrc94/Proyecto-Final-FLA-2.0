@@ -328,7 +328,7 @@ def forgot_password():
     reset_token = create_access_token(identity=str(user.id), expires_delta = timedelta(minutes = 15), additional_claims = claims)
 
     try:
-        frontend_url = os.getenv('VITE_FRONTEND_URL', 'https://glowing-engine-g47g9q94v665hpwq5-3000.app.github.dev/')
+        frontend_url = os.getenv('VITE_FRONTEND_URL')
         frontend_url = frontend_url.rstrip('/')
         reset_link = f"{frontend_url}/reset-password?token={reset_token}"
 

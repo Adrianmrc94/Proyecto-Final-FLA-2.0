@@ -13,7 +13,7 @@ const Favorites = () => {
       setError(null);
       try {
         const token = localStorage.getItem("token");
-        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
+        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
         const response = await fetch(`${BACKEND_URL}/api/favorites`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -49,7 +49,7 @@ const Favorites = () => {
     const fetchProducts = async () => {
       try {
         const token = localStorage.getItem("token");
-        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL
+        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
         const productDetails = await Promise.all(
           favoriteProducts.map(async (fav) => {
             const res = await fetch(`${BACKEND_URL}/api/products/${fav.product_id}`, {
