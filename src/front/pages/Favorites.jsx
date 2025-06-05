@@ -1,79 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import FavoriteProduct from '../components/modales/FavoriteProduct';
+import ApiService from '../services/api';
 
 const Favorites = () => {
   const [favoriteProducts, setFavoriteProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    const fetchFavoriteProducts = async () => {
-      setIsLoading(true);
-      setError(null);
+    const fetchFavorites = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-        const response = await fetch(`${BACKEND_URL}/api/favorites`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (!response.ok) {
-          throw new Error(`Error HTTP: ${response.status}`);
+        setIsLoading(true);
+        setError(null);
+
+        const data = await ApiService.fetchFavorites();
+
+        if (data && Array.isArray(data)) {
+          setFavoriteProducts(data);
+        } else if (data && data.favorites && Array.isArray(data.favorites)) {
+          setFavoriteProducts(data.favorites);
+        } else {
+          setFavoriteProducts([]);
         }
-        const data = await response.json();
-        setFavoriteProducts(data); // El backend devuelve un array de favoritos
       } catch (err) {
-        setError(err.message);
+        setError(err.message || 'Error al cargar favoritos');
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchFavoriteProducts();
-  }, []); // para impedir bucle
+    fetchFavorites();
+  }, []);
 
-    // Nueva función para eliminar favorito del estado
   const handleRemoveFavorite = (favoriteId) => {
     setFavoriteProducts(prev => prev.filter(fav => fav.id !== favoriteId));
-    setProducts(prev => prev.filter(prod => {
-      // Busca el favorito eliminado para obtener el product_id
-      const fav = favoriteProducts.find(f => f.id === favoriteId);
-      return fav ? prod.id !== fav.product_id : true;
-    }));
   };
-
-  useEffect(() => {
-    if (favoriteProducts.length === 0) return;
-    const fetchProducts = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-        const productDetails = await Promise.all(
-          favoriteProducts.map(async (fav) => {
-            const res = await fetch(`${BACKEND_URL}/api/products/${fav.product_id}`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            if (!res.ok) return null;
-            return await res.json();
-          })
-        );
-        setProducts(productDetails.filter(Boolean));
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-    fetchProducts();
-  }, [favoriteProducts]);
 
   if (isLoading) {
     return (
       <div className="container text-center mt-5">
-        <div className="spinner-border text-success" role="status">
-          <span className="visually-hidden">Cargando...</span>
-        </div>
-        <p>Cargando productos favoritos...</p>
+        <div className="spinner-border text-primary" role="status"></div>
+        <p className="mt-3">Cargando productos favoritos...</p>
       </div>
     );
   }
@@ -81,38 +48,61 @@ const Favorites = () => {
   if (error) {
     return (
       <div className="container text-center mt-5">
-        <p className="text-danger">Error al cargar productos: {error}</p>
-        <p>Por favor, inténtalo de nuevo más tarde.</p>
+        <div className="alert alert-danger">
+          <h4>Error al cargar favoritos</h4>
+          <p>{error}</p>
+          <button
+            className="btn btn-outline-danger"
+            onClick={() => window.location.reload()}
+          >
+            Reintentar
+          </button>
+        </div>
       </div>
     );
   }
 
-  const uniqueProducts = products.filter(
-    (prod, idx, arr) => prod && arr.findIndex(p => p && p.id === prod.id) === idx
-  );
-
-  return (
-    uniqueProducts.length === 0 ? (
+  if (!favoriteProducts || favoriteProducts.length === 0) {
+    return (
       <div className="container text-center mt-5">
-        <p>Aún no tienes productos favoritos.</p>
-      </div>
-    ) : (
-      <div className="container mt-4">
-        <h1 className="mb-4 text-center">Mis Productos Favoritos</h1>
-        <div className="row justify-content-center">
-          {uniqueProducts.map(product =>
-            product ? (
-              <FavoriteProduct
-                key={product.id}
-                product={product}
-                onRemoveFavorite={handleRemoveFavorite}
-              />
-            ) : null
-          )}
+        <div className="card shadow-sm">
+          <div className="card-body p-5">
+            <i className="bi bi-heart display-1 text-muted mb-3"></i>
+            <h3>Aún no tienes favoritos</h3>
+            <p className="text-muted">Explora productos y agrega tus favoritos para verlos aquí</p>
+            <a href="/home" className="btn btn-primary">
+              Explorar Productos
+            </a>
+          </div>
         </div>
       </div>
-    )
-  )
+    );
+  }
+
+  return (
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+          <i className="bi bi-heart-fill text-danger me-2"></i>
+          Mis Favoritos
+        </h1>
+        <span className="badge bg-primary fs-6">
+          {favoriteProducts.length} producto{favoriteProducts.length !== 1 ? 's' : ''}
+        </span>
+      </div>
+
+      <div className="row">
+        {favoriteProducts.map((favorite, index) => (
+          <FavoriteProduct
+            key={`favorite-${favorite.id}-${index}`}
+            product={favorite.product || favorite}
+            favoriteId={favorite.id}
+            onRemoveFavorite={handleRemoveFavorite}
+          />
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default Favorites;

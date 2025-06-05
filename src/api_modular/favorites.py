@@ -34,7 +34,7 @@ def add_favorite():
         user_id=user_id,
         product_id=product_id
     ).first()
-    
+
     if existing_favorite:
         return jsonify({'msg': 'El producto ya está en favoritos'}), 409
 
@@ -49,18 +49,50 @@ def add_favorite():
     db.session.commit()
     return jsonify({'msg': 'Producto agregado a favoritos', 'favorite_id': favorite.id}), 201
 
+
+# ✅ CORREGIR ESTA FUNCIÓN - Usaba @app en lugar de @favorites_bp
 @favorites_bp.route('/favorites', methods=['GET'])
 @jwt_required()
 def get_favorites():
-    user_id = get_jwt_identity()
-    favorites = Favorite.query.filter_by(user_id=user_id).all()
-    return jsonify([f.serialize() for f in favorites]), 200
+    try:
+        user_id = get_jwt_identity()
+
+        # JOIN para incluir datos del producto
+        favorites = db.session.query(Favorite, Product).join(
+            Product, Favorite.product_id == Product.id
+        ).filter(Favorite.user_id == user_id).all()
+
+        result = []
+        for favorite, product in favorites:
+            # ✅ Usar getattr() para manejar campos que pueden no existir
+            result.append({
+                'id': favorite.id,
+                'date_ad': favorite.date_ad,
+                'product': {
+                    'id': product.id,
+                    'name': getattr(product, 'name', None),
+                    'title': getattr(product, 'title', getattr(product, 'name', 'Sin nombre')),  # Fallback
+                    'price': getattr(product, 'price', 0),
+                    'image': getattr(product, 'image', None),
+                    'description': getattr(product, 'description', 'Sin descripción'),
+                    'rating': getattr(product, 'rating', 0),
+                    'rate': getattr(product, 'rate', getattr(product, 'rating', 0))  # Fallback
+                }
+            })
+
+        return jsonify(result), 200
+
+    except Exception as e:
+        print(f"❌ Error in get_favorites: {str(e)}")  # Debug
+        return jsonify({'error': str(e)}), 500
+
 
 @favorites_bp.route('/favorites/<int:favorite_id>', methods=['DELETE'])
 @jwt_required()
 def delete_favorite(favorite_id):
     user_id = get_jwt_identity()
-    favorite = Favorite.query.filter_by(id=favorite_id, user_id=user_id).first()
+    favorite = Favorite.query.filter_by(
+        id=favorite_id, user_id=user_id).first()
 
     if not favorite:
         return jsonify({'msg': 'Favorito no encontrado'}), 404
@@ -69,11 +101,13 @@ def delete_favorite(favorite_id):
     db.session.commit()
     return jsonify({'msg': 'Favorito eliminado'}), 200
 
+
 @favorites_bp.route('/favorites/product/<int:product_id>', methods=['DELETE'])
 @jwt_required()
 def delete_favorite_by_product(product_id):
     user_id = get_jwt_identity()
-    favorite = Favorite.query.filter_by(product_id=product_id, user_id=user_id).first()
+    favorite = Favorite.query.filter_by(
+        product_id=product_id, user_id=user_id).first()
 
     if not favorite:
         return jsonify({'msg': 'Favorito no encontrado'}), 404
