@@ -1,19 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import logo from "../assets/img/logo.png";
-import useDarkMode from "../hooks/useDarkMode"; // Ajusta la ruta según tu estructura de carpetas
+import useDarkMode from "../hooks/useDarkMode";
+import SearchBar from "./search/SearchBar";
 
 export const Navbar = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
   const { darkMode, toggleDarkMode } = useDarkMode();
-
-  const handleSearch = (event) => {
-    event.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/search?query=${searchTerm}`);
-    }
-  };
 
   const handleLogout = () => {
     localStorage.clear();
@@ -32,18 +24,9 @@ export const Navbar = () => {
         </button>
 
         <div className="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
-          <form className="d-flex w-50 justify-content-center" role="search" onSubmit={handleSearch}>
-            <input
-              className="form-control border-end-0 flex-grow-1"
-              type="search"
-              placeholder="Buscar"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <button className="btn border-0" type="submit">
-              Buscar
-            </button>
-          </form>
+          <div className="d-flex w-50 justify-content-center">
+            <SearchBar />
+          </div>
 
           <div className="form-check form-switch">
             <input

@@ -1,21 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import ProductFilters from "../components/search/ProductFilters";
 import ProductResults from "../components/search/ProductResults";
 import ComparativeModal3 from "../components/modales/ComparativeModal3";
 import useGlobalProducts from "../hooks/useGlobalProducts";
 import useFilters from "../hooks/useFilters";
-import { useNavigate } from "react-router-dom";
 
 export default function SearchPage() {
-    const navigate = useNavigate();
+    const location = useLocation();
     const { products } = useGlobalProducts();
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showComparativeModal, setShowComparativeModal] = useState(false);
     const { filters, setFilters } = useFilters();
-
     const [searchQuery, setSearchQuery] = useState("");
+    const [hasProcessedState, setHasProcessedState] = useState(false);
 
-    // Filtrado de productos SOLO por nombre/título
+    // Procesar datos del navbar search al cargar - SOLO UNA VEZ
+    useEffect(() => {
+        if (location.state && !hasProcessedState) {
+            const { searchQuery: navQuery, applyCategoryFilter, openProductModal, selectedProduct: navProduct } = location.state;
+            
+            // Aplicar búsqueda por texto
+            if (navQuery) {
+                setSearchQuery(navQuery);
+            }
+            
+            // Aplicar filtro de categoría
+            if (applyCategoryFilter) {
+                setFilters(prev => ({
+                    ...prev,
+                    category: applyCategoryFilter
+                }));
+            }
+            
+            // Abrir modal de producto específico
+            if (openProductModal && navProduct) {
+                setSelectedProduct(navProduct);
+                setShowComparativeModal(true);
+            }
+            
+            // Marcar que ya se procesó el state
+            setHasProcessedState(true);
+            
+            // Limpiar el state del historial
+            window.history.replaceState(null, document.title, window.location.pathname);
+        }
+    }, [location.state, hasProcessedState, setFilters]);
+
+    // Reset cuando cambie la ubicación (nueva navegación)
+    useEffect(() => {
+        setHasProcessedState(false);
+    }, [location.pathname]);
+
+    // Filtrado de productos
     const filteredProducts = products.filter((product) => {
         const title = (product.name || product.title || "").toLowerCase();
         const matchesSearch =
@@ -49,6 +86,11 @@ export default function SearchPage() {
         setShowComparativeModal(true);
     };
 
+    const handleCloseModal = () => {
+        setShowComparativeModal(false);
+        setSelectedProduct(null);
+    };
+
     return (
         <div className="container mt-4">
             <div className="mb-4">
@@ -77,7 +119,7 @@ export default function SearchPage() {
             {showComparativeModal && selectedProduct && (
                 <ComparativeModal3
                     isOpen={showComparativeModal}
-                    onClose={() => setShowComparativeModal(false)}
+                    onClose={handleCloseModal}
                     product={selectedProduct}
                 />
             )}
