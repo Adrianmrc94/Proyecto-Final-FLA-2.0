@@ -22,12 +22,12 @@ export default function SearchBar() {
     }
 
     let suggestions = [];
-    
+
     // Buscar en productos por nombre/título
     products.forEach((product) => {
       const name = product.name || product.title || "";
       const category = product.category || "Sin categoría";
-      
+
       if (name.toLowerCase().includes(q.toLowerCase())) {
         suggestions.push({
           id: product.id,
@@ -64,22 +64,23 @@ export default function SearchBar() {
     setQuery("");
     setResults([]);
     setActiveIdx(-1);
-    
+
     if (result.type === "product") {
       // Navegar a búsqueda y pasar el producto específico para abrir su modal
-      navigate("/search", { 
-        state: { 
+      navigate("/search", {
+        state: {
           searchQuery: result.name,
           openProductModal: true,
-          selectedProduct: result.product 
-        } 
+          selectedProduct: result.product
+        }
       });
     } else if (result.type === "category") {
+      console.log("Navigating with category filter:", result.categoryName); // Debug
       // Navegar a búsqueda y aplicar filtro de categoría
-      navigate("/search", { 
-        state: { 
-          applyCategoryFilter: result.categoryName 
-        } 
+      navigate("/search", {
+        state: {
+          applyCategoryFilter: result.categoryName
+        }
       });
     }
   };
@@ -87,7 +88,7 @@ export default function SearchBar() {
   // Maneja las teclas de navegación (flechas y Enter)
   const handleKeyDown = (e) => {
     if (results.length === 0) return;
-    
+
     if (e.key === "ArrowDown") {
       e.preventDefault();
       setActiveIdx((i) => (i + 1) % results.length);
@@ -102,10 +103,10 @@ export default function SearchBar() {
         // Si no hay selección específica, hacer búsqueda general
         setQuery("");
         setResults([]);
-        navigate("/search", { 
-          state: { 
-            searchQuery: query 
-          } 
+        navigate("/search", {
+          state: {
+            searchQuery: query
+          }
         });
       }
     } else if (e.key === "Escape") {
@@ -128,10 +129,10 @@ export default function SearchBar() {
     e.preventDefault();
     if (query.trim()) {
       setResults([]);
-      navigate("/search", { 
-        state: { 
-          searchQuery: query 
-        } 
+      navigate("/search", {
+        state: {
+          searchQuery: query
+        }
       });
       setQuery("");
     }
@@ -152,26 +153,25 @@ export default function SearchBar() {
           aria-label="Buscar productos"
           autoComplete="off"
         />
-        <button 
-          className="btn btn-outline-secondary border-start-0" 
+        <button
+          className="btn btn-outline-secondary border-start-0"
           type="submit"
           aria-label="Buscar"
         >
           <i className="bi bi-search"></i>
         </button>
       </div>
-      
+
       {results.length > 0 && (
-        <ul 
+        <ul
           className="list-group position-absolute w-100 mt-1 shadow-lg"
           style={{ zIndex: 1050, maxHeight: '300px', overflowY: 'auto' }}
         >
           {results.map((result, i) => (
             <li
               key={`${result.type}-${result.id || result.categoryName}-${i}`}
-              className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center ${
-                i === activeIdx ? "active" : ""
-              }`}
+              className={`list-group-item list-group-item-action d-flex justify-content-between align-items-center ${i === activeIdx ? "active" : ""
+                }`}
               style={{ cursor: "pointer" }}
               onMouseDown={() => handleSelect(result)}
               onMouseEnter={() => setActiveIdx(i)}
