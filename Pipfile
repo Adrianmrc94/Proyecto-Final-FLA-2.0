@@ -23,7 +23,6 @@ flask = "*"
 flask-mail = "*"
 flask-jwt-extended = "*"
 
-
 [requires]
 python_version = "3.13"
 
