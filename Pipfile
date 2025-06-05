@@ -18,10 +18,11 @@ flask-admin = "*"
 typing-extensions = "*"
 wtforms = "==3.1.2"
 sqlalchemy = "*"
-flask-bcrypt = "*"
 flask = "*"
-flask-mail = "*"
+requests = "*"
 flask-jwt-extended = "*"
+flask-bcrypt = "*"
+flask-mail = "*"
 
 [requires]
 python_version = "3.13"
