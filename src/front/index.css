@@ -155,3 +155,42 @@ body.dark-mode {
 .light-mode-card, .dark-mode-card {
     transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
+
+
+/* Efectos para las cards de productos */
+.product-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.05);
+}
+
+.product-overlay {
+    background: rgba(0,0,0,0.7);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-card:hover .product-overlay {
+    opacity: 1;
+}
+
+/* Mejoras para las categorías */
+.category-card {
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.category-card:hover {
+    border-color: var(--bs-primary);
+    background-color: var(--bs-primary);
+    color: white;
+    transform: translateY(-2px);
+}
+

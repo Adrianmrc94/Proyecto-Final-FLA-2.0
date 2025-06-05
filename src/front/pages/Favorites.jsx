@@ -12,9 +12,9 @@ const Favorites = () => {
       try {
         setIsLoading(true);
         setError(null);
-        
+
         const data = await ApiService.fetchFavorites();
-        
+
         if (data && Array.isArray(data)) {
           setFavoriteProducts(data);
         } else if (data && data.favorites && Array.isArray(data.favorites)) {
@@ -51,8 +51,8 @@ const Favorites = () => {
         <div className="alert alert-danger">
           <h4>Error al cargar favoritos</h4>
           <p>{error}</p>
-          <button 
-            className="btn btn-outline-danger" 
+          <button
+            className="btn btn-outline-danger"
             onClick={() => window.location.reload()}
           >
             Reintentar
