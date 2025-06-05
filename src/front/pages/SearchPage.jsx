@@ -15,42 +15,46 @@ export default function SearchPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [hasProcessedState, setHasProcessedState] = useState(false);
 
-    // Procesar datos del navbar search al cargar - SOLO UNA VEZ
     useEffect(() => {
         if (location.state && !hasProcessedState) {
             const { searchQuery: navQuery, applyCategoryFilter, openProductModal, selectedProduct: navProduct } = location.state;
-            
-            // Aplicar búsqueda por texto
-            if (navQuery) {
+
+            console.log("Processing location state:", { navQuery, applyCategoryFilter, openProductModal });
+
+            // Si hay filtro de categoría, solo aplicar el filtro y limpiar búsqueda
+            if (applyCategoryFilter) {
+                console.log("Applying category filter:", applyCategoryFilter);
+                console.log("Current filters before update:", filters);
+
+                // Crear el objeto directamente en lugar de usar una función
+                const newFilters = {
+                    ...filters,
+                    category: applyCategoryFilter
+                };
+                console.log("Setting new filters:", newFilters);
+                setFilters(newFilters);
+
+                setSearchQuery("");
+            }
+            // Si hay búsqueda por texto (y no filtro de categoría)
+            else if (navQuery) {
+                console.log("Applying search query:", navQuery);
                 setSearchQuery(navQuery);
             }
-            
-            // Aplicar filtro de categoría
-            if (applyCategoryFilter) {
-                setFilters(prev => ({
-                    ...prev,
-                    category: applyCategoryFilter
-                }));
-            }
-            
+
             // Abrir modal de producto específico
             if (openProductModal && navProduct) {
                 setSelectedProduct(navProduct);
                 setShowComparativeModal(true);
             }
-            
+
             // Marcar que ya se procesó el state
             setHasProcessedState(true);
-            
+
             // Limpiar el state del historial
             window.history.replaceState(null, document.title, window.location.pathname);
         }
-    }, [location.state, hasProcessedState, setFilters]);
-
-    // Reset cuando cambie la ubicación (nueva navegación)
-    useEffect(() => {
-        setHasProcessedState(false);
-    }, [location.pathname]);
+    }, [location.state, hasProcessedState, filters]);
 
     // Filtrado de productos
     const filteredProducts = products.filter((product) => {

@@ -2,8 +2,10 @@ import React from "react";
 import useCategories from "../../hooks/useCategories";
 
 export default function ProductFilters({ filters, setFilters, products }) {
-    console.log(products)
     const categories = useCategories(products);
+    
+    console.log("ProductFilters - Current filters:", filters); // Debug
+    console.log("ProductFilters - Available categories:", categories); // Debug
 
     if (!categories.length) {
         return <div>Cargando categorías...</div>;
@@ -16,9 +18,10 @@ export default function ProductFilters({ filters, setFilters, products }) {
                 <select
                     className="form-select"
                     value={filters.category || ""}
-                    onChange={e =>
-                        setFilters({ category: e.target.value || "" })
-                    }
+                    onChange={e => {
+                        console.log("Category changed to:", e.target.value); // Debug
+                        setFilters({ ...filters, category: e.target.value || "" });
+                    }}
                 >
                     <option value="">Todas las categorías</option>
                     {categories.map((category, index) => (
