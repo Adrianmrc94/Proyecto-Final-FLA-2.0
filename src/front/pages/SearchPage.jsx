@@ -19,39 +19,30 @@ export default function SearchPage() {
         if (location.state && !hasProcessedState) {
             const { searchQuery: navQuery, applyCategoryFilter, openProductModal, selectedProduct: navProduct } = location.state;
 
-            console.log("Processing location state:", { navQuery, applyCategoryFilter, openProductModal });
-
-            // Si hay filtro de categoría, solo aplicar el filtro y limpiar búsqueda
+            // Procesar datos del navbar search al cargar
             if (applyCategoryFilter) {
-                console.log("Applying category filter:", applyCategoryFilter);
-                console.log("Current filters before update:", filters);
-
-                // Crear el objeto directamente en lugar de usar una función
+                // Aplicar filtro de categoría desde la barra de búsqueda
                 const newFilters = {
                     ...filters,
                     category: applyCategoryFilter
                 };
-                console.log("Setting new filters:", newFilters);
                 setFilters(newFilters);
-
                 setSearchQuery("");
-            }
-            // Si hay búsqueda por texto (y no filtro de categoría)
-            else if (navQuery) {
-                console.log("Applying search query:", navQuery);
+            } else if (navQuery) {
+                // Aplicar búsqueda por texto desde la barra de búsqueda
                 setSearchQuery(navQuery);
             }
 
-            // Abrir modal de producto específico
+            // Abrir modal de producto específico desde la barra de búsqueda
             if (openProductModal && navProduct) {
                 setSelectedProduct(navProduct);
                 setShowComparativeModal(true);
             }
 
-            // Marcar que ya se procesó el state
+            // Marcar que ya se procesó el state para evitar ejecuciones múltiples
             setHasProcessedState(true);
 
-            // Limpiar el state del historial
+            // Limpiar el state del historial para navegación limpia
             window.history.replaceState(null, document.title, window.location.pathname);
         }
     }, [location.state, hasProcessedState, filters]);
