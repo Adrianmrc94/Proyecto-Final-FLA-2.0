@@ -271,10 +271,10 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
             {/* Descripciones */}
             <div className="row justify-content-center g-4 mb-2">
               <div className="col-md-5">
-                <div className="bg-light rounded border p-2" style={{ minHeight: "60px", fontSize: "0.9rem" }}>{p1.description}</div>
+                <div className=" rounded border p-2" style={{ minHeight: "60px", fontSize: "0.9rem" }}>{p1.description}</div>
               </div>
               <div className="col-md-5">
-                <div className="bg-light rounded border p-2" style={{ minHeight: "60px", fontSize: "0.9rem" }}>{p2.description}</div>
+                <div className=" rounded border p-2" style={{ minHeight: "60px", fontSize: "0.9rem" }}>{p2.description}</div>
               </div>
             </div>
             {/* Calificaciones individuales */}
@@ -287,9 +287,9 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
               </div>
             </div>
             {/* Scroll horizontal para specs extra */}
-            <div className="table-responsive mt-3">
+            <div className="table-responsive rounded mt-3">
               <table className="table table-bordered text-center">
-                <thead className="table-light">
+                <thead className="table">
                   <tr>
                     <th>Atributo</th>
                     <th>{p1.name}</th>

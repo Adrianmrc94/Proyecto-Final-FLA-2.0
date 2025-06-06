@@ -37,11 +37,7 @@ const ComparativeModal1 = ({ isOpen, onClose }) => {
                       <p>€89.99</p>
                     </div>
                   </div>
-                  <h6 className="mt-3">Gráfica</h6>
-                  <div className="border p-3 rounded bg-light">
-                    Espacio reservado para una gráfica 📊
-                  </div>
-                </div>
+                                 </div>
               </div>
             </div>
           </div>

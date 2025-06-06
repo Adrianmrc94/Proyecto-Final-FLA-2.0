@@ -2,6 +2,7 @@ import React from "react";
 // productos destacados
 export default function FeaturedProducts({ featured, onProductClick }) {
     return (
+        
         <div className="row">
             {featured.map((product, index) => {
                 // Usa images[0] si existe, si no usa image, si no un placeholder
@@ -11,7 +12,7 @@ export default function FeaturedProducts({ featured, onProductClick }) {
                     "https://via.placeholder.com/200x200?text=Sin+Imagen";
                 return (
                     <div
-                        className="col-md-3 mb-3"
+                        className="featured-products col-md-3 mb-3"
                         key={index}
                         onClick={() => onProductClick(product)}
                         style={{ cursor: "pointer" }}

@@ -2,8 +2,8 @@ import React from "react";
 
 export default function HowItWorksSection({ onTryMeClick, disabled }) {
     return (
-        <div className="text-center m-5">
-            <div className="shadow-lg p-4 rounded">
+        <div className="how-it rounded text-center m-5">
+            <div className="shadow-lg p-4">
                 <h3>¿CÓMO FUNCIONA?</h3>
                 <p>
                     Compara precios de miles de productos y empieza a ahorrar desde ahora mismo.

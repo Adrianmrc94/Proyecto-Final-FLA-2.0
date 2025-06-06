@@ -161,7 +161,7 @@ const Register = () => {
                 </div>
 
                 <div className="col-12 col-md-6 d-flex align-items-center mt-4 mt-md-0">
-                    <div className="bg-light p-4 rounded shadow w-100">
+                    <div className=" p-4 bg-success rounded shadow w-100">
                         <h4 className="mb-3 shadow-lg">¿Qué es FLA?</h4>
                         <p><strong>FLA (Find Lowest App)</strong> es una plataforma que te permite comparar precios de productos entre diferentes supermercados usando tu código postal.</p>
                         <ul>

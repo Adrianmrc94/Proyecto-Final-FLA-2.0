@@ -10,11 +10,11 @@ export default function CategoryList({
     return (
         <>
             <h2 className="mt-5 text-center mb-4">Categorías</h2>
-            <div className="row">
+            <div className="row ">
                 {categories.map((cat, idx) => (
-                    <div className="shadow-lg col-6 col-md-3 mb-3" key={idx}>
+                    <div className="w-25 d-grid rounded col-6 col-md-3 mb-3" key={idx}>
                         <button
-                            className="text-uppercase btn  w-100"
+                            className="text-uppercase btn btn-custom w-auto"
                             onClick={() => onCategoryClick(cat)}
                         >
                             {cat.replace("-", " ")}
