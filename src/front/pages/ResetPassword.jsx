@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import logo from "../assets/img/logo.png";
+import ApiService from '../services/api';
 
 const ResetPassword = () => {
     const [searchParams] = useSearchParams();
@@ -31,35 +32,15 @@ const ResetPassword = () => {
             setError('Las contraseñas no coinciden');
             return;
         }
-
-        const backendUrl = import.meta.env.VITE_BACKEND_URL?.replace(/['"]/g, "").replace(/\/$/, "");
         
         try {
-            const res = await fetch(`${backendUrl}/api/reset-password`, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}` 
-                },
-                body: JSON.stringify({ new_password: password })
-            });
-            
-            console.log('Response status:', res.status);
-            
-            const data = await res.json();
-            console.log('Response data:', data);
-            
-            if (res.ok) {
-                setMessage('Contraseña actualizada correctamente');
-                setTimeout(() => {
-                    navigate('/login');
-                }, 2000);
-            } else {
-                setError(data.msg || 'Error al actualizar contraseña');
-            }
+            await ApiService.resetPassword(token, password);
+            setMessage('Contraseña actualizada correctamente');
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
         } catch (error) {
-            console.error('Fetch error:', error);
-            setError('Error de conexión con el servidor');
+            setError(error.message || 'Error al actualizar contraseña');
         }
     };
 

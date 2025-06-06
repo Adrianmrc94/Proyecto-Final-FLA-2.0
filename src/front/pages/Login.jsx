@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import logo from '../assets/img/logo.png';
+import ApiService from '../services/api'; 
+import useGlobalReducer from '../context/useGlobalReducer';
 
 const Login = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const { dispatch } = useGlobalReducer();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -15,27 +19,29 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        const backendUrl = import.meta.env.VITE_BACKEND_URL?.replace(/['"]/g, "").replace(/\/$/, "");
+        setIsLoading(true);
 
         try {
-            const response = await fetch(`${backendUrl}/api/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
-            const data = await response.json();
-            console.log('Login response:', data);
+            const data = await ApiService.login(formData.email, formData.password);
             
-            if (response.ok) {
-                localStorage.setItem('token', data.token);
-                console.log('Token stored:', data.token);
+            if (data.token && data.user) {
+                dispatch({
+                    type: 'LOGIN_SUCCESS',
+                    payload: {
+                        user: data.user,
+                        token: data.token
+                    }
+                });
+                
                 navigate('/home');
             } else {
-                setError(data.msg || data.error || 'Crea un usuario primero o contacta con administración');
+                setError('Respuesta inválida del servidor');
             }
         } catch (error) {
             console.error('Login error:', error);
-            setError('Error de conexión con el servidor');
+            setError(error.message || 'Error de conexión con el servidor');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -60,9 +66,10 @@ const Login = () => {
                                     onChange={handleChange}
                                     className="form-control"
                                     required
+                                    disabled={isLoading}
                                 />
                             </div>
-                            <div className="shadow-lg mb-3">
+                            <div className="mb-3">
                                 <input
                                     name="password"
                                     type="password"
@@ -71,10 +78,24 @@ const Login = () => {
                                     onChange={handleChange}
                                     className="form-control"
                                     required
+                                    disabled={isLoading}
                                 />
                             </div>
                             {error && <div className="alert alert-danger">{error}</div>}
-                            <button type="submit" className="btn btn-success shadow-lg w-100">Iniciar Sesión</button>
+                            <button 
+                                type="submit" 
+                                className="btn btn-success w-100"
+                                disabled={isLoading}
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                        Iniciando sesión...
+                                    </>
+                                ) : (
+                                    'Iniciar Sesión'
+                                )}
+                            </button>
                         </form>
                         <div className="mt-3">
                             <small>
@@ -90,7 +111,7 @@ const Login = () => {
                 </div>
 
                 <div className="col-12 col-md-6 d-flex align-items-center mt-4 mt-md-0">
-                    <div className="bg-success rounded p-4 shadow-lg w-100">
+                    <div className="bg-success roundedp-4 shadow-lg w-100">
                         <h4 className="mb-3">¿Qué es FLA?</h4>
                         <p><strong>FLA (Find Lowest App)</strong> es una plataforma que te permite comparar precios de productos entre diferentes supermercados usando tu código postal.</p>
                         <ul>

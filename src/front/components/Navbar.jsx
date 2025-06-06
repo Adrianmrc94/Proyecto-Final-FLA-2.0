@@ -1,24 +1,21 @@
+import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 import logo from "../assets/img/logo.png";
-import useDarkMode from "../hooks/useDarkMode"; // Ajusta la ruta según tu estructura de carpetas
+import useDarkMode from "../hooks/useDarkMode";
+import useGlobalReducer from "../context/useGlobalReducer";  // ✅ Agregar import
+import SearchBar from "./search/SearchBar";
 
 export const Navbar = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
   const { darkMode, toggleDarkMode } = useDarkMode();
-
-  const handleSearch = (event) => {
-    event.preventDefault();
-    if (searchTerm.trim()) {
-      navigate(`/search?query=${searchTerm}`);
-    }
-  };
-
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/");
-  };
+  const { store, dispatch } = useGlobalReducer();  // ✅ Usar el hook
+  const isAuthenticated = store.isAuthenticated;
+  const user = store.user;
+  
+  const handleLogout = useCallback(() => {
+    dispatch({ type: "LOGOUT" });
+    navigate("/", { replace: true });
+  }, [dispatch, navigate]);
 
   return (
     <nav className="navbar shadow-lg navbar-expand-lg">
@@ -32,18 +29,9 @@ export const Navbar = () => {
         </button>
 
         <div className="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
-          <form className="d-flex w-50 justify-content-center" role="search" onSubmit={handleSearch}>
-            <input
-              className="form-control border-end-0 flex-grow-1"
-              type="search"
-              placeholder="Buscar"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <button className="btn border-0" type="submit">
-              Buscar
-            </button>
-          </form>
+          <div className="d-flex w-50 justify-content-center">
+            <SearchBar />
+          </div>
 
           <div className="form-check form-switch">
             <input
@@ -69,7 +57,7 @@ export const Navbar = () => {
           <ul className="navbar-nav">
             <li className="nav-item dropdown">
               <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
-                Menú
+                {isAuthenticated && user ? `Hola, ${user.name}` : 'Menú'}
               </a>
               <ul className="dropdown-menu dropdown-menu-end">
                 <li>
@@ -77,24 +65,42 @@ export const Navbar = () => {
                     Inicio
                   </button>
                 </li>
-                <li>
-                  <button className="dropdown-item" onClick={() => navigate("/favorites")}>
-                    Productos Favoritos
-                  </button>
-                </li>
-                <li>
-                  <button className="dropdown-item" onClick={() => navigate("/user")}>
-                    Perfil
-                  </button>
-                </li>
-                <li>
-                  <hr className="dropdown-divider" />
-                </li>
-                <li>
-                  <button className="dropdown-item text-danger" onClick={handleLogout}>
-                    Cerrar Sesión
-                  </button>
-                </li>
+                {isAuthenticated && (
+                  <>
+                    <li>
+                      <button className="dropdown-item" onClick={() => navigate("/favorites")}>
+                        Productos Favoritos
+                      </button>
+                    </li>
+                    <li>
+                      <button className="dropdown-item" onClick={() => navigate("/user")}>
+                        Perfil
+                      </button>
+                    </li>
+                    <li>
+                      <hr className="dropdown-divider" />
+                    </li>
+                    <li>
+                      <button className="dropdown-item text-danger" onClick={handleLogout}>
+                        Cerrar Sesión
+                      </button>
+                    </li>
+                  </>
+                )}
+                {!isAuthenticated && (
+                  <>
+                    <li>
+                      <button className="dropdown-item" onClick={() => navigate("/login")}>
+                        Iniciar Sesión
+                      </button>
+                    </li>
+                    <li>
+                      <button className="dropdown-item" onClick={() => navigate("/register")}>
+                        Registrarse
+                      </button>
+                    </li>
+                  </>
+                )}
               </ul>
             </li>
           </ul>

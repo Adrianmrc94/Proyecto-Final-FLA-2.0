@@ -6,22 +6,22 @@ export default function ModalsManager({
     selectedProduct,
     showProductModal,
     setShowProductModal,
-    productToCompare,
     showComparativeModal,
     setShowComparativeModal,
 }) {
     return (
         <>
-            {selectedProduct && (
+            {/* Modal de producto (desde productos destacados) */}
+            {selectedProduct && showProductModal && (
                 <ProductModal
                     product={selectedProduct}
                     show={showProductModal}
                     onClose={() => setShowProductModal(false)}
-                    onFavorite={() => { }}
                 />
             )}
 
-            {showComparativeModal && selectedProduct && (
+            {/* Modal comparativo (desde "PRUÉBAME") */}
+            {selectedProduct && showComparativeModal && (
                 <ComparativeModal3
                     isOpen={showComparativeModal}
                     onClose={() => setShowComparativeModal(false)}

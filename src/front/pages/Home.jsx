@@ -22,6 +22,7 @@ export default function Home() {
         products,
         featuredProducts: featured,
         randomProduct,
+        loadingProducts,
         setFilters
     } = useGlobalProducts();
 
@@ -45,10 +46,14 @@ export default function Home() {
 
     const handleCategoryClick = (category) => {
         setFilters({ category });
-        navigate(`/search`);
+        navigate(`/search`, { 
+            state: { 
+                applyCategoryFilter: category,
+                fromHome: true 
+            } 
+        });
     };
 
-    // Al hacer click en "PRUÉBAME" - abre modal comparativo
     const handleTryMeClick = async () => {
         if (!randomProduct) return;
         setSelectedProduct(randomProduct);
@@ -56,7 +61,6 @@ export default function Home() {
         setShowProductModal(false);
     };
 
-    // Al hacer click en un producto destacado - abre modal de producto
     const handleProductClick = (product) => {
         setSelectedProduct(product);
         setShowProductModal(true);
@@ -65,12 +69,31 @@ export default function Home() {
 
     return (
         <div className="container mt-4">
-            <h2 className="mb-4 text-center">Productos Destacados</h2>
-            
-            <FeaturedProducts
-                featured={featured}
-                onProductClick={handleProductClick}
-            />
+            {/* Header mejorado */}
+            <div className="text-center mb-5">
+                <h1 className="display-4 fw-bold text-primary mb-3">
+                    Bienvenido a tu Comparador de Precios
+                </h1>
+                <p className="lead text-muted">
+                    Encuentra los mejores productos al mejor precio
+                </p>
+            </div>
+
+            {/* Productos destacados */}
+            <div className="mb-5">
+                <div className="text-center mb-4">
+                    <h2 className="display-6">Productos Destacados</h2>
+                    <p className="text-muted">Los productos más populares de la semana</p>
+                </div>
+                
+                <FeaturedProducts
+                    featured={featured}
+                    onProductClick={handleProductClick}
+                    loading={loadingProducts}
+                />
+            </div>
+
+            {/* Categorías */}
             <CategoryList
                 categories={currentCategories}
                 currentPage={currentPage}
@@ -79,13 +102,16 @@ export default function Home() {
                 goToNextPage={goToNextPage}
                 goToPrevPage={goToPrevPage}
                 goToPage={goToPage}
+                loading={loadingProducts}
             />
 
+            {/* Sección "Cómo funciona" */}
             <HowItWorksSection
                 onTryMeClick={handleTryMeClick}
-                disabled={!randomProduct}
+                disabled={!randomProduct || loadingProducts}
             />
 
+            {/* Gestor de modales */}
             <ModalsManager
                 selectedProduct={selectedProduct}
                 showProductModal={showProductModal}

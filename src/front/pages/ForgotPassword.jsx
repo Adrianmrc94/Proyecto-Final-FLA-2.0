@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/img/logo.png';
+import ApiService from '../services/api';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -13,24 +14,12 @@ const ForgotPassword = () => {
         setError('');
         setMessage('');
 
-        const backendUrl = import.meta.env.VITE_BACKEND_URL?.replace(/['"]/g, "").replace(/\/$/, "");
-
         try {
-            const response = await fetch(`${backendUrl}/api/forgot-password`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-            });
-
-            const data = await response.json();
-            if (response.ok) {
-                setMessage('Instrucciones enviadas al correo');
-                setEmailSent(true);
-            } else {
-                setError(data.error || 'Error al enviar solicitud');
-            }
-        } catch {
-            setError('Error de conexión con el servidor');
+            await ApiService.forgotPassword(email);
+            setMessage('Instrucciones enviadas al correo');
+            setEmailSent(true);
+        } catch (error) {
+            setError(error.message || 'Error al enviar solicitud');
         }
     };
 
