@@ -100,25 +100,43 @@ body.dark-mode {
 
 .modal-content.dark-mode {
   background-color: #1f3d1f; /* Un verde oscuro */
-  color: #fff;
+  color: #ffffff;
   transition: background-color 0.5s ease-in-out;
 }
 
-.modal-content.light-mode {
+.modal-content {
   background-color: #b3e5c4; /* Un verde claro */
-  color: #212529;
+  color: #000000;
   transition: background-color 0.5s ease-in-out;
 }
 
-.card.dark-mode {
-  background-color: #065c34;
-  color: white;
+/* Estilos para tarjetas en modo claro */
+ .card {
+    background-color: #B3E5C4; /* Verde claro */
+    color: black;
+    border: 1px solid #8BC34A; /* Verde más oscuro */
 }
 
-.card.light-mode {
-  background-color: #29e433;
-  color: black;
+/* Estilos para tarjetas en modo oscuro */
+.dark-mode .card {
+    background-color: #065c34; /* Verde oscuro */
+    color: white;
+    border: 1px solid #388E3C;
 }
+
+/* Transición suave entre modos */
+.card {
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Estilo adicional para el texto dentro de la tarjeta */
+.card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
 
 .pagination .page-item .page-link {
   background-color: #4CAF50; /* Verde intenso */
@@ -153,6 +171,78 @@ body.dark-mode {
 
 /* Transición suave para cambios de modo */
 .light-mode-card, .dark-mode-card {
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+/* Estilos para los botones en modo oscuro */
+.dark-mode .btn-custom {
+    background-color: #065c34; /* Verde oscuro */
+    color: white;
+    border: 1px solid #388E3C;
+}
+
+/* Estilos para los botones en modo claro */
+.btn-custom {
+    background-color: #B3E5C4; /* Verde claro */
+    color: black;
+    border: 1px solid #8BC34A;
+}
+
+.btn-custom, .dark-mode .btn-custom {
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+ .how-it {
+    background-color: #B3E5C4; /* Verde claro */
+    color: black;
+    border: 1px solid #8BC34A; /* Verde más oscuro */
+}
+
+/* Estilos para tarjetas en modo oscuro */
+.dark-mode .how-it {
+    background-color: #065c34; /* Verde oscuro */
+    color: white;
+    border: 1px solid #388E3C;
+}
+
+/* Transición suave entre modos */
+.how-it {
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+ .footer {
+    background-color: #43b86a; /* Verde claro */
+    color: black;
+    border: 1px solid #8BC34A; /* Verde más oscuro */
+}
+
+/* Estilos para tarjetas en modo oscuro */
+.dark-mode .footer {
+    background-color: #065c34; /* Verde oscuro */
+    color: white;
+    border: 1px solid #388E3C;
+}
+
+/* Transición suave entre modos */
+.footer {
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+}
+
+.navbar {
+    background-color: #43b86a; /* Verde claro */
+    color: black;
+    border: 1px solid #8BC34A; /* Verde más oscuro */
+}
+
+/* Estilos para tarjetas en modo oscuro */
+.dark-mode .navbar {
+    background-color: #236b4a; /* Verde oscuro */
+    color: white;
+    border: 1px solid #388E3C;
+}
+
+/* Transición suave entre modos */
+.navbar {
     transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 

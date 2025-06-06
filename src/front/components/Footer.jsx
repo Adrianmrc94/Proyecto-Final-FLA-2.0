@@ -2,7 +2,7 @@ import React from 'react';
 
 export const Footer = () => {
     return (
-        <footer className="footer shadow-lg py-3">
+        <footer className="footer border border-dark border-2 shadow-lg py-3">
             <div className="container">
                 <div className="row align-items-center">
 
@@ -21,9 +21,9 @@ export const Footer = () => {
                         <p className="text-muted mt-2">&copy; {new Date().getFullYear()} FLA PROYECT</p>
                     </div>
 
-                    <div className="col-md-4 d-flex flex-column align-items-md-end justify-content-center text-end">
+                    <div className="col-md-4 d-flex flex-column align-items-md-end justify-content-center text-center">
                         <h5 className="text-uppercase fw-bold mb-3">Síguenos</h5>
-                        <div className="d-flex gap-2">
+                        <div className="d-flex justify-content-center gap-2">
                             <a href="https://www.facebook.com/FLA_Proyect " className=" fs-4" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                                 <i className="fab fa-facebook-f"></i>
                             </a>
