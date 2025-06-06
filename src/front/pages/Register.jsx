@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import logo from "../assets/img/logo.png";
+import ApiService from '../services/api';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -45,29 +46,19 @@ const Register = () => {
             return;
         }
 
-        const backendUrl = import.meta.env.VITE_BACKEND_URL?.replace(/['"]/g, "").replace(/\/$/, "");
-
         try {
-            const response = await fetch(`${backendUrl}/api/register`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name,
-                    last_name: last_name,
-                    postal_code: postalCode,
-                    email,
-                    password
-                }),
+            const data = await ApiService.register({
+                name,
+                last_name: last_name,
+                postal_code: postalCode,
+                email,
+                password
             });
-            const data = await response.json();
-            if (response.ok) {
-                alert('Registro exitoso');
-                navigate('/');
-            } else {
-                setError(data.error || 'Error al registrar');
-            }
-        } catch {
-            setError('Error de conexión con el servidor');
+            
+            alert('Usuario registrado correctamente');
+            navigate('/login');
+        } catch (error) {
+            setError(error.message || 'Error al registrar usuario');
         }
     };
 

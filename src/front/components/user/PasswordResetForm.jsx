@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
+import ApiService from '../../services/api';
 
 const PasswordResetForm = ({ onPasswordChangeSuccess }) => {
     const [currentPassword, setCurrentPassword] = useState('');
@@ -23,36 +24,17 @@ const PasswordResetForm = ({ onPasswordChangeSuccess }) => {
             return;
         }
 
-        const backendUrl = import.meta.env.VITE_BACKEND_URL?.replace(/['"]/g, "").replace(/\/$/, "");
-        const token = localStorage.getItem('token');
-
         try {
-            const res = await fetch(`${backendUrl}/api/user/change-password`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    old_password: currentPassword,
-                    new_password: newPassword
-                })
-            });
-            const data = await res.json();
-            if (res.ok) {
-                setMessage('Contraseña actualizada correctamente');
-                setCurrentPassword('');
-                setNewPassword('');
-                setConfirmNewPassword('');
-                if (onPasswordChangeSuccess) {
-                    onPasswordChangeSuccess();
-                }
-            } else {
-                setError(data.msg || 'Error al actualizar contraseña. Verifica tu contraseña actual.');
+            await ApiService.changePassword(currentPassword, newPassword);
+            setMessage('Contraseña actualizada correctamente');
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmNewPassword('');
+            if (onPasswordChangeSuccess) {
+                onPasswordChangeSuccess();
             }
-        } catch (err) {
-            setError('Error de conexión con el servidor');
-            console.error('Error changing password:', err);
+        } catch (error) {
+            setError(error.message || 'Error al actualizar contraseña. Verifica tu contraseña actual.');
         }
     };
 
