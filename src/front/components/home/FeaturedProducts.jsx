@@ -39,6 +39,7 @@ export default function FeaturedProducts({ featured, onProductClick, loading = f
     }
 
     return (
+        
         <div className="row">
             {featured.map((product, index) => {
                 //  Normalización de datos
@@ -52,7 +53,7 @@ export default function FeaturedProducts({ featured, onProductClick, loading = f
                 
                 return (
                     <div
-                        className="col-md-3 mb-3"
+                        className="featured-products col-md-3 mb-3"
                         key={product.id || index}
                         onClick={() => onProductClick(product)}
                         style={{ cursor: "pointer" }}
