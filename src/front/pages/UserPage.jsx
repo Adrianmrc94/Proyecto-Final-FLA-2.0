@@ -4,6 +4,7 @@ import PasswordResetForm from '../components/user/PasswordResetForm';
 import UserInfo from '../components/user/UserInfo';
 import DeleteAccountForm from '../components/user/DeleteAccountForm';
 import useDarkMode from '../hooks/useDarkMode';
+import ApiService from '../services/api';
 
 const UserPage = () => {
     const [activeTab, setActiveTab] = useState('info');
@@ -20,17 +21,10 @@ const UserPage = () => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
             if (!token) { navigate('/login'); return; }
+            
             try {
-                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/user/profile`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setUserData(data);
-                } else {
-                    console.error('Failed to fetch user data');
-                    navigate('/login');
-                }
+                const data = await ApiService.getUserProfile();
+                setUserData(data);
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 navigate('/login');
@@ -55,40 +49,23 @@ const UserPage = () => {
         setShowDeleteConfirmation(true);
     };
 
-    const handleDeleteAccountConfirmed = async () => {
+        const handleDeleteAccountConfirmed = async () => {
         setDeleteError('');
         setDeleteMessage('');
 
-        const token = localStorage.getItem('token');
-        const backendUrl = import.meta.env.VITE_BACKEND_URL?.replace(/['"]/g, "").replace(/\/$/, "");
-
         try {
-            const res = await fetch(`${backendUrl}/api/user/delete-account`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ password: deletePassword })
-            });
-
-            if (res.ok) {
-                setDeleteMessage('Tu cuenta ha sido eliminada correctamente.');
-                setShowDeleteConfirmation(false);
-                setDeletePassword('');
-                setConfirmDeletePassword('');
-                alert('Tu cuenta ha sido eliminada correctamente.');
-                localStorage.clear();
-                navigate('/login');
-            } else {
-                const data = await res.json();
-                setDeleteError(data.msg || 'Error al eliminar la cuenta. Por favor, verifica tu contraseña.');
-                setDeleteMessage('');
-            }
-        } catch (err) {
-            setDeleteError('Error de conexión con el servidor al intentar eliminar la cuenta.');
+            // ✅ Usar ApiService
+            await ApiService.deleteAccount(deletePassword);
+            setDeleteMessage('Tu cuenta ha sido eliminada correctamente.');
+            setShowDeleteConfirmation(false);
+            setDeletePassword('');
+            setConfirmDeletePassword('');
+            alert('Tu cuenta ha sido eliminada correctamente.');
+            localStorage.clear();
+            navigate('/login');
+        } catch (error) {
+            setDeleteError(error.message || 'Error al eliminar la cuenta. Por favor, verifica tu contraseña.');
             setDeleteMessage('');
-            console.error('Error deleting account:', err);
         }
     };
 

@@ -23,7 +23,6 @@ const Login = () => {
 
         try {
             const data = await ApiService.login(formData.email, formData.password);
-            console.log('Login response:', data);
             
             if (data.token && data.user) {
                 dispatch({
