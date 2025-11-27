@@ -70,6 +70,16 @@ export default function ProductModal({ product, show, onClose, mode = "view", on
                 <div className="col-md-7">
                   <h6>Descripción</h6>
                   <p>{description}</p>
+                  
+                  {product.store_name && (
+                    <div className="mb-3">
+                      <small className="text-muted">
+                        <i className="bi bi-shop me-1"></i>
+                        Vendido por: <span className="fw-semibold">{product.store_name}</span>
+                      </small>
+                    </div>
+                  )}
+                  
                   <h6>Precio</h6>
                   <div className="alert alert-info">
                     <div className="fs-4 fw-bold">${price}</div>

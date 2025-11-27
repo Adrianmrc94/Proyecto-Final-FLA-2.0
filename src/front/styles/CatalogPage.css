@@ -113,13 +113,21 @@
     transform: scale(1.1);
 }
 
+.favorite-btn i {
+    color: #6c757d;
+    transition: color 0.3s ease;
+}
+
+.favorite-btn.active i {
+    color: #dc3545;
+}
+
 .favorite-btn.active {
-    background: #dc3545;
-    color: white;
+    background: rgba(220, 53, 69, 0.1);
 }
 
 .favorite-btn.active:hover {
-    background: #c82333;
+    background: rgba(220, 53, 69, 0.2);
 }
 
 .catalog-page.dark-mode .favorite-btn {

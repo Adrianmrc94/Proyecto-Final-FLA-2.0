@@ -543,10 +543,6 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
                       />
                     </div>
                     <h6 className="card-title fw-bold text-primary mb-2">{p1.name}</h6>
-                    <p className="text-muted small mb-0">
-                      <i className="fas fa-store me-1"></i>
-                      {p1.store_name || "Tienda no especificada"}
-                    </p>
                   </div>
                 </div>
               </div>
@@ -580,10 +576,6 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
                       />
                     </div>
                     <h6 className="card-title fw-bold text-primary mb-2">{p2.name}</h6>
-                    <p className="text-muted small mb-0">
-                      <i className="fas fa-store me-1"></i>
-                      {p2.store_name || "Tienda no especificada"}
-                    </p>
                   </div>
                 </div>
               </div>

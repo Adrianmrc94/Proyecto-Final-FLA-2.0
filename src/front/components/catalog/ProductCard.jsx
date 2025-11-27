@@ -32,6 +32,15 @@ const ProductCard = ({ product, isFavorite, onToggleFavorite, onViewComparisons 
                     </span>
                 </div>
 
+                {product.store_name && (
+                    <div className="mb-2">
+                        <small className="text-muted" style={{ fontSize: '0.75rem' }}>
+                            <i className="bi bi-shop me-1"></i>
+                            {product.store_name}
+                        </small>
+                    </div>
+                )}
+
                 {product.rating && (
                     <div className="mb-2">
                         <span className="text-warning">
@@ -43,7 +52,7 @@ const ProductCard = ({ product, isFavorite, onToggleFavorite, onViewComparisons 
                 )}
 
                 <div className="mt-auto">
-                    <p className="h5 text-primary mb-3">
+                    <p className="h5 text-primary mb-3 text-center">
                         ${product.price?.toFixed(2)}
                     </p>
 

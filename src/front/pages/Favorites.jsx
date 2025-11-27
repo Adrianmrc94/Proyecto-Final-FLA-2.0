@@ -9,6 +9,8 @@ const Favorites = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('products'); // 'products' o 'comparisons'
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
 
   const {
     comparisons,
@@ -46,6 +48,17 @@ const Favorites = () => {
 
   const handleRemoveFavorite = (favoriteId) => {
     setFavoriteProducts(prev => prev.filter(fav => fav.id !== favoriteId));
+  };
+
+  // Paginación para productos
+  const indexOfLastProduct = currentPage * itemsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
+  const currentProducts = favoriteProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(favoriteProducts.length / itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDeleteComparison = async (comparisonId) => {
@@ -118,7 +131,7 @@ const Favorites = () => {
         <li className="nav-item">
           <button
             className={`nav-link ${activeTab === 'products' ? 'active' : ''}`}
-            onClick={() => setActiveTab('products')}
+            onClick={() => { setActiveTab('products'); setCurrentPage(1); }}
           >
             <i className="bi bi-bag-heart me-2"></i>
             Productos
@@ -128,7 +141,7 @@ const Favorites = () => {
         <li className="nav-item">
           <button
             className={`nav-link ${activeTab === 'comparisons' ? 'active' : ''}`}
-            onClick={() => setActiveTab('comparisons')}
+            onClick={() => { setActiveTab('comparisons'); setCurrentPage(1); }}
           >
             <i className="bi bi-bar-chart-fill me-2"></i>
             Comparativas
@@ -148,14 +161,56 @@ const Favorites = () => {
               </div>
             </div>
           ) : (
-            favoriteProducts.map((favorite, index) => (
-              <FavoriteProduct
-                key={`favorite-${favorite.id}-${index}`}
-                product={favorite.product || favorite}
-                favoriteId={favorite.id}
-                onRemoveFavorite={handleRemoveFavorite}
-              />
-            ))
+            <>
+              {currentProducts.map((favorite, index) => (
+                <FavoriteProduct
+                  key={`favorite-${favorite.id}-${index}`}
+                  product={favorite.product || favorite}
+                  favoriteId={favorite.id}
+                  onRemoveFavorite={handleRemoveFavorite}
+                />
+              ))}
+              
+              {/* Paginación */}
+              {totalPages > 1 && (
+                <div className="col-12">
+                  <nav aria-label="Paginación de favoritos" className="d-flex justify-content-center mt-4">
+                    <ul className="pagination">
+                      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                        <button 
+                          className="page-link" 
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          disabled={currentPage === 1}
+                        >
+                          Anterior
+                        </button>
+                      </li>
+                      
+                      {[...Array(totalPages)].map((_, i) => (
+                        <li key={i + 1} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                          <button 
+                            className="page-link" 
+                            onClick={() => handlePageChange(i + 1)}
+                          >
+                            {i + 1}
+                          </button>
+                        </li>
+                      ))}
+                      
+                      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                        <button 
+                          className="page-link" 
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                        >
+                          Siguiente
+                        </button>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+              )}
+            </>
           )}
         </div>
       ) : (
