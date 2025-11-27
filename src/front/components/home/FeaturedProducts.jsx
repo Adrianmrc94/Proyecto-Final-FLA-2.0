@@ -87,14 +87,14 @@ export default function FeaturedProducts({ featured, onProductClick, loading = f
                                     className="card-title"
                                     title={productName}
                                     style={{
-                                        fontSize: '1rem',
+                                        fontSize: '0.95rem',
                                         display: '-webkit-box',
-                                        WebkitLineClamp: 2,
+                                        WebkitLineClamp: 3,
                                         WebkitBoxOrient: 'vertical',
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis',
-                                        lineHeight: '1.2',
-                                        height: '2.4em',
+                                        lineHeight: '1.3',
+                                        minHeight: '3.9em',
                                         margin: '0 0 0.5rem 0'
                                     }}
                                 >
@@ -103,14 +103,14 @@ export default function FeaturedProducts({ featured, onProductClick, loading = f
 
                                 {/* Rating si existe */}
                                 {(product.rate || product.rating) && (
-                                    <div className="text-warning mb-2">
+                                    <div className="text-warning mb-2" style={{ fontSize: '0.85rem' }}>
                                         ⭐ {product.rate || product.rating}/5
                                     </div>
                                 )}
 
-                                <p className="card-text mt-auto text-center">
+                                <p className="card-text mt-auto text-center mb-0">
                                     <span className="fs-5 fw-bold text-success">
-                                        ${productPrice}
+                                        ${productPrice.toFixed(2)}
                                     </span>
                                 </p>
                             </div>

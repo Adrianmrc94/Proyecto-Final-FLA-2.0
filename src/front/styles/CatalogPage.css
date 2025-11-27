@@ -20,12 +20,36 @@
 
 .catalog-page.dark-mode .filters-bar {
     background: rgba(30, 30, 30, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.catalog-page.dark-mode .filters-bar .form-control,
+.catalog-page.dark-mode .filters-bar .form-select {
+    background: rgba(50, 50, 50, 0.8);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.catalog-page.dark-mode .filters-bar .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.catalog-page.dark-mode .filters-bar .input-group-text {
+    background: rgba(50, 50, 50, 0.8);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .filters-bar .form-control:focus,
 .filters-bar .form-select:focus {
     border-color: #667eea;
     box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.catalog-page.dark-mode .filters-bar .form-control:focus,
+.catalog-page.dark-mode .filters-bar .form-select:focus {
+    background: rgba(60, 60, 60, 0.9);
+    border-color: #667eea;
 }
 
 /* Product Catalog Card */
@@ -123,6 +147,11 @@
     padding: 0.3rem 0.6rem;
 }
 
+.catalog-page.dark-mode .product-catalog-card .badge.bg-light {
+    background: rgba(100, 100, 100, 0.8) !important;
+    color: #fff !important;
+}
+
 /* Rating Stars */
 .text-warning {
     color: #ffc107 !important;
@@ -131,6 +160,10 @@
 /* Price */
 .product-catalog-card .h5 {
     font-weight: 700;
+}
+
+.catalog-page.dark-mode .product-catalog-card .text-primary {
+    color: #667eea !important;
 }
 
 /* Buttons */

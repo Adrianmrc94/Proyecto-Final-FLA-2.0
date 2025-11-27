@@ -21,7 +21,7 @@ const filterProducts = (products, filters, searchQuery) => {
         // Filtro por precio
         const price = Number(product.price) || 0;
         const matchesPrice = (!filters.price_min || price >= Number(filters.price_min)) &&
-                            (!filters.price_max || price <= Number(filters.price_max));
+            (!filters.price_max || price <= Number(filters.price_max));
 
 
         // Filtro por rating (normalizado)
@@ -51,7 +51,13 @@ export default function SearchPage() {
     // Procesar navegación desde navbar
     useEffect(() => {
         if (location.state && !hasProcessedState) {
-            const { searchQuery: navQuery, applyCategoryFilter, openProductModal, selectedProduct: navProduct } = location.state;
+            const {
+                searchQuery: navQuery,
+                applyCategoryFilter,
+                openProductModal,
+                selectedProduct: navProduct,
+                selectedProductForComparison
+            } = location.state;
 
 
             if (applyCategoryFilter) {
@@ -64,6 +70,10 @@ export default function SearchPage() {
 
             if (openProductModal && navProduct) {
                 setSelectedProduct(navProduct);
+                setShowComparativeModal(true);
+            } else if (selectedProductForComparison) {
+                // Abrir modal de comparativa con el producto seleccionado desde el catálogo
+                setSelectedProduct(selectedProductForComparison);
                 setShowComparativeModal(true);
             }
 

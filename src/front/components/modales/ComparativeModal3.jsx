@@ -9,6 +9,8 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
   const { addComparison } = useComparativeFavorites();
   const [favoriteIds, setFavoriteIds] = useState(new Set());
   const [products, setProducts] = useState([]);
+  const [categoryProducts, setCategoryProducts] = useState([]); // Todos los productos de la categoría
+  const [currentComparisonIndex, setCurrentComparisonIndex] = useState(0); // Índice del producto comparado
   const [loading, setLoading] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [comparisonName, setComparisonName] = useState("");
@@ -37,16 +39,29 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
   const handleToggleFavorite = async (productToToggle) => {
     try {
       if (isFavorite(productToToggle.id)) {
-        await ApiService.removeFavorite(productToToggle.id);
-        setFavoriteIds(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(productToToggle.id);
-          return newSet;
-        });
+        // Buscar el favorite_id correcto
+        const favorites = await ApiService.fetchFavorites();
+        const favoriteToRemove = favorites.find(fav => fav.product_id === productToToggle.id);
+
+        if (favoriteToRemove) {
+          await ApiService.removeFavorite(favoriteToRemove.id);
+          setFavoriteIds(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(productToToggle.id);
+            return newSet;
+          });
+        }
       } else {
+        // Formato YYYY-MM-DD para el backend
+        const today = new Date();
+        const dateAd = today.getFullYear() + '-' +
+          String(today.getMonth() + 1).padStart(2, '0') + '-' +
+          String(today.getDate()).padStart(2, '0');
+
         await ApiService.addFavorite({
           product_id: productToToggle.id,
-          store_id: productToToggle.store_id || 1 // Usar store_id del producto o 1 por defecto
+          store_id: productToToggle.store_id || 1,
+          date_ad: dateAd
         });
         setFavoriteIds(prev => new Set(prev).add(productToToggle.id));
       }
@@ -93,8 +108,12 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
             return pNormalizedCategory === normalizedCategory;
           });
 
+          // Guardar todos los productos de la categoría para navegación
+          setCategoryProducts(otherProductsInCategory);
+          setCurrentComparisonIndex(0);
+
           if (otherProductsInCategory.length > 0) {
-            similar = otherProductsInCategory[Math.floor(Math.random() * otherProductsInCategory.length)];
+            similar = otherProductsInCategory[0]; // Empezar con el primero
           }
         }
 
@@ -217,6 +236,80 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
     fetchComparison();
   }, [isOpen, product]);
 
+  // Navegar al siguiente producto de la categoría
+  const handleNextProduct = async () => {
+    if (categoryProducts.length === 0 || currentComparisonIndex >= categoryProducts.length - 1) return;
+
+    const nextIndex = currentComparisonIndex + 1;
+    const nextProduct = categoryProducts[nextIndex];
+    setCurrentComparisonIndex(nextIndex);
+
+    // Actualizar la comparativa con el nuevo producto
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+      const compareRes = await fetch(`${BACKEND_URL}/api/products/compare`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ product_ids: [product.id, nextProduct.id] }),
+      });
+
+      if (compareRes.ok) {
+        const data = await compareRes.json();
+        setProducts(data);
+      } else {
+        setProducts([product, nextProduct]);
+      }
+    } catch (error) {
+      console.error("Error loading next comparison:", error);
+      setProducts([product, nextProduct]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Navegar al producto anterior de la categoría
+  const handlePreviousProduct = async () => {
+    if (categoryProducts.length === 0 || currentComparisonIndex <= 0) return;
+
+    const prevIndex = currentComparisonIndex - 1;
+    const prevProduct = categoryProducts[prevIndex];
+    setCurrentComparisonIndex(prevIndex);
+
+    // Actualizar la comparativa con el nuevo producto
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
+      const compareRes = await fetch(`${BACKEND_URL}/api/products/compare`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ product_ids: [product.id, prevProduct.id] }),
+      });
+
+      if (compareRes.ok) {
+        const data = await compareRes.json();
+        setProducts(data);
+      } else {
+        setProducts([product, prevProduct]);
+      }
+    } catch (error) {
+      console.error("Error loading previous comparison:", error);
+      setProducts([product, prevProduct]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSaveComparison = async () => {
     if (!comparisonName.trim()) {
       toast.warning('Por favor ingresa un nombre para la comparativa', {
@@ -325,8 +418,35 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
             <h4 className="modal-title fw-bold d-flex align-items-center">
               <i className="fas fa-chart-line me-2 text-primary"></i>
               Comparativa de Productos
+              {categoryProducts.length > 0 && (
+                <span className="badge bg-secondary ms-2" style={{ fontSize: '0.7rem' }}>
+                  {currentComparisonIndex + 1} / {categoryProducts.length}
+                </span>
+              )}
             </h4>
-            <button type="button" className="btn-close" onClick={onClose} aria-label="Close"></button>
+            <div className="d-flex align-items-center gap-2">
+              {categoryProducts.length > 0 && (
+                <>
+                  <button
+                    className="btn btn-sm btn-outline-primary"
+                    onClick={handlePreviousProduct}
+                    disabled={currentComparisonIndex <= 0}
+                    title="Producto anterior"
+                  >
+                    <i className="bi bi-chevron-left"></i>
+                  </button>
+                  <button
+                    className="btn btn-sm btn-outline-primary"
+                    onClick={handleNextProduct}
+                    disabled={currentComparisonIndex >= categoryProducts.length - 1}
+                    title="Siguiente producto"
+                  >
+                    <i className="bi bi-chevron-right"></i>
+                  </button>
+                </>
+              )}
+              <button type="button" className="btn-close" onClick={onClose} aria-label="Close"></button>
+            </div>
           </div>
 
           <div className="modal-body px-4">

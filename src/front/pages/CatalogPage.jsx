@@ -79,17 +79,30 @@ const CatalogPage = () => {
     const handleToggleFavorite = async (product) => {
         try {
             if (favoriteIds.has(product.id)) {
-                await ApiService.removeFavorite(product.id);
-                setFavoriteIds(prev => {
-                    const newSet = new Set(prev);
-                    newSet.delete(product.id);
-                    return newSet;
-                });
-                toast.info('Eliminado de favoritos', { autoClose: 2000 });
+                // Buscar el favorite_id correcto
+                const favorites = await ApiService.fetchFavorites();
+                const favoriteToRemove = favorites.find(fav => fav.product_id === product.id);
+
+                if (favoriteToRemove) {
+                    await ApiService.removeFavorite(favoriteToRemove.id);
+                    setFavoriteIds(prev => {
+                        const newSet = new Set(prev);
+                        newSet.delete(product.id);
+                        return newSet;
+                    });
+                    toast.info('Eliminado de favoritos', { autoClose: 2000 });
+                }
             } else {
+                // Formato YYYY-MM-DD para el backend
+                const today = new Date();
+                const dateAd = today.getFullYear() + '-' +
+                    String(today.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(today.getDate()).padStart(2, '0');
+
                 await ApiService.addFavorite({
                     product_id: product.id,
-                    store_id: product.store_id || 1 // Usar store_id del producto o 1 por defecto
+                    store_id: product.store_id || 1,
+                    date_ad: dateAd
                 });
                 setFavoriteIds(prev => new Set(prev).add(product.id));
                 toast.success('Agregado a favoritos', { autoClose: 2000 });
@@ -100,7 +113,12 @@ const CatalogPage = () => {
     };
 
     const handleViewComparisons = (product) => {
-        navigate('/search', { state: { product, openComparison: true } });
+        navigate('/search', {
+            state: {
+                applyCategoryFilter: product.category,
+                selectedProductForComparison: product
+            }
+        });
     };
 
     if (loadingProducts) {
