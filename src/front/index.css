@@ -74,59 +74,75 @@
 
 /* Estilos por defecto para el modo claro */
 body {
-  /* Fondo sólido con tono verde claro */
-  background-color: #b3e5c4; /* Tono verde claro: ajústalo a tu gusto */
-  /* Fondo de imagen para el modo claro */
-  background-image: url('https://img.freepik.com/vector-gratis/diseno-logotipo-icona-letra-e-creativa-colorida_474888-6382.jpg?ga=GA1.1.1508989412.1749036095&semt=ais_hybrid&w=740'); /* Actualiza la ruta a tu imagen */
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
+  /* Fondo degradado suave y profesional */
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
   
   /* Transiciones suaves para cambios en el fondo */
-  transition: background-color 0.5s ease, background-image 0.5s ease;
+  transition: background 0.5s ease;
 }
 
 /* Cuando se activa el modo oscuro, el cuerpo recibe la clase "dark-mode" */
 body.dark-mode {
-  background-color: #004d00; /* Tono verde oscuro */
-  background-image: url(https://img.freepik.com/vector-gratis/fondo-abstract-cortado-papel_474888-6378.jpg?ga=GA1.1.1508989412.1749036095&semt=ais_hybrid&w=740);
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
+  /* Gradiente animado oscuro con efecto de movimiento */
+  background: linear-gradient(-45deg, #1a1a2e, #16213e, #0f3460, #533483);
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
   
   /* Transiciones suaves para cambios en el fondo */
-  transition: background-color 0.5s ease, background-image 0.5s ease;
-} /* La imagen para modo oscuro */
+  transition: background 0.5s ease;
+}
+
+/* Animación de gradiente para modo oscuro */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
 
 .modal-content.dark-mode {
-  background-color: #1f3d1f; /* Un verde oscuro */
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
   color: #ffffff;
-  transition: background-color 0.5s ease-in-out;
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.2);
+  transition: all 0.5s ease-in-out;
 }
 
 .modal-content {
-  background-color: #b3e5c4; /* Un verde claro */
-  color: #000000;
-  transition: background-color 0.5s ease-in-out;
+  background: rgba(255, 255, 255, 0.98);
+  color: #1e293b;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s ease-in-out;
 }
 
 /* Estilos para tarjetas en modo claro */
  .card {
-    background-color: #B3E5C4; /* Verde claro */
-    color: black;
-    border: 1px solid #8BC34A; /* Verde más oscuro */
+    background: rgba(255, 255, 255, 0.95);
+    color: #1e293b;
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    backdrop-filter: blur(10px);
 }
 
 /* Estilos para tarjetas en modo oscuro */
 .dark-mode .card {
-    background-color: #065c34; /* Verde oscuro */
-    color: white;
-    border: 1px solid #388E3C;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
+    color: #f1f5f9;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.15);
+    backdrop-filter: blur(10px);
 }
 
 /* Transición suave entre modos */
 .card {
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
 }
 
 /* Estilo adicional para el texto dentro de la tarjeta */
@@ -139,33 +155,33 @@ body.dark-mode {
 
 
 .pagination .page-item .page-link {
-  background-color: #4CAF50; /* Verde intenso */
-  color: white; /* Texto blanco */
-  border: 1px solid #388E3C; /* Borde verde oscuro */
+  background-color: #667eea;
+  color: white;
+  border: 1px solid #5a67d8;
 }
 
 .pagination .page-item.active .page-link {
-  background-color: #2E7D32 ; /* Verde más oscuro para página activa */
-  border-color: #1B5E20;
+  background-color: #5a67d8;
+  border-color: #4c51bf;
 }
 
 .pagination .page-item.disabled .page-link {
-  background-color: #A5D6A7 ; /* Verde apagado para deshabilitados */
+  background-color: #cbd5e0;
   cursor: not-allowed;
-  color: #ffffff;
+  color: #a0aec0;
 }
 
 /* Estilos para el modo claro */
 .light-mode-card {
-    background-color: #B3E5C4; /* Verde claro */
-    border: 1px solid #8BC34A; /* Verde más oscuro */
-    color: #212529;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #2d3748;
 }
 
 /* Estilos para el modo oscuro */
 .dark-mode-card {
-    background-color: #1B5E20; /* Verde oscuro */
-    border: 1px solid #388E3C;
+    background-color: #2d3748;
+    border: 1px solid #4a5568;
     color: white;
 }
 
@@ -176,16 +192,16 @@ body.dark-mode {
 
 /* Estilos para los botones en modo oscuro */
 .dark-mode .btn-custom {
-    background-color: #065c34; /* Verde oscuro */
+    background-color: #5a67d8;
     color: white;
-    border: 1px solid #388E3C;
+    border: 1px solid #4c51bf;
 }
 
 /* Estilos para los botones en modo claro */
 .btn-custom {
-    background-color: #B3E5C4; /* Verde claro */
-    color: black;
-    border: 1px solid #8BC34A;
+    background-color: #667eea;
+    color: white;
+    border: 1px solid #5a67d8;
 }
 
 .btn-custom, .dark-mode .btn-custom {
@@ -193,68 +209,81 @@ body.dark-mode {
 }
 
  .how-it {
-    background-color: #B3E5C4; /* Verde claro */
-    color: black;
-    border: 1px solid #8BC34A; /* Verde más oscuro */
+    background: rgba(255, 255, 255, 0.9);
+    color: #1e293b;
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* Estilos para tarjetas en modo oscuro */
 .dark-mode .how-it {
-    background-color: #065c34; /* Verde oscuro */
-    color: white;
-    border: 1px solid #388E3C;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.9) 100%);
+    color: #f1f5f9;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 0 6px 20px rgba(139, 92, 246, 0.12);
 }
 
 /* Transición suave entre modos */
 .how-it {
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
 }
 
  .footer {
-    background-color: #43b86a; /* Verde claro */
-    color: black;
-    border: 1px solid #8BC34A; /* Verde más oscuro */
+    background: rgba(255, 255, 255, 0.95);
+    color: #1e293b;
+    border-top: 1px solid rgba(226, 232, 240, 0.8);
+    backdrop-filter: blur(10px);
 }
 
 /* Estilos para tarjetas en modo oscuro */
 .dark-mode .footer {
-    background-color: #065c34; /* Verde oscuro */
-    color: white;
-    border: 1px solid #388E3C;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
+    color: #f1f5f9;
+    border-top: 1px solid rgba(139, 92, 246, 0.3);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 -4px 16px rgba(139, 92, 246, 0.1);
 }
 
 /* Transición suave entre modos */
 .footer {
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
 }
 
 .navbar {
-    background-color: #43b86a; /* Verde claro */
-    color: black;
-    border: 1px solid #8BC34A; /* Verde más oscuro */
+    background: rgba(255, 255, 255, 0.95);
+    color: #1e293b;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 /* Estilos para tarjetas en modo oscuro */
 .dark-mode .navbar {
-    background-color: #236b4a; /* Verde oscuro */
-    color: white;
-    border: 1px solid #388E3C;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
+    color: #f1f5f9;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
 }
 
 /* Transición suave entre modos */
 .navbar {
-    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
 }
 
 
 /* Efectos para las cards de productos */
 .product-card {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(139, 92, 246, 0.25) !important;
+}
+
+.dark-mode .product-card:hover {
+    box-shadow: 0 12px 40px rgba(139, 92, 246, 0.4) !important;
 }
 
 .product-card:hover .product-image {

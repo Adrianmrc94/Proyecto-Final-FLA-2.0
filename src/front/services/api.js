@@ -46,6 +46,8 @@ class ApiService {
    //Agrega un producto a favoritos
   static async addFavorite(favoriteData) {
     try {
+      console.log('📤 Sending favorite data:', favoriteData);
+      
       const response = await fetch(`${API_BASE_URL}/api/favorites`, {
         method: "POST",
         headers: {
@@ -55,14 +57,17 @@ class ApiService {
         body: JSON.stringify(favoriteData),
       });
 
+      const data = await response.json();
+      console.log('📥 Response from server:', data);
+
       if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
+        throw new Error(data.msg || data.error || `Error ${response.status}: ${response.statusText}`);
       }
 
-      return await response.json();
+      return data;
     } catch (error) {
-      console.error("Error agregando favorito:", error);
-      throw new Error("No se pudo agregar el favorito");
+      console.error("❌ Error agregando favorito:", error);
+      throw error;
     }
   }
 

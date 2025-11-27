@@ -23,6 +23,7 @@ requests = "*"
 flask-jwt-extended = "*"
 flask-bcrypt = "*"
 flask-mail = "*"
+colorama = "*"
 
 [requires]
 python_version = "3.13"

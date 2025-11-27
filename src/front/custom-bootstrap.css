@@ -1,0 +1,99 @@
+/* Sobrescribir colores de Bootstrap para el tema azul/púrpura */
+
+/* Botones Success - Cambiar de verde a azul */
+.btn-success {
+    background-color: #667eea !important;
+    border-color: #5a67d8 !important;
+    color: white !important;
+}
+
+.btn-success:hover {
+    background-color: #5a67d8 !important;
+    border-color: #4c51bf !important;
+}
+
+.btn-success:focus,
+.btn-success:active {
+    background-color: #4c51bf !important;
+    border-color: #434190 !important;
+    box-shadow: 0 0 0 0.25rem rgba(102, 126, 234, 0.5) !important;
+}
+
+/* Backgrounds Success */
+.bg-success {
+    background-color: #667eea !important;
+}
+
+/* Alerts Success */
+.alert-success {
+    background-color: #e0e7ff !important;
+    border-color: #c7d2fe !important;
+    color: #4c51bf !important;
+}
+
+/* Text Success */
+.text-success {
+    color: #667eea !important;
+}
+
+/* Badges Success */
+.badge.bg-success {
+    background-color: #667eea !important;
+}
+
+/* Primary colors - asegurar consistencia */
+.btn-primary {
+    background-color: #667eea !important;
+    border-color: #5a67d8 !important;
+}
+
+.btn-primary:hover {
+    background-color: #5a67d8 !important;
+    border-color: #4c51bf !important;
+}
+
+.bg-primary {
+    background-color: #667eea !important;
+}
+
+.text-primary {
+    color: #667eea !important;
+}
+
+.badge.bg-primary {
+    background-color: #667eea !important;
+}
+
+/* Spinners */
+.spinner-border.text-primary {
+    color: #667eea !important;
+}
+
+/* Links */
+a.text-primary:hover {
+    color: #5a67d8 !important;
+}
+
+/* Modo oscuro - ajustes adicionales */
+.dark-mode .btn-success,
+.dark-mode .btn-primary {
+    background-color: #5a67d8 !important;
+    border-color: #4c51bf !important;
+}
+
+.dark-mode .btn-success:hover,
+.dark-mode .btn-primary:hover {
+    background-color: #4c51bf !important;
+    border-color: #434190 !important;
+}
+
+.dark-mode .bg-success,
+.dark-mode .bg-primary {
+    background-color: #5a67d8 !important;
+}
+
+.dark-mode .alert-success {
+    background-color: #2d3748 !important;
+    border-color: #4a5568 !important;
+    color: #a5b4fc !important;
+}

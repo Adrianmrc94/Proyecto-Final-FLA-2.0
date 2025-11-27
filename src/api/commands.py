@@ -1,6 +1,7 @@
 
 import click
 from api.models import db, User
+from api.scripts.import_external_products import import_products
 
 """
 In this file, you can add as many commands as you want using the @app.cli.command decorator
@@ -32,3 +33,10 @@ def setup_commands(app):
     @app.cli.command("insert-test-data")
     def insert_test_data():
         pass
+
+    @app.cli.command("import-products")
+    def import_products_command():
+        """Importa productos desde APIs externas (DummyJSON y FakeStore)"""
+        print("🚀 Iniciando importación de productos...")
+        import_products(app)
+        print("✅ Importación completada exitosamente!")

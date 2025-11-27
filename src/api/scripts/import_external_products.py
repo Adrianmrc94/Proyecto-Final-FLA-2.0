@@ -19,12 +19,13 @@ def fetch_dummyjson_products():
     return []
 
 def fetch_fakestore_products():
-    url = 'https://fakestoreapi.in/api/products?limit=150'
+    url = 'https://fakestoreapi.com/products'
     try:
         resp = requests.get(url)
         if resp.ok:
             data = resp.json()
-            return data.get('products', [])
+            # Esta API devuelve directamente un array de productos
+            return data if isinstance(data, list) else []
     except Exception as e:
         print("Error fakestore:", e)
     return []
@@ -87,6 +88,10 @@ def import_products(app):
                 db.session.flush()
 
             if not Product.query.filter_by(external_id=f"fakestore-{p['id']}").first():
+                # La API fakestoreapi.com devuelve rating como objeto {rate, count}
+                rating_data = p.get("rating", {})
+                rate_value = rating_data.get("rate", 0) if isinstance(rating_data, dict) else 0
+                
                 product = Product(
                     external_id=f"fakestore-{p['id']}",
                     name=name,
@@ -94,8 +99,8 @@ def import_products(app):
                     description=desc,
                     category=p.get("category"),
                     image=p.get("image"),
-                    rate=p.get("rating", 0),
-                    stock=p.get("stock", 0),
+                    rate=rate_value,
+                    stock=100,  # FakeStoreAPI no provee stock, usamos valor por defecto
                     created_at=datetime.now(),
                     source="fakestore",
                     store_id=store.id

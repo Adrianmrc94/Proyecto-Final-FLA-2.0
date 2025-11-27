@@ -5,6 +5,7 @@ from api_modular.auth import auth_bp
 from api_modular.products import products_bp
 from api_modular.users import users_bp
 from api_modular.favorites import favorites_bp
+from api_modular.comparisons import comparisons_bp
 
 def register_modular_blueprints(app):
     """
@@ -18,6 +19,7 @@ def register_modular_blueprints(app):
         app.register_blueprint(products_bp, url_prefix='/api') 
         app.register_blueprint(users_bp, url_prefix='/api')
         app.register_blueprint(favorites_bp, url_prefix='/api')
+        app.register_blueprint(comparisons_bp, url_prefix='/api')
         
         print("✅ Blueprints modulares registrados exitosamente")
         print("📋 Módulos disponibles:")
@@ -25,6 +27,7 @@ def register_modular_blueprints(app):
         print("   📦 Products: /api/products, /api/categories, /api/search, /api/random-product")
         print("   👤 Users: /api/user/profile, /api/user/change-password, /api/user/delete-account")
         print("   ❤️  Favorites: /api/favorites")
+        print("   🔀 Comparisons: /api/favorite-comparisons")
         
         return True
         
@@ -45,13 +48,15 @@ def modular_info():
             'auth': 'Autenticación y recuperación de contraseñas',
             'products': 'Gestión de productos y búsqueda',
             'users': 'Gestión de perfiles de usuario',
-            'favorites': 'Sistema de favoritos'
+            'favorites': 'Sistema de favoritos',
+            'comparisons': 'Comparativas favoritas de productos'
         },
         'endpoints_count': {
             'auth': 4,
             'products': 7,
             'users': 4,
-            'favorites': 3
+            'favorites': 3,
+            'comparisons': 5
         }
     }), 200
 

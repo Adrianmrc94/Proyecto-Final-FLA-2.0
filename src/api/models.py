@@ -1,8 +1,17 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, Boolean, Float, Date, ForeignKey, UniqueConstraint
+from sqlalchemy import String, Integer, Boolean, Float, Date, ForeignKey, UniqueConstraint, Table, Column, DateTime
+from datetime import datetime
 
 db = SQLAlchemy()
+
+# Tabla de asociación para la relación many-to-many entre FavoriteComparison y Product
+favorite_comparison_products = Table(
+    'favorite_comparison_products',
+    db.metadata,
+    Column('comparison_id', Integer, ForeignKey('favorite_comparison.id', ondelete='CASCADE'), primary_key=True),
+    Column('product_id', Integer, ForeignKey('product.id', ondelete='CASCADE'), primary_key=True)
+)
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -16,6 +25,7 @@ class User(db.Model):
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
     favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="user", cascade="all, delete-orphan")
+    favorite_comparisons: Mapped[list["FavoriteComparison"]] = relationship("FavoriteComparison", back_populates="user", cascade="all, delete-orphan")
 
     def serialize(self):
         return {
@@ -106,4 +116,29 @@ class Favorite(db.Model):
             "user_id": self.user_id,
             "product_id": self.product_id,
             "date_ad": self.date_ad
+        }
+
+
+class FavoriteComparison(db.Model):
+    __tablename__ = 'favorite_comparison'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    created_at: Mapped[DateTime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
+
+    user: Mapped["User"] = relationship("User", back_populates="favorite_comparisons")
+    products: Mapped[list["Product"]] = relationship(
+        "Product",
+        secondary=favorite_comparison_products,
+        backref="comparisons"
+    )
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "name": self.name,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "products": [product.serialize() for product in self.products]
         }

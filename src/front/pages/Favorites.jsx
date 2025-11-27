@@ -1,11 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import FavoriteProduct from '../components/modales/FavoriteProduct';
+import FavoriteComparisonCard from '../components/favorites/FavoriteComparisonCard';
 import ApiService from '../services/api';
+import useComparativeFavorites from '../hooks/useComparativeFavorites';
 
 const Favorites = () => {
   const [favoriteProducts, setFavoriteProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState('products'); // 'products' o 'comparisons'
+
+  const {
+    comparisons,
+    isLoading: comparisonsLoading,
+    fetchComparisons,
+    deleteComparison,
+    updateComparison
+  } = useComparativeFavorites();
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -30,17 +41,28 @@ const Favorites = () => {
     };
 
     fetchFavorites();
+    fetchComparisons(); // Cargar también las comparativas
   }, []);
 
   const handleRemoveFavorite = (favoriteId) => {
     setFavoriteProducts(prev => prev.filter(fav => fav.id !== favoriteId));
   };
 
-  if (isLoading) {
+  const handleDeleteComparison = async (comparisonId) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar esta comparativa?')) {
+      await deleteComparison(comparisonId);
+    }
+  };
+
+  const handleUpdateComparison = async (comparisonId, newName) => {
+    await updateComparison(comparisonId, newName);
+  };
+
+  if (isLoading || comparisonsLoading) {
     return (
       <div className="container text-center mt-5">
         <div className="spinner-border text-primary" role="status"></div>
-        <p className="mt-3">Cargando productos favoritos...</p>
+        <p className="mt-3">Cargando favoritos...</p>
       </div>
     );
   }
@@ -62,7 +84,10 @@ const Favorites = () => {
     );
   }
 
-  if (!favoriteProducts || favoriteProducts.length === 0) {
+  const hasNoFavorites = (!favoriteProducts || favoriteProducts.length === 0) &&
+    (!comparisons || comparisons.length === 0);
+
+  if (hasNoFavorites) {
     return (
       <div className="container text-center mt-5">
         <div className="card shadow-sm">
@@ -86,21 +111,75 @@ const Favorites = () => {
           <i className="bi bi-heart-fill text-danger me-2"></i>
           Mis Favoritos
         </h1>
-        <span className="badge bg-primary fs-6">
-          {favoriteProducts.length} producto{favoriteProducts.length !== 1 ? 's' : ''}
-        </span>
       </div>
 
-      <div className="row">
-        {favoriteProducts.map((favorite, index) => (
-          <FavoriteProduct
-            key={`favorite-${favorite.id}-${index}`}
-            product={favorite.product || favorite}
-            favoriteId={favorite.id}
-            onRemoveFavorite={handleRemoveFavorite}
-          />
-        ))}
-      </div>
+      {/* Pestañas para alternar entre productos y comparativas */}
+      <ul className="nav nav-tabs mb-4">
+        <li className="nav-item">
+          <button
+            className={`nav-link ${activeTab === 'products' ? 'active' : ''}`}
+            onClick={() => setActiveTab('products')}
+          >
+            <i className="bi bi-bag-heart me-2"></i>
+            Productos
+            <span className="badge bg-primary ms-2">{favoriteProducts.length}</span>
+          </button>
+        </li>
+        <li className="nav-item">
+          <button
+            className={`nav-link ${activeTab === 'comparisons' ? 'active' : ''}`}
+            onClick={() => setActiveTab('comparisons')}
+          >
+            <i className="bi bi-bar-chart-fill me-2"></i>
+            Comparativas
+            <span className="badge bg-success ms-2">{comparisons.length}</span>
+          </button>
+        </li>
+      </ul>
+
+      {/* Contenido de la pestaña activa */}
+      {activeTab === 'products' ? (
+        <div className="row">
+          {favoriteProducts.length === 0 ? (
+            <div className="col-12">
+              <div className="alert alert-info">
+                <i className="bi bi-info-circle me-2"></i>
+                No tienes productos favoritos guardados
+              </div>
+            </div>
+          ) : (
+            favoriteProducts.map((favorite, index) => (
+              <FavoriteProduct
+                key={`favorite-${favorite.id}-${index}`}
+                product={favorite.product || favorite}
+                favoriteId={favorite.id}
+                onRemoveFavorite={handleRemoveFavorite}
+              />
+            ))
+          )}
+        </div>
+      ) : (
+        <div className="row">
+          {comparisons.length === 0 ? (
+            <div className="col-12">
+              <div className="alert alert-info">
+                <i className="bi bi-info-circle me-2"></i>
+                No tienes comparativas favoritas guardadas.
+                Abre una comparativa de productos y haz clic en "Guardar Comparativa".
+              </div>
+            </div>
+          ) : (
+            comparisons.map((comparison) => (
+              <FavoriteComparisonCard
+                key={comparison.id}
+                comparison={comparison}
+                onDelete={handleDeleteComparison}
+                onUpdate={handleUpdateComparison}
+              />
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 };

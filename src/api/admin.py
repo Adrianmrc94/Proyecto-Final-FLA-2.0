@@ -64,10 +64,7 @@ def setup_admin(app):
     # Inicializar Flask-Admin
     admin = Admin(
         app, 
-        name='🚀 Proyecto Final FLA - Admin', 
-        template_mode='bootstrap3',
-        index_view=None,
-        base_template='admin/custom_base.html' if os.path.exists('templates/admin/custom_base.html') else None
+        name='🚀 Proyecto Final FLA - Admin'
     )
 
     # Agregar vistas personalizadas para cada modelo

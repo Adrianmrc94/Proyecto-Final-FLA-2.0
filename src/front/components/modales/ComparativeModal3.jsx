@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
 import useDarkMode from "../../hooks/useDarkMode"; // Importamos el hook de modo oscuro
+import useComparativeFavorites from "../../hooks/useComparativeFavorites";
 
 const ComparativeModal3 = ({ isOpen, onClose, product }) => {
   const { darkMode } = useDarkMode(); // Accedemos al estado del modo oscuro
+  const { addComparison } = useComparativeFavorites();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [comparisonName, setComparisonName] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!isOpen || !product) return;
@@ -52,12 +57,12 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
         // 2. Si no se encontró, buscar por palabras clave de la categoría
         if (!similar && normalizedCategory) {
           const categoryWords = normalizedCategory.split(" ");
-          
+
           // Priorizar palabras más específicas (como "shoes", "bags", etc.)
-          const prioritizedWords = categoryWords.filter(word => 
+          const prioritizedWords = categoryWords.filter(word =>
             word.length > 3 && !['womens', 'mens'].includes(word)
           );
-          
+
           // Si no hay palabras específicas, usar todas las palabras válidas
           const searchWords = prioritizedWords.length > 0 ? prioritizedWords : categoryWords;
 
@@ -74,26 +79,26 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
                 // Priorizar productos de la misma subcategoría
                 const keywordFiltered = keywordFound.filter(p => {
                   if (p.id === product.id) return false;
-                  
+
                   const pCategory = p.category?.toLowerCase() || '';
                   const productCategory = normalizedCategory || '';
-                  
+
                   // Buscar coincidencias más específicas primero
                   if (pCategory.includes(word) && pCategory !== productCategory) {
                     // Si ambos productos comparten palabras específicas pero no son exactamente iguales
                     const pCategoryWords = pCategory.split(/[\s-]+/);
                     const productCategoryWords = productCategory.split(/[\s-]+/);
-                    
+
                     // Contar palabras en común excluyendo términos genéricos
-                    const commonSpecificWords = pCategoryWords.filter(w => 
-                      productCategoryWords.includes(w) && 
-                      w.length > 3 && 
+                    const commonSpecificWords = pCategoryWords.filter(w =>
+                      productCategoryWords.includes(w) &&
+                      w.length > 3 &&
                       !['womens', 'mens', 'for', 'the', 'and'].includes(w)
                     );
-                    
+
                     return commonSpecificWords.length > 0;
                   }
-                  
+
                   // Como fallback, buscar en nombre también
                   return p.name?.toLowerCase().includes(word);
                 });
@@ -104,14 +109,14 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
                     const aCategory = a.category?.toLowerCase() || '';
                     const bCategory = b.category?.toLowerCase() || '';
                     const productWords = normalizedCategory.split(/[\s-]+/);
-                    
+
                     const aCommonWords = productWords.filter(w => aCategory.includes(w)).length;
                     const bCommonWords = productWords.filter(w => bCategory.includes(w)).length;
-                    
+
                     return bCommonWords - aCommonWords;
                   });
-                  
-                  similar = keywordFiltered[0]; 
+
+                  similar = keywordFiltered[0];
                   break;
                 }
               }
@@ -167,6 +172,31 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
 
     fetchComparison();
   }, [isOpen, product]);
+
+  const handleSaveComparison = async () => {
+    if (!comparisonName.trim()) {
+      alert('Por favor ingresa un nombre para la comparativa');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const productIds = products.map(p => p.id);
+      await addComparison(comparisonName, productIds, (msg, type) => {
+        if (type === 'success') {
+          setShowSaveModal(false);
+          setComparisonName("");
+          alert(msg);
+        } else {
+          alert(msg);
+        }
+      });
+    } catch (error) {
+      console.error('Error saving comparison:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   if (!isOpen || !product) return null;
 
@@ -394,6 +424,15 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
 
           {/* Footer opcional */}
           <div className="modal-footer border-0 pt-0">
+            <button
+              type="button"
+              className="btn btn-success"
+              onClick={() => setShowSaveModal(true)}
+              disabled={products.length < 2}
+            >
+              <i className="fas fa-save me-2"></i>
+              Guardar Comparativa
+            </button>
             <button type="button" className="btn btn-secondary" onClick={onClose}>
               <i className="fas fa-times me-2"></i>
               Cerrar
@@ -401,6 +440,78 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
           </div>
         </div>
       </div>
+
+      {/* Mini-modal para guardar comparativa */}
+      {showSaveModal && (
+        <div
+          className="modal fade show d-block"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
+        >
+          <div className="modal-dialog modal-dialog-centered modal-sm">
+            <div className={`modal-content ${modalTheme}`}>
+              <div className="modal-header border-0">
+                <h6 className="modal-title">
+                  <i className="fas fa-save me-2"></i>
+                  Guardar Comparativa
+                </h6>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => {
+                    setShowSaveModal(false);
+                    setComparisonName("");
+                  }}
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <label className="form-label small">Nombre de la comparativa:</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Ej: Comparativa de laptops"
+                  value={comparisonName}
+                  onChange={(e) => setComparisonName(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSaveComparison()}
+                  autoFocus
+                />
+              </div>
+              <div className="modal-footer border-0 pt-0">
+                <button
+                  type="button"
+                  className="btn btn-sm btn-success"
+                  onClick={handleSaveComparison}
+                  disabled={saving || !comparisonName.trim()}
+                >
+                  {saving ? (
+                    <>
+                      <span className="spinner-border spinner-border-sm me-2"></span>
+                      Guardando...
+                    </>
+                  ) : (
+                    <>
+                      <i className="fas fa-check me-2"></i>
+                      Guardar
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-secondary"
+                  onClick={() => {
+                    setShowSaveModal(false);
+                    setComparisonName("");
+                  }}
+                  disabled={saving}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

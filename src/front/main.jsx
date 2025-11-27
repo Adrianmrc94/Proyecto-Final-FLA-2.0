@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import ReactDOM from 'react-dom/client'
 import './index.css'  // Global styles for your application
+import './custom-bootstrap.css'  // Custom Bootstrap overrides
 import { RouterProvider } from "react-router-dom";  // Import RouterProvider to use the router
 import { router } from "./routes";  // Import the router configuration
 import { StoreProvider } from './context/StoreContext';  // Import the StoreProvider for global state management
@@ -40,7 +41,7 @@ function AppWithEffects() {
     useEffect(() => {
         if (products.length === 0 && !loadingProducts) {
             setLoadingProducts(true);
-            
+
             ApiService.fetchProducts()
                 .then((data) => {
                     setProducts(data);
