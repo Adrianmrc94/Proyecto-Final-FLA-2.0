@@ -5,7 +5,7 @@ const CatalogAccessSection = ({ totalProducts }) => {
     const navigate = useNavigate();
 
     return (
-        <div className="mb-5">
+        <div className="mb-5" style={{ position: 'relative', zIndex: 1 }}>
             <div className="card border-0 shadow-lg" style={{
                 background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
                 backdropFilter: 'blur(10px)'

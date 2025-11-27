@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useNavigate, Link } from 'react-router-dom';
 import logo from "../assets/img/logo.png";
 import ApiService from '../services/api';
@@ -55,7 +56,7 @@ const Register = () => {
                 password
             });
 
-            alert('Usuario registrado correctamente');
+            toast.success('Usuario registrado correctamente');
             navigate('/login');
         } catch (error) {
             setError(error.message || 'Error al registrar usuario');
@@ -64,8 +65,27 @@ const Register = () => {
 
     return (
         <div className="container mt-5 mb-5">
-            <div className="text-center mb-4">
-                <img src={logo} alt="Logo FLA" className="logo" style={{ width: '300px', height: '300px', objectFit: 'contain' }} />
+            <div className="text-center mb-4 position-relative">
+                <div
+                    className="logo-container-static d-inline-block p-3 rounded-4 shadow-lg"
+                    style={{
+                        background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)',
+                        backdropFilter: 'blur(10px)',
+                        border: '3px solid rgba(102, 126, 234, 0.4)',
+                        animation: 'fadeInScale 0.6s ease'
+                    }}
+                >
+                    <img
+                        src={logo}
+                        alt="Logo FLA"
+                        className="logo"
+                        style={{
+                            width: '350px',
+                            objectFit: 'contain',
+                            filter: 'drop-shadow(0 10px 25px rgba(102, 126, 234, 0.4))'
+                        }}
+                    />
+                </div>
             </div>
 
             <div className="row flex-grow-1">

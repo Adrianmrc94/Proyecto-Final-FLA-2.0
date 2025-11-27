@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import ApiService from '../services/api';
 
 const useProductFavorites = (product, isOpen, onFavoriteRemoved = null, showToast = null) => {
@@ -31,11 +32,7 @@ const useProductFavorites = (product, isOpen, onFavoriteRemoved = null, showToas
         // Verificar si el usuario está autenticado
         const token = localStorage.getItem('token');
         if (!token) {
-            if (showToast) {
-                showToast('Debes iniciar sesión para agregar productos a favoritos', 'warning');
-            } else {
-                alert('Debes iniciar sesión para agregar productos a favoritos');
-            }
+            toast.warning('Debes iniciar sesión para agregar productos a favoritos');
             return;
         }
 
@@ -46,10 +43,7 @@ const useProductFavorites = (product, isOpen, onFavoriteRemoved = null, showToas
                 // Quitar de favoritos
                 await ApiService.removeFavorite(favoriteId);
                 setIsFavorite(false);
-
-                if (showToast) {
-                    showToast('Producto eliminado de favoritos', 'success');
-                }
+                toast.info('Eliminado de favoritos');
 
                 // ✅ Notificar al padre cuando se elimina un favorito
                 if (onFavoriteRemoved) {
@@ -70,19 +64,12 @@ const useProductFavorites = (product, isOpen, onFavoriteRemoved = null, showToas
                 const response = await ApiService.addFavorite(favoriteData);
                 setIsFavorite(true);
                 setFavoriteId(response.favorite_id);
-
-                if (showToast) {
-                    showToast('Producto agregado a favoritos', 'success');
-                }
+                toast.success('Agregado a favoritos');
             }
         } catch (error) {
             console.error('Error toggling favorite:', error);
-            const errorMessage = error.message || 'Error al actualizar favoritos. Por favor, intenta de nuevo.';
-            if (showToast) {
-                showToast(errorMessage, 'error');
-            } else {
-                alert(errorMessage);
-            }
+            const errorMessage = error.message || 'Error al actualizar favoritos';
+            toast.error(errorMessage);
         } finally {
             setIsProcessing(false);
         }

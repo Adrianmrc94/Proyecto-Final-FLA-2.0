@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import PasswordResetForm from '../components/user/PasswordResetForm';
 import UserInfo from '../components/user/UserInfo';
@@ -21,7 +22,7 @@ const UserPage = () => {
         const fetchUserData = async () => {
             const token = localStorage.getItem('token');
             if (!token) { navigate('/login'); return; }
-            
+
             try {
                 const data = await ApiService.getUserProfile();
                 setUserData(data);
@@ -34,7 +35,7 @@ const UserPage = () => {
     }, [navigate]);
 
     const handlePasswordChangeSuccess = () => {
-        alert('Contraseña actualizada correctamente.');
+        toast.success('Contraseña actualizada correctamente');
     };
 
     const handleDeleteAccountAttempt = (e) => {
@@ -49,7 +50,7 @@ const UserPage = () => {
         setShowDeleteConfirmation(true);
     };
 
-        const handleDeleteAccountConfirmed = async () => {
+    const handleDeleteAccountConfirmed = async () => {
         setDeleteError('');
         setDeleteMessage('');
 
@@ -60,7 +61,7 @@ const UserPage = () => {
             setShowDeleteConfirmation(false);
             setDeletePassword('');
             setConfirmDeletePassword('');
-            alert('Tu cuenta ha sido eliminada correctamente.');
+            toast.success('Tu cuenta ha sido eliminada correctamente');
             localStorage.clear();
             navigate('/login');
         } catch (error) {

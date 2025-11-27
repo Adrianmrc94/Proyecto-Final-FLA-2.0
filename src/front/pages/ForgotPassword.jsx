@@ -25,8 +25,27 @@ const ForgotPassword = () => {
 
     return (
         <div className="container m-auto d-flex flex-column justify-content-between" style={{ minHeight: '100vh' }}>
-            <div className="mt-5 mb-1 text-center">
-                <img src={logo} alt="Logo FLA" className="logo" style={{ width: '300px', height: '300px', objectFit: 'contain' }} />
+            <div className="mt-5 mb-1 text-center position-relative">
+                <div
+                    className="logo-container-static d-inline-block p-3 rounded-4 shadow-lg"
+                    style={{
+                        background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%)',
+                        backdropFilter: 'blur(10px)',
+                        border: '3px solid rgba(102, 126, 234, 0.4)',
+                        animation: 'fadeInScale 0.6s ease'
+                    }}
+                >
+                    <img
+                        src={logo}
+                        alt="Logo FLA"
+                        className="logo"
+                        style={{
+                            width: '350px',
+                            objectFit: 'contain',
+                            filter: 'drop-shadow(0 10px 25px rgba(102, 126, 234, 0.4))'
+                        }}
+                    />
+                </div>
             </div>
 
             <div className="row flex-grow-1">

@@ -24,7 +24,7 @@ export const Layout = () => {
             {!hide && <Footer />}
             <ToastContainer
                 position="top-right"
-                autoClose={3000}
+                autoClose={2000}
                 hideProgressBar={false}
                 newestOnTop={true}
                 closeOnClick
@@ -33,6 +33,7 @@ export const Layout = () => {
                 draggable
                 pauseOnHover
                 theme="colored"
+                limit={3}
             />
         </ScrollToTop>
     );

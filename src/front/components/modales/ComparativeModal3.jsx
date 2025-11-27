@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import useDarkMode from "../../hooks/useDarkMode"; // Importamos el hook de modo oscuro
 import useComparativeFavorites from "../../hooks/useComparativeFavorites";
+import useGlobalProducts from "../../hooks/useGlobalProducts";
 import ApiService from "../../services/api";
 import { toast } from 'react-toastify';
 
 const ComparativeModal3 = ({ isOpen, onClose, product }) => {
   const { darkMode } = useDarkMode(); // Accedemos al estado del modo oscuro
   const { addComparison } = useComparativeFavorites();
+  const { products: allProducts } = useGlobalProducts(); // Productos globales
   const [favoriteIds, setFavoriteIds] = useState(new Set());
   const [products, setProducts] = useState([]);
   const [categoryProducts, setCategoryProducts] = useState([]); // Todos los productos de la categoría
@@ -41,7 +43,16 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
       if (isFavorite(productToToggle.id)) {
         // Buscar el favorite_id correcto
         const favorites = await ApiService.fetchFavorites();
-        const favoriteToRemove = favorites.find(fav => fav.product_id === productToToggle.id);
+        console.log('🔍 Buscando favorito para eliminar. Product ID:', productToToggle.id);
+        console.log('🔍 Favoritos obtenidos:', favorites);
+
+        // Buscar de manera más robusta (puede venir como product.id o product_id)
+        const favoriteToRemove = favorites.find(fav => {
+          const favProductId = fav.product?.id || fav.product_id;
+          return favProductId === productToToggle.id;
+        });
+
+        console.log('🔍 Favorito encontrado para eliminar:', favoriteToRemove);
 
         if (favoriteToRemove) {
           await ApiService.removeFavorite(favoriteToRemove.id);
@@ -50,6 +61,10 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
             newSet.delete(productToToggle.id);
             return newSet;
           });
+          toast.info('Eliminado de favoritos');
+        } else {
+          console.error('❌ No se encontró el favorito en la lista');
+          toast.error('No se pudo eliminar de favoritos');
         }
       } else {
         // Formato YYYY-MM-DD para el backend
@@ -64,9 +79,11 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
           date_ad: dateAd
         });
         setFavoriteIds(prev => new Set(prev).add(productToToggle.id));
+        toast.success('Agregado a favoritos');
       }
     } catch (error) {
       console.error('Error toggling favorite:', error);
+      toast.error('Error al actualizar favoritos');
     }
   };
 
@@ -79,43 +96,73 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
         const token = localStorage.getItem("token");
         const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
-
         let normalizedCategory = product.category;
         if (normalizedCategory) {
           normalizedCategory = normalizedCategory.replace(/-/g, " ").trim().toLowerCase();
         }
 
-        // Estrategia de múltiples búsquedas para encontrar productos similares
+        // Estrategia mejorada: Usar productos globales primero
         let similar = null;
+        let otherProductsInCategory = [];
 
-        // 1. Buscar por categoría exacta
-        const searchRes = await fetch(
-          `${BACKEND_URL}/api/search?query=&category=${encodeURIComponent(normalizedCategory)}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        // 1. Buscar en productos globales en memoria (más confiable)
+        if (allProducts && allProducts.length > 0) {
+          const productsInCategory = allProducts.filter(p => {
+            // Comparación más flexible de categorías
+            let pCat = (p.category || '').trim().toLowerCase();
+            let prodCat = (product.category || '').trim().toLowerCase();
 
-        if (searchRes.ok) {
-          const found = await searchRes.json();
+            // Normalizar guiones, espacios y underscores
+            pCat = pCat.replace(/[-_]/g, ' ');
+            prodCat = prodCat.replace(/[-_]/g, ' ');
 
-          const otherProductsInCategory = found.filter(p => {
-            if (p.id === product.id) {
-              return false;
-            }
-            let pNormalizedCategory = p.category;
-            if (pNormalizedCategory) {
-              pNormalizedCategory = pNormalizedCategory.replace(/-/g, " ").trim().toLowerCase();
-            }
-            return pNormalizedCategory === normalizedCategory;
+            return pCat === prodCat;
           });
 
-          console.log(`🔍 Productos encontrados en categoría "${normalizedCategory}":`, otherProductsInCategory.length);
+          otherProductsInCategory = productsInCategory.filter(p => p.id !== product.id);
+
+          console.log(`🔍 Categoría: "${product.category}"`);
+          console.log(`🔍 Total productos en categoría (memoria):`, productsInCategory.length);
+          console.log(`🔍 Productos disponibles para comparar:`, otherProductsInCategory.length);
 
           // Guardar todos los productos de la categoría para navegación
           setCategoryProducts(otherProductsInCategory);
           setCurrentComparisonIndex(0);
 
           if (otherProductsInCategory.length > 0) {
-            similar = otherProductsInCategory[0]; // Empezar con el primero
+            similar = otherProductsInCategory[0];
+          }
+        }
+
+        // 2. Si no se encontró en memoria, buscar por API (fallback)
+        if (!similar) {
+          const searchRes = await fetch(
+            `${BACKEND_URL}/api/search?query=&category=${encodeURIComponent(product.category)}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+
+          if (searchRes.ok) {
+            const found = await searchRes.json();
+
+            // Filtrar productos de la misma categoría
+            const productsInCategory = found.filter(p => {
+              let pCat = (p.category || '').trim().toLowerCase();
+              let prodCat = (product.category || '').trim().toLowerCase();
+              pCat = pCat.replace(/[-_]/g, ' ');
+              prodCat = prodCat.replace(/[-_]/g, ' ');
+              return pCat === prodCat;
+            });
+
+            otherProductsInCategory = productsInCategory.filter(p => p.id !== product.id);
+
+            console.log(`🔍 Productos encontrados vía API:`, otherProductsInCategory.length);
+
+            setCategoryProducts(otherProductsInCategory);
+            setCurrentComparisonIndex(0);
+
+            if (otherProductsInCategory.length > 0) {
+              similar = otherProductsInCategory[0];
+            }
           }
         }
 
@@ -242,7 +289,7 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
     };
 
     fetchComparison();
-  }, [isOpen, product]);
+  }, [isOpen, product, allProducts]);
 
   // Navegar al siguiente producto de la categoría
   const handleNextProduct = async () => {

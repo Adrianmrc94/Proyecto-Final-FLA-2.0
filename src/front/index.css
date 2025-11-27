@@ -250,20 +250,37 @@ body.dark-mode {
 }
 
 .navbar {
-    background: rgba(255, 255, 255, 0.95);
-    color: #1e293b;
-    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
 }
 
-/* Estilos para tarjetas en modo oscuro */
+/* Estilos para navbar en modo oscuro */
 .dark-mode .navbar {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
-    color: #f1f5f9;
-    border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
-    box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Links del navbar */
+.navbar .nav-link,
+.navbar .navbar-brand,
+.navbar-nav .dropdown-toggle {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.navbar .nav-link:hover,
+.navbar-nav .dropdown-toggle:hover {
+    color: #fff !important;
+}
+
+/* Form check label en navbar */
+.navbar .form-check-label {
+    color: rgba(255, 255, 255, 0.9);
 }
 
 /* Transición suave entre modos */
@@ -425,3 +442,86 @@ img[src*="fakestoreapi"] {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 }
+
+/* Logo Animation */
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Logo container sin hover */
+.logo-container-static {
+    transition: none;
+}
+
+/* SearchBar Dropdown - Always on top */
+.search-dropdown {
+    z-index: 10000 !important;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.search-dropdown .list-group-item {
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease;
+}
+
+.search-dropdown .list-group-item:hover,
+.search-dropdown .list-group-item.active {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+    color: white;
+}
+
+.search-dropdown .list-group-item:last-child {
+    border-bottom: none;
+    border-radius: 0 0 8px 8px;
+}
+
+.search-dropdown .list-group-item:first-child {
+    border-radius: 8px 8px 0 0;
+}
+
+/* Navbar search container */
+.navbar .position-relative {
+    z-index: 1001 !important;
+}
+
+form.position-relative {
+    position: relative !important;
+    z-index: 1001 !important;
+}
+
+/* Toast Notifications Custom Styles */
+.Toastify__toast {
+    border-radius: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.Toastify__toast-theme--colored.Toastify__toast--success {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.Toastify__toast-theme--colored.Toastify__toast--info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.Toastify__toast-theme--colored.Toastify__toast--warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.Toastify__toast-theme--colored.Toastify__toast--error {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.Toastify__progress-bar {
+    height: 4px;
+}
+

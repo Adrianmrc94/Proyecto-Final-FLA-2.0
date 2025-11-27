@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import useDarkMode from '../../hooks/useDarkMode';
 import ApiService from '../../services/api';
 
@@ -44,7 +45,7 @@ const FavoriteComparisonCard = ({ comparison, onDelete, onUpdate }) => {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                alert('Debes iniciar sesión');
+                toast.warning('Debes iniciar sesión');
                 return;
             }
 
@@ -59,6 +60,7 @@ const FavoriteComparisonCard = ({ comparison, onDelete, onUpdate }) => {
                         newSet.delete(product.id);
                         return newSet;
                     });
+                    toast.info('Eliminado de favoritos');
                 }
             } else {
                 // Agregar a favoritos
@@ -69,10 +71,11 @@ const FavoriteComparisonCard = ({ comparison, onDelete, onUpdate }) => {
                 };
                 await ApiService.addFavorite(favoriteData);
                 setFavoriteIds(prev => new Set([...prev, product.id]));
+                toast.success('Agregado a favoritos');
             }
         } catch (error) {
             console.error('Error toggling favorite:', error);
-            alert('Error al actualizar favoritos');
+            toast.error('Error al actualizar favoritos');
         }
     };
 

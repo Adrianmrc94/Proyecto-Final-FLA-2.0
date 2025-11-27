@@ -93,7 +93,7 @@ const CatalogPage = () => {
                         newSet.delete(product.id);
                         return newSet;
                     });
-                    toast.info('Eliminado de favoritos', { autoClose: 2000 });
+                    toast.info('Eliminado de favoritos');
                 }
             } else {
                 // Formato YYYY-MM-DD para el backend
@@ -108,10 +108,10 @@ const CatalogPage = () => {
                     date_ad: dateAd
                 });
                 setFavoriteIds(prev => new Set(prev).add(product.id));
-                toast.success('Agregado a favoritos', { autoClose: 2000 });
+                toast.success('Agregado a favoritos');
             }
         } catch (error) {
-            toast.error('Error al actualizar favoritos', { autoClose: 2000 });
+            toast.error('Error al actualizar favoritos');
         }
     };
 

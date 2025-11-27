@@ -14,28 +14,46 @@
 /* Filters Bar */
 .filters-bar {
     backdrop-filter: blur(10px);
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
 }
 
 .catalog-page.dark-mode .filters-bar {
-    background: rgba(30, 30, 30, 0.95);
+    background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.filters-bar .form-control,
+.filters-bar .form-select {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .catalog-page.dark-mode .filters-bar .form-control,
 .catalog-page.dark-mode .filters-bar .form-select {
-    background: rgba(50, 50, 50, 0.8);
+    background: rgba(255, 255, 255, 0.05);
     color: #fff;
     border-color: rgba(255, 255, 255, 0.2);
+}
+
+.filters-bar .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.5);
 }
 
 .catalog-page.dark-mode .filters-bar .form-control::placeholder {
     color: rgba(255, 255, 255, 0.5);
 }
 
+.filters-bar .input-group-text {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
 .catalog-page.dark-mode .filters-bar .input-group-text {
-    background: rgba(50, 50, 50, 0.8);
+    background: rgba(255, 255, 255, 0.05);
     color: #fff;
     border-color: rgba(255, 255, 255, 0.2);
 }
@@ -57,15 +75,21 @@
     position: relative;
     transition: all 0.3s ease;
     overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
 }
 
 .product-catalog-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2) !important;
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4) !important;
+    border-color: rgba(102, 126, 234, 0.5);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .catalog-page.dark-mode .product-catalog-card {
-    background: rgba(30, 30, 30, 0.95);
+    background: rgba(255, 255, 255, 0.05);
     color: #fff;
 }
 
@@ -113,13 +137,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f8f9fa;
+    background: rgba(255, 255, 255, 0.03);
     overflow: hidden;
     padding: 1rem;
 }
 
 .catalog-page.dark-mode .product-image-wrapper {
-    background: rgba(40, 40, 40, 0.5);
+    background: rgba(255, 255, 255, 0.03);
 }
 
 .product-image-wrapper img {

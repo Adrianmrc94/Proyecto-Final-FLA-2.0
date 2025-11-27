@@ -2,27 +2,60 @@ import React from "react";
 
 // Mapa de iconos para categorías
 const categoryIcons = {
-    'electronics': 'bi-laptop',
+    'electronics': 'bi-lightning-charge-fill',
     'jewelery': 'bi-gem',
-    'men\'s clothing': 'bi-person',
+    'jewelry': 'bi-gem',
+    'men\'s clothing': 'bi-person-fill',
     'women\'s clothing': 'bi-person-dress',
-    'beauty': 'bi-palette',
-    'home-decoration': 'bi-house',
-    'groceries': 'bi-basket',
-    'furniture': 'bi-house-door',
-    'fragrances': 'bi-spray-can',
-    'skincare': 'bi-droplet',
-    'laptops': 'bi-laptop',
-    'smartphones': 'bi-phone',
-    'automotive': 'bi-car-front',
+    'mens shirts': 'bi-person-square',
+    'womens bags': 'bi-bag-fill',
+    'womens dresses': 'bi-award-fill',
+    'womens jewellery': 'bi-gem',
+    'womens shoes': 'bi-balloon-heart-fill',
+    'womens watches': 'bi-smartwatch',
+    'mens shoes': 'bi-snow3',
+    'mens watches': 'bi-watch',
+    'beauty': 'bi-palette2',
+    'home-decoration': 'bi-house-heart-fill',
+    'groceries': 'bi-basket3-fill',
+    'furniture': 'bi-house-door-fill',
+    'fragrances': 'bi-flower1',
+    'skincare': 'bi-droplet-fill',
+    'skin care': 'bi-droplet-fill',
+    'laptops': 'bi-laptop-fill',
+    'smartphones': 'bi-phone-fill',
+    'automotive': 'bi-car-front-fill',
     'motorcycle': 'bi-bicycle',
-    'lighting': 'bi-lightbulb'
+    'lighting': 'bi-lightbulb-fill',
+    'sunglasses': 'bi-sun-fill',
+    'sports accessories': 'bi-trophy-fill',
+    'kitchen accessories': 'bi-cup-hot-fill',
+    'tops': 'bi-person-badge',
+    'mobile accessories': 'bi-headphones',
+    'tablets': 'bi-tablet-fill',
+    'vehicle': 'bi-truck-front-fill'
 };
 
 // Función para obtener icono de categoría
 const getCategoryIcon = (category) => {
-    const normalizedCategory = category.toLowerCase().replace(/[^a-z\s-]/g, '');
-    return categoryIcons[normalizedCategory] || 'bi-tag';
+    const normalizedCategory = category.toLowerCase()
+        .trim()
+        .replace(/[^a-z\s'-]/g, '')
+        .replace(/\s+/g, ' ');
+
+    // Buscar coincidencia exacta primero
+    if (categoryIcons[normalizedCategory]) {
+        return categoryIcons[normalizedCategory];
+    }
+
+    // Buscar coincidencia parcial
+    for (const [key, icon] of Object.entries(categoryIcons)) {
+        if (normalizedCategory.includes(key) || key.includes(normalizedCategory)) {
+            return icon;
+        }
+    }
+
+    return 'bi-tag-fill';
 };
 
 export default function CategoryList({

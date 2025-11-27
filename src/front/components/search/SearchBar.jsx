@@ -1,4 +1,5 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import useGlobalProducts from "../../hooks/useGlobalProducts";
 
@@ -7,8 +8,22 @@ export default function SearchBar() {
   const [query, setQuery] = useState("");
   const [activeIdx, setActiveIdx] = useState(-1);
   const [results, setResults] = useState([]);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const navigate = useNavigate();
   const inputRef = useRef(null);
+  const formRef = useRef(null);
+
+  // Actualiza la posición del dropdown cuando hay resultados
+  useEffect(() => {
+    if (results.length > 0 && formRef.current) {
+      const rect = formRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width
+      });
+    }
+  }, [results]);
 
   // Maneja los cambios en el input de búsqueda
   const handleChange = (e) => {
@@ -148,33 +163,44 @@ export default function SearchBar() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="position-relative w-100">
-      <div className="d-flex">
-        <input
-          ref={inputRef}
-          type="search"
-          value={query}
-          placeholder="Buscar productos..."
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          onBlur={handleBlur}
-          className="form-control border-end-0"
-          aria-label="Buscar productos"
-          autoComplete="off"
-        />
-        <button
-          className="btn btn-outline-secondary border-start-0"
-          type="submit"
-          aria-label="Buscar"
-        >
-          <i className="bi bi-search"></i>
-        </button>
-      </div>
+    <>
+      <form ref={formRef} onSubmit={handleSubmit} className="position-relative w-100">
+        <div className="d-flex">
+          <input
+            ref={inputRef}
+            type="search"
+            value={query}
+            placeholder="Buscar productos..."
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            onBlur={handleBlur}
+            className="form-control border-end-0"
+            aria-label="Buscar productos"
+            autoComplete="off"
+          />
+          <button
+            className="btn btn-outline-secondary border-start-0"
+            type="submit"
+            aria-label="Buscar"
+          >
+            <i className="bi bi-search"></i>
+          </button>
+        </div>
+      </form>
 
-      {results.length > 0 && (
+      {results.length > 0 && createPortal(
         <ul
-          className="list-group position-absolute w-100 mt-1 shadow-lg"
-          style={{ zIndex: 1050, maxHeight: '300px', overflowY: 'auto' }}
+          className="list-group shadow-lg search-dropdown"
+          style={{
+            position: 'absolute',
+            top: `${dropdownPosition.top}px`,
+            left: `${dropdownPosition.left}px`,
+            width: `${dropdownPosition.width}px`,
+            zIndex: 10000,
+            maxHeight: '400px',
+            overflowY: 'auto',
+            maxWidth: '600px'
+          }}
         >
           {results.map((result, i) => (
             <li
@@ -198,8 +224,9 @@ export default function SearchBar() {
               )}
             </li>
           ))}
-        </ul>
+        </ul>,
+        document.body
       )}
-    </form>
+    </>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import logo from "../assets/img/logo.png";
 import useDarkMode from "../hooks/useDarkMode";
 import useGlobalReducer from "../context/useGlobalReducer";  // ✅ Agregar import
@@ -7,10 +7,14 @@ import SearchBar from "./search/SearchBar";
 
 export const Navbar = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { darkMode, toggleDarkMode } = useDarkMode();
   const { store, dispatch } = useGlobalReducer();  // ✅ Usar el hook
   const isAuthenticated = store.isAuthenticated;
   const user = store.user;
+
+  // Ocultar SearchBar en la página de búsqueda y en el catálogo
+  const showSearchBar = location.pathname !== '/search' && location.pathname !== '/catalog';
 
   const handleLogout = useCallback(() => {
     dispatch({ type: "LOGOUT" });
@@ -27,8 +31,8 @@ export const Navbar = () => {
             className="navbar-logo"
             style={{
               width: "auto",
-              height: "45px",
-              maxHeight: "45px",
+              height: "60px",
+              maxHeight: "60px",
               objectFit: "contain"
             }}
           />
@@ -39,9 +43,11 @@ export const Navbar = () => {
         </button>
 
         <div className="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
-          <div className="d-flex w-50 justify-content-center">
-            <SearchBar />
-          </div>
+          {showSearchBar && (
+            <div className="d-flex w-50 justify-content-center">
+              <SearchBar />
+            </div>
+          )}
 
           <div className="form-check form-switch">
             <input
