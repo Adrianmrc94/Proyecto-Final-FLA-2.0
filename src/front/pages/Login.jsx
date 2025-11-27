@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import logo from '../assets/img/logo.png';
-import ApiService from '../services/api'; 
+import ApiService from '../services/api';
 import useGlobalReducer from '../context/useGlobalReducer';
 
 const Login = () => {
@@ -23,7 +23,7 @@ const Login = () => {
 
         try {
             const data = await ApiService.login(formData.email, formData.password);
-            
+
             if (data.token && data.user) {
                 dispatch({
                     type: 'LOGIN_SUCCESS',
@@ -32,7 +32,7 @@ const Login = () => {
                         token: data.token
                     }
                 });
-                
+
                 navigate('/home');
             } else {
                 setError('Respuesta inválida del servidor');
@@ -82,8 +82,8 @@ const Login = () => {
                                 />
                             </div>
                             {error && <div className="alert alert-danger">{error}</div>}
-                            <button 
-                                type="submit" 
+                            <button
+                                type="submit"
                                 className="btn btn-success w-100"
                                 disabled={isLoading}
                             >
@@ -111,15 +111,42 @@ const Login = () => {
                 </div>
 
                 <div className="col-12 col-md-6 d-flex align-items-center mt-4 mt-md-0">
-                    <div className="bg-success roundedp-4 shadow-lg w-100">
-                        <h4 className="mb-3">¿Qué es FLA?</h4>
-                        <p><strong>FLA (Find Lowest App)</strong> es una plataforma que te permite comparar precios de productos entre diferentes supermercados usando tu código postal.</p>
-                        <ul>
-                            <li>Compara precios fácilmente</li>
-                            <li>Filtra por categoría o tienda</li>
-                            <li>Guarda tus productos favoritos</li>
-                        </ul>
-                        <p>¡Optimiza tus compras y ahorra dinero cada mes!</p>
+                    <div className="card shadow-lg w-100 border-0" style={{
+                        background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+                        backdropFilter: 'blur(10px)'
+                    }}>
+                        <div className="card-body p-4">
+                            <h4 className="mb-3 text-primary">
+                                <i className="bi bi-info-circle-fill me-2"></i>
+                                ¿Qué es FLA?
+                            </h4>
+                            <p className="lead mb-3">
+                                <strong>FLA (Find Lowest App)</strong> es una plataforma que te permite comparar precios de productos entre diferentes supermercados usando tu código postal.
+                            </p>
+                            <div className="d-flex flex-column gap-3">
+                                <div className="d-flex align-items-center">
+                                    <div className="bg-primary text-white rounded-circle p-2 me-3" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <i className="bi bi-bar-chart-fill"></i>
+                                    </div>
+                                    <span>Compara precios fácilmente</span>
+                                </div>
+                                <div className="d-flex align-items-center">
+                                    <div className="bg-primary text-white rounded-circle p-2 me-3" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <i className="bi bi-funnel-fill"></i>
+                                    </div>
+                                    <span>Filtra por categoría o tienda</span>
+                                </div>
+                                <div className="d-flex align-items-center">
+                                    <div className="bg-primary text-white rounded-circle p-2 me-3" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <i className="bi bi-heart-fill"></i>
+                                    </div>
+                                    <span>Guarda tus productos favoritos</span>
+                                </div>
+                            </div>
+                            <p className="mt-4 mb-0 text-center">
+                                <strong className="text-primary">¡Optimiza tus compras y ahorra dinero cada mes!</strong>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

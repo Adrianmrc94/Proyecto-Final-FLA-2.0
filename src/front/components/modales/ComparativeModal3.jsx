@@ -1,15 +1,59 @@
 import React, { useEffect, useState } from "react";
 import useDarkMode from "../../hooks/useDarkMode"; // Importamos el hook de modo oscuro
 import useComparativeFavorites from "../../hooks/useComparativeFavorites";
+import ApiService from "../../services/api";
+import { toast } from 'react-toastify';
 
 const ComparativeModal3 = ({ isOpen, onClose, product }) => {
   const { darkMode } = useDarkMode(); // Accedemos al estado del modo oscuro
   const { addComparison } = useComparativeFavorites();
+  const [favoriteIds, setFavoriteIds] = useState(new Set());
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [comparisonName, setComparisonName] = useState("");
   const [saving, setSaving] = useState(false);
+
+  // Cargar favoritos al abrir el modal
+  useEffect(() => {
+    const loadFavorites = async () => {
+      try {
+        const favorites = await ApiService.fetchFavorites();
+        setFavoriteIds(new Set(favorites.map(fav => fav.product.id)));
+      } catch (error) {
+        console.error('Error loading favorites:', error);
+      }
+    };
+
+    if (isOpen) {
+      loadFavorites();
+    }
+  }, [isOpen]);
+
+  // Función para verificar si un producto es favorito
+  const isFavorite = (productId) => favoriteIds.has(productId);
+
+  // Función para agregar/quitar favoritos
+  const handleToggleFavorite = async (productToToggle) => {
+    try {
+      if (isFavorite(productToToggle.id)) {
+        await ApiService.removeFavorite(productToToggle.id);
+        setFavoriteIds(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(productToToggle.id);
+          return newSet;
+        });
+      } else {
+        await ApiService.addFavorite({
+          product_id: productToToggle.id,
+          store_id: productToToggle.store_id || 1 // Usar store_id del producto o 1 por defecto
+        });
+        setFavoriteIds(prev => new Set(prev).add(productToToggle.id));
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+    }
+  };
 
   useEffect(() => {
     if (!isOpen || !product) return;
@@ -175,7 +219,10 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
 
   const handleSaveComparison = async () => {
     if (!comparisonName.trim()) {
-      alert('Por favor ingresa un nombre para la comparativa');
+      toast.warning('Por favor ingresa un nombre para la comparativa', {
+        position: "top-right",
+        autoClose: 3000,
+      });
       return;
     }
 
@@ -186,13 +233,27 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
         if (type === 'success') {
           setShowSaveModal(false);
           setComparisonName("");
-          alert(msg);
+          toast.success('🎉 ' + msg, {
+            position: "top-right",
+            autoClose: 4000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
         } else {
-          alert(msg);
+          toast.error(msg, {
+            position: "top-right",
+            autoClose: 4000,
+          });
         }
       });
     } catch (error) {
       console.error('Error saving comparison:', error);
+      toast.error('Error al guardar la comparativa', {
+        position: "top-right",
+        autoClose: 3000,
+      });
     } finally {
       setSaving(false);
     }
@@ -272,14 +333,24 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
             {/* Sección de productos con imágenes y nombres */}
             <div className="row mb-4">
               <div className="col-md-5">
-                <div className={`card ${cardTheme} shadow-sm h-100`}>
+                <div className={`card ${cardTheme} shadow-sm h-100 position-relative`}>
+                  {/* Botón de favoritos */}
+                  <button
+                    className={`btn btn-sm position-absolute top-0 end-0 m-2 ${isFavorite(p1.id) ? 'btn-danger' : 'btn-outline-danger'
+                      }`}
+                    onClick={() => handleToggleFavorite(p1)}
+                    style={{ zIndex: 10 }}
+                    title={isFavorite(p1.id) ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+                  >
+                    <i className={`bi ${isFavorite(p1.id) ? 'bi-heart-fill' : 'bi-heart'}`}></i>
+                  </button>
                   <div className="card-body text-center">
                     <div className="mb-3">
                       <img
                         src={p1.image || p1.img || "https://via.placeholder.com/200x200?text=No+Image"}
                         alt={p1.name}
                         className="img-fluid rounded shadow-sm"
-                        style={{ width: "200px", height: "200px", objectFit: "cover" }}
+                        style={{ width: "200px", height: "200px", objectFit: "contain", padding: "10px" }}
                       />
                     </div>
                     <h6 className="card-title fw-bold text-primary mb-2">{p1.name}</h6>
@@ -299,14 +370,24 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
               </div>
 
               <div className="col-md-5">
-                <div className={`card ${cardTheme} shadow-sm h-100`}>
+                <div className={`card ${cardTheme} shadow-sm h-100 position-relative`}>
+                  {/* Botón de favoritos */}
+                  <button
+                    className={`btn btn-sm position-absolute top-0 end-0 m-2 ${isFavorite(p2.id) ? 'btn-danger' : 'btn-outline-danger'
+                      }`}
+                    onClick={() => handleToggleFavorite(p2)}
+                    style={{ zIndex: 10 }}
+                    title={isFavorite(p2.id) ? 'Quitar de favoritos' : 'Agregar a favoritos'}
+                  >
+                    <i className={`bi ${isFavorite(p2.id) ? 'bi-heart-fill' : 'bi-heart'}`}></i>
+                  </button>
                   <div className="card-body text-center">
                     <div className="mb-3">
                       <img
                         src={p2.image || p2.img || "https://via.placeholder.com/200x200?text=No+Image"}
                         alt={p2.name}
                         className="img-fluid rounded shadow-sm"
-                        style={{ width: "200px", height: "200px", objectFit: "cover" }}
+                        style={{ width: "200px", height: "200px", objectFit: "contain", padding: "10px" }}
                       />
                     </div>
                     <h6 className="card-title fw-bold text-primary mb-2">{p2.name}</h6>

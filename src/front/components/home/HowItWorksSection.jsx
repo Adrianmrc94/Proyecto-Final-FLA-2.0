@@ -1,52 +1,99 @@
 import React from "react";
+import '../../styles/HowItWorksSection.css';
 
 export default function HowItWorksSection({ onTryMeClick, disabled }) {
     return (
-        <div className="my-5 py-5">
-            {/* Header minimalista con más espacio */}
+        <div className="how-it-works-section my-5 py-5">
+            {/* Header con gradiente y animación */}
             <div className="text-center mb-5 pb-4">
-                <h2 className="fw-light display-5">Así de simple</h2>
-                <div className="mx-auto mt-3" style={{ width: '60px', height: '2px', backgroundColor: '#dee2e6' }}></div>
+                <h2 className="fw-bold display-4 gradient-text mb-3">¿Cómo Funciona?</h2>
+                <p className="lead text-muted">Encuentra las mejores ofertas en 3 simples pasos</p>
             </div>
 
-            {/* Steps en línea horizontal más espaciados */}
-            <div className="d-flex align-items-center justify-content-center mb-5 pb-4 flex-wrap" style={{ minHeight: '120px' }}>
-                <div className="text-center mx-5 mb-3">
-                    <div className="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary text-white mb-3" style={{ width: '60px', height: '60px' }}>
-                        <span className="fw-bold fs-5">1</span>
+            {/* Steps con cards animadas */}
+            <div className="row g-4 mb-5 px-3 px-md-5">
+                <div className="col-12 col-md-4">
+                    <div className="step-card card border-0 shadow-lg h-100 hover-lift">
+                        <div className="card-body text-center p-4">
+                            <div className="step-icon-wrapper mb-4">
+                                <div className="step-number-circle bg-gradient-primary">
+                                    <span className="fw-bold">1</span>
+                                </div>
+                                <i className="bi bi-search step-icon text-primary"></i>
+                            </div>
+                            <h4 className="fw-bold mb-3">Busca</h4>
+                            <p className="text-muted mb-0">
+                                Explora miles de productos de diferentes tiendas en un solo lugar
+                            </p>
+                        </div>
+                        <div className="card-footer border-0 bg-transparent">
+                            <div className="progress" style={{ height: '4px' }}>
+                                <div className="progress-bar bg-primary" style={{ width: '100%' }}></div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="small text-muted fw-medium">Busca</div>
                 </div>
-                
-                <div className="text-muted mx-4 d-none d-md-block" style={{ fontSize: '1.5rem' }}>→</div>
-                
-                <div className="text-center mx-5 mb-3">
-                    <div className="d-inline-flex align-items-center justify-content-center rounded-circle bg-success text-white mb-3" style={{ width: '60px', height: '60px' }}>
-                        <span className="fw-bold fs-5">2</span>
+
+                <div className="col-12 col-md-4">
+                    <div className="step-card card border-0 shadow-lg h-100 hover-lift">
+                        <div className="card-body text-center p-4">
+                            <div className="step-icon-wrapper mb-4">
+                                <div className="step-number-circle bg-gradient-success">
+                                    <span className="fw-bold">2</span>
+                                </div>
+                                <i className="bi bi-arrow-left-right step-icon text-success"></i>
+                            </div>
+                            <h4 className="fw-bold mb-3">Compara</h4>
+                            <p className="text-muted mb-0">
+                                Analiza precios, características y opiniones lado a lado
+                            </p>
+                        </div>
+                        <div className="card-footer border-0 bg-transparent">
+                            <div className="progress" style={{ height: '4px' }}>
+                                <div className="progress-bar bg-success" style={{ width: '100%' }}></div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="small text-muted fw-medium">Compara</div>
                 </div>
-                
-                <div className="text-muted mx-4 d-none d-md-block" style={{ fontSize: '1.5rem' }}>→</div>
-                
-                <div className="text-center mx-5 mb-3">
-                    <div className="d-inline-flex align-items-center justify-content-center rounded-circle bg-warning text-white mb-3" style={{ width: '60px', height: '60px' }}>
-                        <span className="fw-bold fs-5">3</span>
+
+                <div className="col-12 col-md-4">
+                    <div className="step-card card border-0 shadow-lg h-100 hover-lift">
+                        <div className="card-body text-center p-4">
+                            <div className="step-icon-wrapper mb-4">
+                                <div className="step-number-circle bg-gradient-warning">
+                                    <span className="fw-bold">3</span>
+                                </div>
+                                <i className="bi bi-piggy-bank step-icon text-warning"></i>
+                            </div>
+                            <h4 className="fw-bold mb-3">Ahorra</h4>
+                            <p className="text-muted mb-0">
+                                Compra inteligente y ahorra hasta un 40% en tus productos favoritos
+                            </p>
+                        </div>
+                        <div className="card-footer border-0 bg-transparent">
+                            <div className="progress" style={{ height: '4px' }}>
+                                <div className="progress-bar bg-warning" style={{ width: '100%' }}></div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="small text-muted fw-medium">Ahorra</div>
                 </div>
             </div>
 
-            {/* CTA minimalista con más espacio */}
+            {/* CTA con efecto shimmer */}
             <div className="text-center pt-4">
                 <button
-                    className="btn btn-outline-primary btn-lg px-5 py-3"
+                    className="btn btn-primary btn-lg px-5 py-3 shadow-lg cta-button"
                     onClick={onTryMeClick}
                     disabled={disabled}
-                    style={{ minWidth: '200px' }}
                 >
-                    Prueba ahora
+                    <i className="bi bi-rocket-takeoff me-2"></i>
+                    Comienza Ahora
+                    <i className="bi bi-arrow-right ms-2"></i>
                 </button>
+                <p className="text-muted mt-3 small">
+                    <i className="bi bi-shield-check me-1"></i>
+                    100% gratis, sin tarjeta de crédito
+                </p>
             </div>
         </div>
     );

@@ -64,17 +64,42 @@ const ForgotPassword = () => {
                 </div>
 
                 <div className="col-12 col-md-6 d-flex align-items-center mt-4 mt-md-0">
-                    <div className="bg-success rounded p-4 shadow-lg w-100">
-                        <h4 className="mb-3">¿Cómo funciona?</h4>
-                        <p>Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.</p>
-                        <ul>
-                            <li>Recibe un enlace seguro por email</li>
-                            <li>Crea una nueva contraseña</li>
-                            <li>Vuelve a iniciar sesión fácilmente</li>
-                        </ul>
-                        <p className="text-muted">
-                            Asegúrate de revisar tu bandeja de entrada y también la carpeta de spam.
-                        </p>
+                    <div className="card shadow-lg w-100 border-0" style={{
+                        background: 'linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%)',
+                        backdropFilter: 'blur(10px)'
+                    }}>
+                        <div className="card-body p-4">
+                            <h4 className="mb-3 text-primary">
+                                <i className="bi bi-question-circle-fill me-2"></i>
+                                ¿Cómo funciona?
+                            </h4>
+                            <p className="lead mb-3">
+                                Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña.
+                            </p>
+                            <div className="d-flex flex-column gap-3">
+                                <div className="d-flex align-items-center">
+                                    <div className="bg-primary text-white rounded-circle p-2 me-3" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <i className="bi bi-envelope-fill"></i>
+                                    </div>
+                                    <span>Recibe un enlace seguro por email</span>
+                                </div>
+                                <div className="d-flex align-items-center">
+                                    <div className="bg-primary text-white rounded-circle p-2 me-3" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <i className="bi bi-key-fill"></i>
+                                    </div>
+                                    <span>Crea una nueva contraseña</span>
+                                </div>
+                                <div className="d-flex align-items-center">
+                                    <div className="bg-primary text-white rounded-circle p-2 me-3" style={{ width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <i className="bi bi-box-arrow-in-right"></i>
+                                    </div>
+                                    <span>Vuelve a iniciar sesión fácilmente</span>
+                                </div>
+                            </div>
+                            <p className="mt-4 mb-0 text-center text-muted">
+                                <small>Asegúrate de revisar tu bandeja de entrada y también la carpeta de spam.</small>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>

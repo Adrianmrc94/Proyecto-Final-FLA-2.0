@@ -66,12 +66,10 @@ export default function SearchBar() {
     setActiveIdx(-1);
 
     if (result.type === "product") {
-      // Navegar a búsqueda y pasar el producto específico para abrir su modal
+      // Navegar a búsqueda y aplicar filtro de categoría del producto
       navigate("/search", {
         state: {
-          searchQuery: result.name,
-          openProductModal: true,
-          selectedProduct: result.product
+          applyCategoryFilter: result.category
         }
       });
     } else if (result.type === "category") {

@@ -12,18 +12,12 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const Main = () => {
     if (!import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_BACKEND_URL === "")
-        return (
-            <React.StrictMode>
-                <BackendURL />
-            </React.StrictMode>
-        );
+        return <BackendURL />;
 
     return (
-        <React.StrictMode>
-            <StoreProvider>
-                <AppWithEffects />
-            </StoreProvider>
-        </React.StrictMode>
+        <StoreProvider>
+            <AppWithEffects />
+        </StoreProvider>
     );
 }
 
@@ -70,4 +64,8 @@ function AppWithEffects() {
     return <RouterProvider router={router} />;
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<Main />);
+const rootElement = document.getElementById('root');
+if (!rootElement._reactRoot) {
+    rootElement._reactRoot = ReactDOM.createRoot(rootElement);
+}
+rootElement._reactRoot.render(<Main />);
