@@ -2,13 +2,14 @@ import React from "react";
 import FeaturedProducts from "../home/FeaturedProducts";
 import usePagination from "../../hooks/usePagination";
 
-export default function ProductResults({ filteredProducts, handleProductClick }) {
-    const itemsPerPage = 9;
+export default function ProductResults({ filteredProducts, handleProductClick, initialPage = 1 }) {
+    const itemsPerPage = 12; // Mismo que CatalogPage
 
     const { currentPage, totalPages, currentItems, goToNextPage, goToPrevPage, goToPage } =
         usePagination({
             items: filteredProducts,
             itemsPerPage,
+            initialPage: initialPage - 1 // usePagination usa índice 0
         });
 
     return (

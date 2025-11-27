@@ -46,6 +46,7 @@ export default function SearchPage() {
     const [showComparativeModal, setShowComparativeModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [hasProcessedState, setHasProcessedState] = useState(false);
+    const [initialPage, setInitialPage] = useState(1);
 
 
     // Procesar navegación desde navbar
@@ -56,7 +57,8 @@ export default function SearchPage() {
                 applyCategoryFilter,
                 openProductModal,
                 selectedProduct: navProduct,
-                selectedProductForComparison
+                selectedProductForComparison,
+                initialPage: navInitialPage
             } = location.state;
 
 
@@ -65,6 +67,11 @@ export default function SearchPage() {
                 setSearchQuery("");
             } else if (navQuery) {
                 setSearchQuery(navQuery);
+            }
+
+            // Establecer página inicial si viene de SearchBar
+            if (navInitialPage) {
+                setInitialPage(navInitialPage);
             }
 
 
@@ -160,6 +167,7 @@ export default function SearchPage() {
                     <ProductResults
                         filteredProducts={filteredProducts}
                         handleProductClick={handleProductClick}
+                        initialPage={initialPage}
                     />
                 </div>
             </div>

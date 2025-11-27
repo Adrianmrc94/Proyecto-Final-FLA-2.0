@@ -108,6 +108,8 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
             return pNormalizedCategory === normalizedCategory;
           });
 
+          console.log(`🔍 Productos encontrados en categoría "${normalizedCategory}":`, otherProductsInCategory.length);
+
           // Guardar todos los productos de la categoría para navegación
           setCategoryProducts(otherProductsInCategory);
           setCurrentComparisonIndex(0);
@@ -221,7 +223,13 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
         });
         if (compareRes.ok) {
           const data = await compareRes.json();
-          setProducts(data);
+          // Asegurar que el producto seleccionado esté primero
+          const orderedData = data.sort((a, b) => {
+            if (a.id === product.id) return -1;
+            if (b.id === product.id) return 1;
+            return 0;
+          });
+          setProducts(orderedData);
         } else {
           setProducts([product, similar]);
         }
@@ -261,7 +269,13 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
 
       if (compareRes.ok) {
         const data = await compareRes.json();
-        setProducts(data);
+        // Asegurar que el producto seleccionado esté primero
+        const orderedData = data.sort((a, b) => {
+          if (a.id === product.id) return -1;
+          if (b.id === product.id) return 1;
+          return 0;
+        });
+        setProducts(orderedData);
       } else {
         setProducts([product, nextProduct]);
       }
@@ -298,7 +312,13 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
 
       if (compareRes.ok) {
         const data = await compareRes.json();
-        setProducts(data);
+        // Asegurar que el producto seleccionado esté primero
+        const orderedData = data.sort((a, b) => {
+          if (a.id === product.id) return -1;
+          if (b.id === product.id) return 1;
+          return 0;
+        });
+        setProducts(orderedData);
       } else {
         setProducts([product, prevProduct]);
       }
@@ -407,7 +427,9 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
     );
   }
 
-  const [p1, p2] = products;
+  // Asegurar que el producto seleccionado siempre esté a la izquierda
+  const p1 = products.find(p => p.id === product.id) || products[0];
+  const p2 = products.find(p => p.id !== product.id) || products[1];
 
   return (
     <div className={`modal fade show ${modalDisplayClass}`} tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>

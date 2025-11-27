@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import ApiService from '../services/api';
 import useGlobalProducts from '../hooks/useGlobalProducts';
 import useDarkMode from '../hooks/useDarkMode';
+import CatalogFilters from '../components/catalog/CatalogFilters';
+import ProductCard from '../components/catalog/ProductCard';
+import CatalogPagination from '../components/catalog/CatalogPagination';
 import { toast } from 'react-toastify';
 import '../styles/CatalogPage.css';
 
@@ -146,57 +149,15 @@ const CatalogPage = () => {
                 </div>
 
                 {/* Filters Bar */}
-                <div className="filters-bar card shadow-sm mb-4 border-0">
-                    <div className="card-body p-4">
-                        <div className="row g-3 align-items-center">
-                            {/* Search */}
-                            <div className="col-12 col-md-4">
-                                <div className="input-group">
-                                    <span className="input-group-text bg-transparent border-end-0">
-                                        <i className="bi bi-search"></i>
-                                    </span>
-                                    <input
-                                        type="text"
-                                        className="form-control border-start-0"
-                                        placeholder="Buscar productos..."
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Category Filter */}
-                            <div className="col-12 col-md-4">
-                                <select
-                                    className="form-select"
-                                    value={selectedCategory}
-                                    onChange={(e) => setSelectedCategory(e.target.value)}
-                                >
-                                    <option value="all">Todas las categorías</option>
-                                    {categories.filter(c => c !== 'all').map(cat => (
-                                        <option key={cat} value={cat}>
-                                            {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            {/* Sort */}
-                            <div className="col-12 col-md-4">
-                                <select
-                                    className="form-select"
-                                    value={sortBy}
-                                    onChange={(e) => setSortBy(e.target.value)}
-                                >
-                                    <option value="name">Nombre (A-Z)</option>
-                                    <option value="price-asc">Precio (menor a mayor)</option>
-                                    <option value="price-desc">Precio (mayor a menor)</option>
-                                    <option value="rating">Mejor valorados</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <CatalogFilters
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
+                    sortBy={sortBy}
+                    setSortBy={setSortBy}
+                    categories={categories}
+                />
 
                 {/* Results Count */}
                 <div className="mb-3">
@@ -209,100 +170,22 @@ const CatalogPage = () => {
                 <div className="row g-4 mb-5">
                     {currentProducts.map(product => (
                         <div key={product.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
-                            <div className="product-catalog-card card h-100 border-0 shadow-sm">
-                                {/* Favorite Button */}
-                                <button
-                                    className={`btn btn-sm favorite-btn ${favoriteIds.has(product.id) ? 'active' : ''}`}
-                                    onClick={() => handleToggleFavorite(product)}
-                                >
-                                    <i className={`bi ${favoriteIds.has(product.id) ? 'bi-heart-fill' : 'bi-heart'}`}></i>
-                                </button>
-
-                                {/* Product Image */}
-                                <div className="product-image-wrapper">
-                                    <img
-                                        src={product.image || product.img || 'https://via.placeholder.com/300'}
-                                        alt={product.name}
-                                        className="card-img-top"
-                                    />
-                                </div>
-
-                                {/* Product Info */}
-                                <div className="card-body d-flex flex-column">
-                                    <h6 className="card-title text-truncate mb-2" title={product.name}>
-                                        {product.name}
-                                    </h6>
-
-                                    <div className="mb-2">
-                                        <span className="badge bg-light text-dark">
-                                            {product.category}
-                                        </span>
-                                    </div>
-
-                                    {product.rating && (
-                                        <div className="mb-2">
-                                            <span className="text-warning">
-                                                {'★'.repeat(Math.floor(product.rating))}
-                                                {'☆'.repeat(5 - Math.floor(product.rating))}
-                                            </span>
-                                            <small className="text-muted ms-1">({product.rating})</small>
-                                        </div>
-                                    )}
-
-                                    <div className="mt-auto">
-                                        <p className="h5 text-primary mb-3">
-                                            ${product.price?.toFixed(2)}
-                                        </p>
-
-                                        <button
-                                            className="btn btn-outline-primary w-100"
-                                            onClick={() => handleViewComparisons(product)}
-                                        >
-                                            <i className="bi bi-arrow-left-right me-2"></i>
-                                            Ver Comparativas
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                            <ProductCard
+                                product={product}
+                                isFavorite={favoriteIds.has(product.id)}
+                                onToggleFavorite={handleToggleFavorite}
+                                onViewComparisons={handleViewComparisons}
+                            />
                         </div>
                     ))}
                 </div>
 
                 {/* Pagination */}
-                {totalPages > 1 && (
-                    <nav aria-label="Catalog pagination">
-                        <ul className="pagination justify-content-center">
-                            <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                <button
-                                    className="page-link"
-                                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                                >
-                                    Anterior
-                                </button>
-                            </li>
-
-                            {[...Array(totalPages)].map((_, i) => (
-                                <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
-                                    <button
-                                        className="page-link"
-                                        onClick={() => setCurrentPage(i + 1)}
-                                    >
-                                        {i + 1}
-                                    </button>
-                                </li>
-                            ))}
-
-                            <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                                <button
-                                    className="page-link"
-                                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                                >
-                                    Siguiente
-                                </button>
-                            </li>
-                        </ul>
-                    </nav>
-                )}
+                <CatalogPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={setCurrentPage}
+                />
 
                 {/* Empty State */}
                 {filteredProducts.length === 0 && (

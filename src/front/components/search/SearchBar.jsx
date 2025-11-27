@@ -66,10 +66,21 @@ export default function SearchBar() {
     setActiveIdx(-1);
 
     if (result.type === "product") {
-      // Navegar a búsqueda y aplicar filtro de categoría del producto
+      // Calcular en qué página está el producto dentro de su categoría
+      const categoryProducts = products
+        .filter(p => p.category === result.category)
+        .sort((a, b) => a.name.localeCompare(b.name)); // Ordenar igual que en SearchPage
+
+      const productIndex = categoryProducts.findIndex(p => p.id === result.product.id);
+      const productsPerPage = 12;
+      const pageNumber = Math.floor(productIndex / productsPerPage) + 1;
+
+      // Navegar a búsqueda con categoría, página y producto seleccionado
       navigate("/search", {
         state: {
-          applyCategoryFilter: result.category
+          applyCategoryFilter: result.category,
+          selectedProductForComparison: result.product,
+          initialPage: pageNumber
         }
       });
     } else if (result.type === "category") {
