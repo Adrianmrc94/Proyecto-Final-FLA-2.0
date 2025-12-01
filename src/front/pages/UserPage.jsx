@@ -6,6 +6,7 @@ import UserInfo from '../components/user/UserInfo';
 import DeleteAccountForm from '../components/user/DeleteAccountForm';
 import useDarkMode from '../hooks/useDarkMode';
 import ApiService from '../services/api';
+import '../styles/UserPage.css';
 
 const UserPage = () => {
     const [activeTab, setActiveTab] = useState('info');
@@ -15,6 +16,7 @@ const UserPage = () => {
     const [deleteError, setDeleteError] = useState('');
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
     const [deleteMessage, setDeleteMessage] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
     const { darkMode } = useDarkMode();
     const navigate = useNavigate();
 
@@ -24,11 +26,14 @@ const UserPage = () => {
             if (!token) { navigate('/login'); return; }
 
             try {
+                setIsLoading(true);
                 const data = await ApiService.getUserProfile();
                 setUserData(data);
             } catch (error) {
                 console.error('Error fetching user data:', error);
                 navigate('/login');
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchUserData();
@@ -78,60 +83,79 @@ const UserPage = () => {
         setDeleteMessage('');
     };
 
-    return (
-        <div className="container mt-5">
-            <div className="card shadow-lg p-3 mb-5 shadow-lg rounded">
-                <div className="card-header text-center">
-                    <h2>Configuración de Usuario</h2>
+    if (isLoading) {
+        return (
+            <div className="container mt-5 text-center">
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Cargando...</span>
                 </div>
-                <div className="card-body">
-                    <ul className="nav nav-tabs nav-justified mb-4">
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link ${activeTab === 'info' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('info')}
-                            >
-                                Información
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link ${activeTab === 'changePassword' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('changePassword')}
-                            >
-                                Cambio de Contraseña
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link ${activeTab === 'deleteAccount' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('deleteAccount')}
-                            >
-                                Eliminar Cuenta
-                            </button>
-                        </li>
-                    </ul>
+            </div>
+        );
+    }
 
-                    <div className="tab-content">
-                        {activeTab === 'info' && <UserInfo userData={userData} />}
-                        {activeTab === 'changePassword' && (
-                            <PasswordResetForm onPasswordChangeSuccess={handlePasswordChangeSuccess} />
-                        )}
-                        {activeTab === 'deleteAccount' && (
-                            <DeleteAccountForm
-                                deletePassword={deletePassword}
-                                confirmDeletePassword={confirmDeletePassword}
-                                deleteError={deleteError}
-                                deleteMessage={deleteMessage}
-                                showDeleteConfirmation={showDeleteConfirmation}
-                                setDeletePassword={setDeletePassword}
-                                setConfirmDeletePassword={setConfirmDeletePassword}
-                                handleDeleteAccountAttempt={handleDeleteAccountAttempt}
-                                handleDeleteAccountConfirmed={handleDeleteAccountConfirmed}
-                                handleCancelDelete={handleCancelDelete}
-                            />
-                        )}
+    return (
+        <div className="container mt-5 mb-5">
+            {/* Header con Avatar */}
+            <div className="user-header-card">
+                <div className="user-avatar-section">
+                    <div className="user-avatar">
+                        <i className="fas fa-user"></i>
                     </div>
+                    <div className="user-header-info">
+                        <h2 className="user-name">{userData.name} {userData.last_name}</h2>
+                        <p className="user-email"><i className="fas fa-envelope me-2"></i>{userData.email}</p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Tabs Navigation */}
+            <div className="user-tabs-container">
+                <div className="user-tabs">
+                    <button
+                        className={`user-tab ${activeTab === 'info' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('info')}
+                    >
+                        <i className="fas fa-user-circle"></i>
+                        <span>Información</span>
+                    </button>
+                    <button
+                        className={`user-tab ${activeTab === 'changePassword' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('changePassword')}
+                    >
+                        <i className="fas fa-key"></i>
+                        <span>Contraseña</span>
+                    </button>
+                    <button
+                        className={`user-tab ${activeTab === 'deleteAccount' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('deleteAccount')}
+                    >
+                        <i className="fas fa-trash-alt"></i>
+                        <span>Eliminar Cuenta</span>
+                    </button>
+                </div>
+            </div>
+
+            {/* Tab Content */}
+            <div className="user-content-card">
+                <div className={`tab-content-wrapper ${activeTab}`}>
+                    {activeTab === 'info' && <UserInfo userData={userData} />}
+                    {activeTab === 'changePassword' && (
+                        <PasswordResetForm onPasswordChangeSuccess={handlePasswordChangeSuccess} />
+                    )}
+                    {activeTab === 'deleteAccount' && (
+                        <DeleteAccountForm
+                            deletePassword={deletePassword}
+                            confirmDeletePassword={confirmDeletePassword}
+                            deleteError={deleteError}
+                            deleteMessage={deleteMessage}
+                            showDeleteConfirmation={showDeleteConfirmation}
+                            setDeletePassword={setDeletePassword}
+                            setConfirmDeletePassword={setConfirmDeletePassword}
+                            handleDeleteAccountAttempt={handleDeleteAccountAttempt}
+                            handleDeleteAccountConfirmed={handleDeleteAccountConfirmed}
+                            handleCancelDelete={handleCancelDelete}
+                        />
+                    )}
                 </div>
             </div>
         </div>

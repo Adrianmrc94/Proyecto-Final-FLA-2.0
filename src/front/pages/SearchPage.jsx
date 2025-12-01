@@ -4,19 +4,21 @@ import ProductFilters from "../components/search/ProductFilters";
 import ProductResults from "../components/search/ProductResults";
 import ComparativeModal3 from "../components/modales/ComparativeModal3";
 import useGlobalProducts from "../hooks/useGlobalProducts";
+import useMainCategories from "../hooks/useMainCategories";
 import useFilters from "../hooks/useFilters";
 
 
-const filterProducts = (products, filters, searchQuery) => {
+const filterProducts = (products, filters, searchQuery, mainCategory, subcategory) => {
     return products.filter((product) => {
         // Búsqueda por texto
         const title = (product.name || product.title || "").toLowerCase();
         const matchesSearch = !searchQuery || title.includes(searchQuery.toLowerCase());
 
+        // Filtro por categoría principal
+        const matchesMainCategory = !mainCategory || mainCategory === 'all' || product.main_category === mainCategory;
 
-        // Filtro por categoría
-        const matchesCategory = !filters.category || product.category === filters.category;
-
+        // Filtro por subcategoría
+        const matchesSubcategory = !subcategory || subcategory === 'all' || product.category === subcategory;
 
         // Filtro por precio
         const price = Number(product.price) || 0;
@@ -33,7 +35,7 @@ const filterProducts = (products, filters, searchQuery) => {
         const matchesStock = filters.inStock === null || (product.stock > 0);
 
 
-        return matchesSearch && matchesCategory && matchesPrice && matchesRating && matchesStock;
+        return matchesSearch && matchesMainCategory && matchesSubcategory && matchesPrice && matchesRating && matchesStock;
     });
 };
 
@@ -41,10 +43,12 @@ const filterProducts = (products, filters, searchQuery) => {
 export default function SearchPage() {
     const location = useLocation();
     const { products } = useGlobalProducts();
+    const { mainCategories, subcategories, selectedMainCategory, setSelectedMainCategory } = useMainCategories();
     const { filters, setFilters } = useFilters();
     const [selectedProduct, setSelectedProduct] = useState(null);
     const [showComparativeModal, setShowComparativeModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedSubcategory, setSelectedSubcategory] = useState('all');
     const [hasProcessedState, setHasProcessedState] = useState(false);
     const [initialPage, setInitialPage] = useState(1);
 
@@ -92,7 +96,7 @@ export default function SearchPage() {
 
 
     // Filtrado simplificado
-    const filteredProducts = filterProducts(products, filters, searchQuery);
+    const filteredProducts = filterProducts(products, filters, searchQuery, selectedMainCategory, selectedSubcategory);
 
 
     const handleProductClick = (product) => {
@@ -145,7 +149,7 @@ export default function SearchPage() {
             {/* Contenido principal */}
             <div className="row">
                 <div className="col-md-3">
-                    <div className="card shadow-sm">
+                    <div className="card shadow-sm mb-3">
                         <div className="card-header">
                             <h5 className="mb-0">
                                 <i className="bi bi-funnel me-2"></i>
@@ -153,6 +157,53 @@ export default function SearchPage() {
                             </h5>
                         </div>
                         <div className="card-body">
+                            {/* Filtros de categorías principales */}
+                            <div className="mb-3">
+                                <label className="form-label fw-bold">
+                                    <i className="bi bi-folder me-1"></i>
+                                    Categoría Principal
+                                </label>
+                                <select
+                                    className="form-select form-select-sm"
+                                    value={selectedMainCategory || 'all'}
+                                    onChange={(e) => {
+                                        setSelectedMainCategory(e.target.value);
+                                        setSelectedSubcategory('all');
+                                    }}
+                                >
+                                    <option value="all">Todas</option>
+                                    {mainCategories.map(cat => (
+                                        <option key={cat.name} value={cat.name}>
+                                            {cat.name} ({cat.count})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Subcategorías */}
+                            <div className="mb-3">
+                                <label className="form-label fw-bold">
+                                    <i className="bi bi-tags me-1"></i>
+                                    Subcategoría
+                                </label>
+                                <select
+                                    className="form-select form-select-sm"
+                                    value={selectedSubcategory}
+                                    onChange={(e) => setSelectedSubcategory(e.target.value)}
+                                    disabled={!selectedMainCategory || selectedMainCategory === 'all' || subcategories.length === 0}
+                                >
+                                    <option value="all">Todas</option>
+                                    {subcategories.map(sub => (
+                                        <option key={sub.name} value={sub.name}>
+                                            {sub.name} ({sub.count})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <hr />
+
+                            {/* Filtros legacy */}
                             <ProductFilters
                                 filters={filters}
                                 setFilters={setFilters}

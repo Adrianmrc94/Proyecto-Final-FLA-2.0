@@ -84,28 +84,11 @@ def get_favorites():
     try:
         user_id = get_jwt_identity()
 
-        # JOIN para incluir datos del producto
-        favorites = db.session.query(Favorite, Product).join(
-            Product, Favorite.product_id == Product.id
-        ).filter(Favorite.user_id == user_id).all()
+        # Obtener favoritos del usuario
+        favorites = Favorite.query.filter_by(user_id=user_id).all()
 
-        result = []
-        for favorite, product in favorites:
-            # ✅ Usar getattr() para manejar campos que pueden no existir
-            result.append({
-                'id': favorite.id,
-                'date_ad': favorite.date_ad,
-                'product': {
-                    'id': product.id,
-                    'name': getattr(product, 'name', None),
-                    'title': getattr(product, 'title', getattr(product, 'name', 'Sin nombre')),  # Fallback
-                    'price': getattr(product, 'price', 0),
-                    'image': getattr(product, 'image', None),
-                    'description': getattr(product, 'description', 'Sin descripción'),
-                    'rating': getattr(product, 'rating', 0),
-                    'rate': getattr(product, 'rate', getattr(product, 'rating', 0))  # Fallback
-                }
-            })
+        # Usar el método serialize() que incluye store_name, category, main_category
+        result = [favorite.serialize() for favorite in favorites]
 
         return jsonify(result), 200
 

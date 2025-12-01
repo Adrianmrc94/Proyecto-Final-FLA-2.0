@@ -40,7 +40,9 @@ if db_url is not None:
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url.replace(
         "postgres://", "postgresql://")
 else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
+    # Usar ruta relativa para SQLite en desarrollo
+    basedir = os.path.abspath(os.path.dirname(__file__))
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(basedir, '..', 'instance', 'database.db')}"
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -130,12 +132,16 @@ products_imported = threading.Event()
 
 @app.before_request
 def auto_import_products():
-
     if not products_imported.is_set():
-        if Product.query.count() == 0:
-            print("Base de datos vacía. Importando productos externos...")
-            import_products(app)
-        products_imported.set()
+        try:
+            if Product.query.count() == 0:
+                print("Base de datos vacía. Importando productos externos...")
+                import_products(app)
+        except Exception as e:
+            # Ignorar errores si las tablas no existen aún (durante migraciones)
+            pass
+        finally:
+            products_imported.set()
 
 # ===== PUNTO DE ENTRADA =====
 if __name__ == '__main__':

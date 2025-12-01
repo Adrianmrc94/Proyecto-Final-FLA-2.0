@@ -23,6 +23,7 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(128), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    created_at: Mapped[DateTime] = mapped_column(DateTime, default=datetime.utcnow, nullable=False)
 
     favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="user", cascade="all, delete-orphan")
     favorite_comparisons: Mapped[list["FavoriteComparison"]] = relationship("FavoriteComparison", back_populates="user", cascade="all, delete-orphan")
@@ -34,7 +35,8 @@ class User(db.Model):
             "last_name": self.last_name,
             "postal_code": self.postal_code,
             "email": self.email,
-            "is_active": self.is_active
+            "is_active": self.is_active,
+            "created_at": self.created_at.isoformat() if self.created_at else None
         }
 
 
@@ -43,9 +45,11 @@ class Store(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(120), nullable=False)
-    postal_code: Mapped[str] = mapped_column(String(10))
+    postal_code: Mapped[str] = mapped_column(String(10), nullable=True)
     product: Mapped[int] = mapped_column(Integer, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    url: Mapped[str] = mapped_column(String(255), nullable=True)
+    logo: Mapped[str] = mapped_column(String(255), nullable=True)
 
     favorites: Mapped[list["Favorite"]] = relationship("Favorite", back_populates="store")
 
@@ -55,7 +59,9 @@ class Store(db.Model):
             "name": self.name,
             "postal_code": self.postal_code,
             "productos": self.product,
-            "is_active": self.is_active
+            "is_active": self.is_active,
+            "url": self.url,
+            "logo": self.logo
         }
 
 
@@ -63,14 +69,14 @@ class Product(db.Model):
     __tablename__ = 'product'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    external_id: Mapped[str] = mapped_column(String(100), unique=True, nullable=True) 
+    external_id: Mapped[str] = mapped_column(String(100), nullable=True) 
     name: Mapped[str] = mapped_column(String(120), nullable=False)
     price: Mapped[float] = mapped_column(Float, nullable=False)
-    image: Mapped[str] = mapped_column(String(255))
-    rate: Mapped[float] = mapped_column(Float)
-    category: Mapped[str] = mapped_column(String(100))
+    image: Mapped[str] = mapped_column(String(255), nullable=True)
+    rate: Mapped[float] = mapped_column(Float, nullable=True)
+    category: Mapped[str] = mapped_column(String(100), nullable=True)
     created_at: Mapped[Date] = mapped_column(Date, nullable=True)
-    stock: Mapped[int] = mapped_column(Integer, default=True)
+    stock: Mapped[int] = mapped_column(Integer, default=True, nullable=True)
     description: Mapped[str] = mapped_column(String(500), nullable=True)
     source: Mapped[str] = mapped_column(String(50), nullable=True)
     store_id: Mapped[int] = mapped_column(ForeignKey("store.id"), nullable=True)
@@ -79,14 +85,24 @@ class Product(db.Model):
     store: Mapped["Store"] = relationship("Store")
 
     def serialize(self):
+        from urllib.parse import quote_plus
+        from api.category_mapping import get_main_category
+        
+        # Si la imagen es de Mercadona, usar el proxy para evitar CORS
+        image_url = self.image
+        if image_url and 'mercadona.imgix.net' in image_url:
+            # Usar quote_plus que es más compatible con URLs en parámetros GET
+            image_url = f"/api/image-proxy?url={quote_plus(image_url)}"
+        
         return {
             "id": self.id,
             "external_id": self.external_id,
             "name": self.name,
             "price": self.price,
-            "image": self.image,
+            "image": image_url,
             "rate": self.rate,
             "category": self.category,
+            "main_category": get_main_category(self.category),
             "created_at": self.created_at,
             "stock": self.stock,
             "description": self.description,
@@ -115,7 +131,9 @@ class Favorite(db.Model):
             "store_id": self.store_id,
             "user_id": self.user_id,
             "product_id": self.product_id,
-            "date_ad": self.date_ad
+            "date_ad": self.date_ad,
+            "product": self.product.serialize() if self.product else None,
+            "store": self.store.serialize() if self.store else None
         }
 
 

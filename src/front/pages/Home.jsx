@@ -5,7 +5,7 @@ import HowItWorksSection from "../components/home/HowItWorksSection";
 import CatalogAccessSection from "../components/home/CatalogAccessSection";
 import usePagination from "../hooks/usePagination";
 import useGlobalProducts from "../hooks/useGlobalProducts";
-import useCategories from "../hooks/useCategories";
+import useMainCategories from "../hooks/useMainCategories";
 import ModalsManager from "../components/modales/ModalsManager";
 import { useNavigate } from "react-router-dom";
 
@@ -27,7 +27,7 @@ export default function Home() {
         setFilters
     } = useGlobalProducts();
 
-    const categories = useCategories(products);
+    const { mainCategories, loadingMainCategories } = useMainCategories();
 
     const {
         currentPage,
@@ -37,7 +37,7 @@ export default function Home() {
         goToPage,
         currentItems: currentCategories,
     } = usePagination({
-        items: categories,
+        items: mainCategories,
         itemsPerPage: 8,
     });
 
@@ -45,14 +45,9 @@ export default function Home() {
     const [showProductModal, setShowProductModal] = useState(false);
     const [showComparativeModal, setShowComparativeModal] = useState(false);
 
-    const handleCategoryClick = (category) => {
-        setFilters({ category });
-        navigate(`/search`, {
-            state: {
-                applyCategoryFilter: category,
-                fromHome: true
-            }
-        });
+    const handleCategoryClick = (categoryName) => {
+        // Navegar al catálogo con filtro de categoría principal
+        navigate(`/catalog?main_category=${encodeURIComponent(categoryName)}`);
     };
 
     const handleTryMeClick = async () => {
@@ -106,7 +101,7 @@ export default function Home() {
                 goToNextPage={goToNextPage}
                 goToPrevPage={goToPrevPage}
                 goToPage={goToPage}
-                loading={loadingProducts}
+                loading={loadingProducts || loadingMainCategories}
             />
 
             {/* Sección "Cómo funciona" */}

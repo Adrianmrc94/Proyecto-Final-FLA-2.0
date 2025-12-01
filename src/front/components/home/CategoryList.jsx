@@ -112,8 +112,11 @@ export default function CategoryList({
 
             <div className="row g-4">
                 {categories.map((category, idx) => {
-                    const icon = getCategoryIcon(category);
-                    const displayName = category.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    // Ahora category es {name: "...", count: N}
+                    const categoryName = category.name || category;
+                    const categoryCount = category.count || 0;
+                    const icon = getCategoryIcon(categoryName);
+                    const displayName = categoryName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
                     // Colores variados para cada categoría
                     const gradients = [
@@ -133,7 +136,7 @@ export default function CategoryList({
                         <div className="col-6 col-md-3 col-lg-3" key={idx}>
                             <div
                                 className="category-card-modern h-100"
-                                onClick={() => onCategoryClick(category)}
+                                onClick={() => onCategoryClick(categoryName)}
                                 style={{
                                     background: gradient,
                                     borderRadius: '20px',
@@ -161,9 +164,14 @@ export default function CategoryList({
                                     >
                                         <i className={`bi ${icon} text-white`} style={{ fontSize: '1.8rem' }}></i>
                                     </div>
-                                    <h6 className="text-white fw-bold mb-0" style={{ fontSize: '0.9rem', textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+                                    <h6 className="text-white fw-bold mb-1" style={{ fontSize: '0.9rem', textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                                         {displayName}
                                     </h6>
+                                    {categoryCount > 0 && (
+                                        <span className="badge bg-white text-dark" style={{ fontSize: '0.7rem' }}>
+                                            {categoryCount} productos
+                                        </span>
+                                    )}
                                 </div>
 
                                 {/* Decoración de fondo */}
@@ -199,19 +207,52 @@ export default function CategoryList({
                             </button>
                         </li>
 
-                        {Array.from({ length: totalPages }, (_, i) => (
-                            <li
-                                key={i}
-                                className={`page-item ${i === currentPage ? "active" : ""}`}
-                            >
-                                <button
-                                    className="page-link"
-                                    onClick={() => goToPage(i)}
-                                >
-                                    {i + 1}
-                                </button>
-                            </li>
-                        ))}
+                        {/* Mostrar solo páginas cercanas */}
+                        {(() => {
+                            const pages = [];
+                            const maxVisible = 5;
+                            let startPage = Math.max(0, currentPage - Math.floor(maxVisible / 2));
+                            let endPage = Math.min(totalPages - 1, startPage + maxVisible - 1);
+
+                            if (endPage - startPage < maxVisible - 1) {
+                                startPage = Math.max(0, endPage - maxVisible + 1);
+                            }
+
+                            // Primera página
+                            if (startPage > 0) {
+                                pages.push(
+                                    <li key={0} className="page-item">
+                                        <button className="page-link" onClick={() => goToPage(0)}>1</button>
+                                    </li>
+                                );
+                                if (startPage > 1) {
+                                    pages.push(<li key="dots1" className="page-item disabled"><span className="page-link">...</span></li>);
+                                }
+                            }
+
+                            // Páginas visibles
+                            for (let i = startPage; i <= endPage; i++) {
+                                pages.push(
+                                    <li key={i} className={`page-item ${i === currentPage ? "active" : ""}`}>
+                                        <button className="page-link" onClick={() => goToPage(i)}>{i + 1}</button>
+                                    </li>
+                                );
+                            }
+
+                            // Última página
+                            if (endPage < totalPages - 1) {
+                                if (endPage < totalPages - 2) {
+                                    pages.push(<li key="dots2" className="page-item disabled"><span className="page-link">...</span></li>);
+                                }
+                                pages.push(
+                                    <li key={totalPages - 1} className="page-item">
+                                        <button className="page-link" onClick={() => goToPage(totalPages - 1)}>{totalPages}</button>
+                                    </li>
+                                );
+                            }
+
+                            return pages;
+                        })()}
 
                         <li className={`page-item ${currentPage === totalPages - 1 ? "disabled" : ""}`}>
                             <button

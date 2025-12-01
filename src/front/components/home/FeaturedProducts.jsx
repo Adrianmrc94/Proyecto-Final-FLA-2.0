@@ -1,4 +1,5 @@
 import React from "react";
+import { getProductImageUrl } from "../../utils/imageUtils";
 
 export default function FeaturedProducts({ featured, onProductClick, loading = false }) {
     if (loading) {
@@ -43,11 +44,7 @@ export default function FeaturedProducts({ featured, onProductClick, loading = f
         <div className="row">
             {featured.map((product, index) => {
                 //  Normalización de datos
-                const imageUrl =
-                    (product.images && product.images[0]) ||
-                    product.image ||
-                    "https://via.placeholder.com/200x200?text=Sin+Imagen";
-
+                const imageUrl = getProductImageUrl(product);
                 const productName = product.name || product.title || "Producto sin nombre";
                 const productPrice = product.price || 0;
 
@@ -71,6 +68,9 @@ export default function FeaturedProducts({ featured, onProductClick, loading = f
                                         transition: 'transform 0.3s ease'
                                     }}
                                     loading="lazy"
+                                    onError={(e) => {
+                                        e.target.src = 'https://via.placeholder.com/200x200?text=Sin+Imagen';
+                                    }}
                                 />
 
                                 {/* Overlay al hacer hover */}
@@ -89,17 +89,33 @@ export default function FeaturedProducts({ featured, onProductClick, loading = f
                                     style={{
                                         fontSize: '0.95rem',
                                         display: '-webkit-box',
-                                        WebkitLineClamp: 3,
+                                        WebkitLineClamp: 2,
                                         WebkitBoxOrient: 'vertical',
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis',
                                         lineHeight: '1.3',
-                                        minHeight: '3.9em',
+                                        minHeight: '2.6em',
                                         margin: '0 0 0.5rem 0'
                                     }}
                                 >
                                     {productName}
                                 </h5>
+
+                                {/* Categorías */}
+                                {(product.main_category || product.category) && (
+                                    <div className="mb-2 d-flex flex-wrap gap-1">
+                                        {product.main_category && (
+                                            <span className="badge bg-success" style={{ fontSize: '0.65rem' }}>
+                                                {product.main_category}
+                                            </span>
+                                        )}
+                                        {product.category && (
+                                            <span className="badge bg-secondary" style={{ fontSize: '0.65rem' }}>
+                                                {product.category}
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
 
                                 {/* Rating si existe */}
                                 {(product.rate || product.rating) && (

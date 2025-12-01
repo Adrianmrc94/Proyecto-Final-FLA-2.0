@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import ProductModal from "./ProductModal";
+import { getProductImageUrl } from "../../utils/imageUtils";
 
 const FavoriteProduct = ({ product, favoriteId, onRemoveFavorite }) => {
     const [showModal, setShowModal] = useState(false);
@@ -7,11 +8,7 @@ const FavoriteProduct = ({ product, favoriteId, onRemoveFavorite }) => {
     if (!product?.id) return null;
 
     // Normalización de datos
-    const imageUrl =
-        (product.images && product.images[0]) ||
-        product.image ||
-        "https://via.placeholder.com/200x200?text=Sin+Imagen";
-
+    const imageUrl = getProductImageUrl(product);
     const productName = product.name || product.title || "Sin nombre";
     const productPrice = product.price || 0;
     const productRating = product.rate || product.rating || 0;
@@ -44,6 +41,7 @@ const FavoriteProduct = ({ product, favoriteId, onRemoveFavorite }) => {
                                 transition: 'transform 0.3s ease'
                             }}
                             loading="lazy"
+                            onError={(e) => e.target.src = "https://via.placeholder.com/200x200?text=Sin+Imagen"}
                         />
 
                         <div className="product-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">

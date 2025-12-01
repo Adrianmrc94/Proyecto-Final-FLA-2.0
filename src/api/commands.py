@@ -40,3 +40,56 @@ def setup_commands(app):
         print("🚀 Iniciando importación de productos...")
         import_products(app)
         print("✅ Importación completada exitosamente!")
+
+    @app.cli.command("import-mercadona")
+    @click.option("--postal-code", "-p", default="28020", help="Código postal para la búsqueda de productos")
+    @click.option("--limit", "-l", default=None, type=int, help="Límite de categorías a procesar (recomendado 5-10 para pruebas)")
+    def import_mercadona_command(postal_code, limit):
+        """Importa productos desde la API de Mercadona
+        
+        Ejemplos:
+        flask import-mercadona                          # Madrid (28020), todas las categorías
+        flask import-mercadona -p 28001                 # Madrid centro
+        flask import-mercadona -p 08001                 # Barcelona
+        flask import-mercadona -p 28020 -l 5           # Solo 5 categorías (prueba rápida)
+        """
+        from api.scripts.import_mercadona_products import import_mercadona_products
+        print(f"🛒 Iniciando importación de productos de Mercadona (CP: {postal_code})...")
+        if limit:
+            print(f"📊 Procesando solo {limit} categorías")
+        import_mercadona_products(postal_code=postal_code, limit_categories=limit)
+        print("✅ Importación de Mercadona completada!")
+
+    @app.cli.command("import-carrefour")
+    @click.option("--postal-code", "-p", default="28020", help="Código postal para la búsqueda de productos")
+    @click.option("--limit", "-l", default=20, type=int, help="Productos por categoría (default: 20)")
+    def import_carrefour_command(postal_code, limit):
+        """Importa productos desde Carrefour
+        
+        Ejemplos:
+        flask import-carrefour                          # Madrid (28020), 20 productos/categoría
+        flask import-carrefour -p 28001 -l 10          # Madrid centro, 10 productos/categoría
+        flask import-carrefour -p 08001                 # Barcelona
+        """
+        from api.scripts.import_carrefour_products import import_carrefour_products
+        print(f"🛒 Iniciando importación de productos de Carrefour (CP: {postal_code})...")
+        import_carrefour_products(postal_code=postal_code, limit_per_category=limit)
+        print("✅ Importación de Carrefour completada!")
+
+    @app.cli.command("import-simulated-stores")
+    @click.option("--postal-code", "-p", default="28020", help="Código postal para las tiendas simuladas")
+    def import_simulated_stores_command(postal_code):
+        """Genera productos simulados para DIA, Carrefour y Alcampo basándose en Mercadona
+        
+        Este comando toma los productos reales de Mercadona y crea versiones con precios
+        variados para otros supermercados, permitiendo demostrar la funcionalidad de comparación.
+        
+        Ejemplos:
+        flask import-simulated-stores                   # Madrid (28020)
+        flask import-simulated-stores -p 28001          # Madrid centro
+        flask import-simulated-stores -p 08001          # Barcelona
+        """
+        from api.scripts.import_simulated_stores import generate_simulated_products
+        print(f"🎨 Iniciando generación de tiendas y productos simulados (CP: {postal_code})...")
+        generate_simulated_products(postal_code=postal_code)
+        print("✅ Generación de productos simulados completada!")

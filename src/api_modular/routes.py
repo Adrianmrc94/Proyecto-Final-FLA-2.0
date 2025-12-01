@@ -6,6 +6,7 @@ from api_modular.products import products_bp
 from api_modular.users import users_bp
 from api_modular.favorites import favorites_bp
 from api_modular.comparisons import comparisons_bp
+from api_modular.images import images_bp
 
 def register_modular_blueprints(app):
     """
@@ -20,6 +21,7 @@ def register_modular_blueprints(app):
         app.register_blueprint(users_bp, url_prefix='/api')
         app.register_blueprint(favorites_bp, url_prefix='/api')
         app.register_blueprint(comparisons_bp, url_prefix='/api')
+        app.register_blueprint(images_bp, url_prefix='/api')
         
         print("✅ Blueprints modulares registrados exitosamente")
         print("📋 Módulos disponibles:")
@@ -28,6 +30,7 @@ def register_modular_blueprints(app):
         print("   👤 Users: /api/user/profile, /api/user/change-password, /api/user/delete-account")
         print("   ❤️  Favorites: /api/favorites")
         print("   🔀 Comparisons: /api/favorite-comparisons")
+        print("   🖼️  Images: /api/image-proxy")
         
         return True
         

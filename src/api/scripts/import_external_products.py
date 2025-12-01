@@ -1,114 +1,108 @@
 import os
 import sys
-import requests
+import json
 from datetime import datetime
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 from api.models import db, Product, Store
 
 
-def fetch_dummyjson_products():
-    url = 'https://dummyjson.com/products?limit=0'
+def load_products_from_json(filename):
+    """Carga productos desde un archivo JSON"""
     try:
-        resp = requests.get(url)
-        if resp.ok:
-            data = resp.json()
-            return data.get('products', [])
+        json_path = os.path.join(os.path.dirname(__file__), '../../../', filename)
+        if not os.path.exists(json_path):
+            print(f"⚠️  Archivo no encontrado: {json_path}")
+            return []
+        
+        with open(json_path, 'r', encoding='utf-8') as f:
+            products = json.load(f)
+            print(f"✅ Cargados {len(products)} productos desde {filename}")
+            return products
     except Exception as e:
-        print("Error dummyjson:", e)
-    return []
+        print(f"❌ Error al cargar {filename}: {e}")
+        return []
 
-def fetch_fakestore_products():
-    url = 'https://fakestoreapi.com/products'
-    try:
-        resp = requests.get(url)
-        if resp.ok:
-            data = resp.json()
-            # Esta API devuelve directamente un array de productos
-            return data if isinstance(data, list) else []
-    except Exception as e:
-        print("Error fakestore:", e)
-    return []
 
 def import_products(app):
+    """Importa productos desde archivos JSON de Mercadona"""
     with app.app_context():
-        # DummyJSON
-        for p in fetch_dummyjson_products():
-            desc = p.get("description", "")
-            if desc and len(desc) > 500:
-                desc = desc[:500]
-            name = p.get("title", "")
-            if name and len(name) > 120:
-                name = name[:120]
-
-            store_name = "DummyJSON Store"
-            store = Store.query.filter_by(name=store_name).first()
-            if not store:
-                store = Store(name=store_name, postal_code="Unknown")
-                db.session.add(store)
-                db.session.flush()
-
-            db.session.refresh(store)  # Esto asegura que el objeto esté actualizado
-
-            if not Product.query.filter_by(external_id=f"dummyjson-{p['id']}").first():
-                product = Product(
-                    external_id=f"dummyjson-{p['id']}",
-                    name=name,
-                    price=p.get("price"),
-                    description=desc,
-                    category=p.get("category"),
-                    image=p.get("images", [""])[0] if p.get("images") else "",
-                    rate=p.get("rating", 0),
-                    stock=p.get("stock", 0),
-                    created_at=datetime.now(),
-                    source="dummyjson",
-                    store_id=store.id
-                )
-                print("Asignando store_id a producto dummyjson:", store.id)
-                db.session.add(product)
-
-        # FakeStore
-        for p in fetch_fakestore_products():
-            if isinstance(p, str):
-                print(f"Unexpected string: {p}")
-                continue
-
-            desc = p.get("description", "")
-            if desc and len(desc) > 500:
-                desc = desc[:500]
-            name = p.get("title", "")
-            if name and len(name) > 120:
-                name = name[:120]
-
-            store_name = "FakeStore API"
-            store = Store.query.filter_by(name=store_name).first()
-            if not store:
-                store = Store(name=store_name, postal_code="Unknown")
-                db.session.add(store)
-                db.session.flush()
-
-            if not Product.query.filter_by(external_id=f"fakestore-{p['id']}").first():
-                # La API fakestoreapi.com devuelve rating como objeto {rate, count}
-                rating_data = p.get("rating", {})
-                rate_value = rating_data.get("rate", 0) if isinstance(rating_data, dict) else 0
+        print("🛒 Iniciando importación de productos de Mercadona...")
+        
+        # Cargar productos de Mercadona desde JSON
+        mercadona_products = load_products_from_json('mercadona_products_28020.json')
+        
+        if not mercadona_products:
+            print("⚠️  No se encontraron productos de Mercadona, intentando archivo alternativo...")
+            mercadona_products = load_products_from_json('mercadona_products.json')
+        
+        if not mercadona_products:
+            print("❌ No se pudieron cargar productos. Verifica que existan los archivos JSON.")
+            return
+        
+        # Crear/obtener tienda de Mercadona
+        store_name = "Mercadona - 28020"
+        mercadona_store = Store.query.filter_by(name=store_name).first()
+        
+        if not mercadona_store:
+            print(f"🏪 Creando tienda: {store_name}")
+            mercadona_store = Store(
+                name=store_name,
+                postal_code="28020",
+                url="https://tienda.mercadona.es",
+                logo="https://www.mercadona.es/images/logo.svg"
+            )
+            db.session.add(mercadona_store)
+            db.session.flush()
+        
+        imported_count = 0
+        skipped_count = 0
+        
+        # Importar productos de Mercadona
+        for p in mercadona_products:
+            try:
+                external_id = f"mercadona-{p.get('external_id')}"
+                
+                # Verificar si ya existe
+                if Product.query.filter_by(external_id=external_id).first():
+                    skipped_count += 1
+                    continue
+                
+                name = p.get("name", "")
+                if len(name) > 120:
+                    name = name[:120]
                 
                 product = Product(
-                    external_id=f"fakestore-{p['id']}",
+                    external_id=external_id,
                     name=name,
-                    price=p.get("price"),
-                    description=desc,
-                    category=p.get("category"),
-                    image=p.get("image"),
-                    rate=rate_value,
-                    stock=100,  # FakeStoreAPI no provee stock, usamos valor por defecto
+                    price=float(p.get("price", 0)),
+                    image=p.get("image", ""),
+                    category=p.get("category", "General"),
+                    rate=4.5,  # Rating por defecto para Mercadona
+                    stock=100,
                     created_at=datetime.now(),
-                    source="fakestore",
-                    store_id=store.id
+                    source="mercadona",
+                    store_id=mercadona_store.id
                 )
                 db.session.add(product)
-
+                imported_count += 1
+                
+                # Commit cada 100 productos
+                if imported_count % 100 == 0:
+                    db.session.commit()
+                    print(f"   📦 {imported_count} productos importados...")
+                
+            except Exception as e:
+                print(f"⚠️  Error importando producto {p.get('name')}: {e}")
+                continue
+        
         db.session.commit()
-        print("Importación completada.")
+        print(f"\n✅ Importación completada:")
+        print(f"   - Productos nuevos: {imported_count}")
+        print(f"   - Productos omitidos: {skipped_count}")
+        print(f"   - Total en BD: {Product.query.count()}")
+
 
 if __name__ == "__main__":
-    import_products()
+    from app import app
+    import_products(app)

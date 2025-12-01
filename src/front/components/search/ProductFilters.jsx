@@ -24,7 +24,6 @@ export default function ProductFilters({ filters, setFilters, products }) {
     //  Reset de filtros
     const resetFilters = () => {
         setFilters({
-            category: "",
             price_min: 0,
             price_max: 100000,
             rating: 0,
@@ -46,28 +45,6 @@ export default function ProductFilters({ filters, setFilters, products }) {
                     Reset
                 </button>
             </div>
-
-
-            {/* Categorías */}
-            <div>
-                <label className="form-label fw-bold">
-                    <i className="bi bi-tags me-2"></i>
-                    Categoría
-                </label>
-                <select
-                    className="form-select"
-                    value={filters.category || ""}
-                    onChange={e => updateFilter('category', e.target.value || "")}
-                >
-                    <option value="">Todas las categorías</option>
-                    {categories.map((category, index) => (
-                        <option key={index} value={category}>
-                            {category.charAt(0).toUpperCase() + category.slice(1).replace(/-/g, " ")}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
 
             {/* Precio */}
             <div>

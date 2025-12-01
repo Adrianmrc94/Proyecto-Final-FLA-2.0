@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import useDarkMode from '../../hooks/useDarkMode';
 import ApiService from '../../services/api';
+import { getProductImageUrl } from '../../utils/imageUtils';
 
 const FavoriteComparisonCard = ({ comparison, onDelete, onUpdate }) => {
     const { darkMode } = useDarkMode();
@@ -160,7 +161,7 @@ const FavoriteComparisonCard = ({ comparison, onDelete, onUpdate }) => {
                                     <div key={product.id} className="col-6">
                                         <div className="d-flex align-items-center gap-2">
                                             <img
-                                                src={product.image || 'https://via.placeholder.com/40'}
+                                                src={getProductImageUrl(product)}
                                                 alt={product.name}
                                                 className="rounded"
                                                 style={{
@@ -168,6 +169,7 @@ const FavoriteComparisonCard = ({ comparison, onDelete, onUpdate }) => {
                                                     height: '40px',
                                                     objectFit: 'cover'
                                                 }}
+                                                onError={(e) => e.target.src = 'https://via.placeholder.com/40'}
                                             />
                                             <div className="flex-grow-1" style={{ minWidth: 0 }}>
                                                 <p className="mb-0 small text-truncate" title={product.name}>
@@ -242,10 +244,11 @@ const FavoriteComparisonCard = ({ comparison, onDelete, onUpdate }) => {
                                                         <div className="card-body text-center">
                                                             <div className="mb-3">
                                                                 <img
-                                                                    src={p1.image || p1.img || "https://via.placeholder.com/200"}
+                                                                    src={getProductImageUrl(p1)}
                                                                     alt={p1.name}
                                                                     className="img-fluid rounded shadow-sm"
                                                                     style={{ width: "200px", height: "200px", objectFit: "cover" }}
+                                                                    onError={(e) => e.target.src = "https://via.placeholder.com/200"}
                                                                 />
                                                             </div>
                                                             <h6 className="card-title fw-bold text-primary mb-2">{p1.name}</h6>
@@ -278,10 +281,11 @@ const FavoriteComparisonCard = ({ comparison, onDelete, onUpdate }) => {
                                                         <div className="card-body text-center">
                                                             <div className="mb-3">
                                                                 <img
-                                                                    src={p2.image || p2.img || "https://via.placeholder.com/200"}
+                                                                    src={getProductImageUrl(p2)}
                                                                     alt={p2.name}
                                                                     className="img-fluid rounded shadow-sm"
                                                                     style={{ width: "200px", height: "200px", objectFit: "cover" }}
+                                                                    onError={(e) => e.target.src = "https://via.placeholder.com/200"}
                                                                 />
                                                             </div>
                                                             <h6 className="card-title fw-bold text-primary mb-2">{p2.name}</h6>

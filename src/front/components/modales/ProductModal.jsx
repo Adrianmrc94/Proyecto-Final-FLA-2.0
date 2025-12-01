@@ -2,12 +2,21 @@ import React, { useState } from "react";
 import useDarkMode from "../../hooks/useDarkMode";
 import useProductFavorites from "../../hooks/useProductFavorites";
 import Toast from "../Toast";
+import { getProductImageUrl } from "../../utils/imageUtils";
 
 export default function ProductModal({ product, show, onClose, mode = "view", onFavoriteRemoved }) {
   if (!product) return null;
 
   const { darkMode } = useDarkMode();
   const [toast, setToast] = useState(null);
+
+  // Debug logging
+  if (mode === "favorite") {
+    console.log("🔍 ProductModal - Producto recibido:", product);
+    console.log("   store_name:", product.store_name);
+    console.log("   category:", product.category);
+    console.log("   main_category:", product.main_category);
+  }
 
   const showToast = (message, type) => {
     setToast({ message, type });
@@ -24,8 +33,11 @@ export default function ProductModal({ product, show, onClose, mode = "view", on
   const title = product.name || product.title || "Producto sin nombre";
   const price = product.price ?? "N/A";
   const description = product.description || "Sin descripción";
-  const imageUrl = product.image || product.images?.[0] || "https://placehold.co/150x150?text=No+Image";
+  const imageUrl = getProductImageUrl(product);
   const rating = product.rate || product.rating || 0;
+  const storeName = product.store_name || "Tienda no especificada";
+  const category = product.category || "Sin categoría";
+  const mainCategory = product.main_category || null;
 
   return (
     <>
@@ -64,25 +76,57 @@ export default function ProductModal({ product, show, onClose, mode = "view", on
             <div className="modal-body">
               <div className="row">
                 <div className="col-md-5 text-center">
-                  <img src={imageUrl} alt={title} className="img-fluid rounded" style={{ maxHeight: "300px" }} />
-                  <div className="text-warning mt-2">⭐ {rating}/5</div>
-                </div>
-                <div className="col-md-7">
-                  <h6>Descripción</h6>
-                  <p>{description}</p>
-                  
-                  {product.store_name && (
-                    <div className="mb-3">
-                      <small className="text-muted">
-                        <i className="bi bi-shop me-1"></i>
-                        Vendido por: <span className="fw-semibold">{product.store_name}</span>
-                      </small>
+                  <img
+                    src={imageUrl}
+                    alt={title}
+                    className="img-fluid rounded shadow-sm"
+                    style={{ maxHeight: "300px" }}
+                    onError={(e) => e.target.src = "https://placehold.co/150x150?text=No+Image"}
+                  />
+                  {rating > 0 && (
+                    <div className="text-warning mt-3">
+                      <i className="bi bi-star-fill me-1"></i>
+                      {rating}/5
                     </div>
                   )}
-                  
-                  <h6>Precio</h6>
-                  <div className="alert alert-info">
-                    <div className="fs-4 fw-bold">${price}</div>
+                </div>
+                <div className="col-md-7">
+                  {/* Tienda y Categoría */}
+                  <div className="mb-3 d-flex flex-wrap gap-2">
+                    <span className="badge bg-primary fs-6">
+                      <i className="bi bi-shop me-1"></i>
+                      {storeName}
+                    </span>
+                    {mainCategory && (
+                      <span className="badge bg-success fs-6">
+                        <i className="bi bi-grid-3x3-gap me-1"></i>
+                        {mainCategory}
+                      </span>
+                    )}
+                    <span className="badge bg-secondary fs-6">
+                      <i className="bi bi-tag me-1"></i>
+                      {category}
+                    </span>
+                  </div>
+
+                  {/* Precio destacado */}
+                  <div className="alert alert-success border-0 shadow-sm mb-3">
+                    <div className="d-flex align-items-center justify-content-between">
+                      <div>
+                        <small className="text-muted d-block">Precio</small>
+                        <div className="fs-3 fw-bold text-success">${price}</div>
+                      </div>
+                      <i className="bi bi-currency-dollar fs-1 text-success opacity-25"></i>
+                    </div>
+                  </div>
+
+                  {/* Descripción */}
+                  <div className="mb-3">
+                    <h6 className="text-muted mb-2">
+                      <i className="bi bi-info-circle me-2"></i>
+                      Descripción
+                    </h6>
+                    <p className="text-justify">{description}</p>
                   </div>
                 </div>
               </div>

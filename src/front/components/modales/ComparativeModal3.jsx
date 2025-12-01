@@ -4,6 +4,7 @@ import useComparativeFavorites from "../../hooks/useComparativeFavorites";
 import useGlobalProducts from "../../hooks/useGlobalProducts";
 import ApiService from "../../services/api";
 import { toast } from 'react-toastify';
+import { getProductImageUrl } from "../../utils/imageUtils";
 
 const ComparativeModal3 = ({ isOpen, onClose, product }) => {
   const { darkMode } = useDarkMode(); // Accedemos al estado del modo oscuro
@@ -536,10 +537,11 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
                   <div className="card-body text-center">
                     <div className="mb-3">
                       <img
-                        src={p1.image || p1.img || "https://via.placeholder.com/200x200?text=No+Image"}
+                        src={getProductImageUrl(p1)}
                         alt={p1.name}
                         className="img-fluid rounded shadow-sm"
                         style={{ width: "200px", height: "200px", objectFit: "contain", padding: "10px" }}
+                        onError={(e) => e.target.src = "https://via.placeholder.com/200x200?text=No+Image"}
                       />
                     </div>
                     <h6 className="card-title fw-bold text-primary mb-2">{p1.name}</h6>
@@ -569,10 +571,11 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
                   <div className="card-body text-center">
                     <div className="mb-3">
                       <img
-                        src={p2.image || p2.img || "https://via.placeholder.com/200x200?text=No+Image"}
+                        src={getProductImageUrl(p2)}
                         alt={p2.name}
                         className="img-fluid rounded shadow-sm"
                         style={{ width: "200px", height: "200px", objectFit: "contain", padding: "10px" }}
+                        onError={(e) => e.target.src = "https://via.placeholder.com/200x200?text=No+Image"}
                       />
                     </div>
                     <h6 className="card-title fw-bold text-primary mb-2">{p2.name}</h6>

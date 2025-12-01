@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import ApiService from '../services/api';
 import useGlobalProducts from '../hooks/useGlobalProducts';
+import useMainCategories from '../hooks/useMainCategories';
 import useDarkMode from '../hooks/useDarkMode';
 import CatalogFilters from '../components/catalog/CatalogFilters';
 import ProductCard from '../components/catalog/ProductCard';
@@ -11,15 +12,26 @@ import '../styles/CatalogPage.css';
 
 const CatalogPage = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { darkMode } = useDarkMode();
     const { products, loadingProducts } = useGlobalProducts();
+    const { mainCategories, subcategories, selectedMainCategory, setSelectedMainCategory } = useMainCategories();
     const [filteredProducts, setFilteredProducts] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [selectedSubcategory, setSelectedSubcategory] = useState('all');
+    const [selectedStore, setSelectedStore] = useState('all');
     const [sortBy, setSortBy] = useState('name');
     const [searchTerm, setSearchTerm] = useState('');
     const [favoriteIds, setFavoriteIds] = useState(new Set());
     const [currentPage, setCurrentPage] = useState(1);
     const productsPerPage = 12;
+
+    // Detectar categoría principal de URL
+    useEffect(() => {
+        const mainCat = searchParams.get('main_category');
+        if (mainCat) {
+            setSelectedMainCategory(mainCat);
+        }
+    }, [searchParams, setSelectedMainCategory]);
 
     // Cargar favoritos al montar el componente
     useEffect(() => {
@@ -32,18 +44,70 @@ const CatalogPage = () => {
             }
         };
         loadFavorites();
+
+        // Debug: mostrar estructura de productos al cargar
+        if (products.length > 0) {
+            console.log('📦 Sample product structure:');
+            console.log(products[0]);
+            const despensaProducts = products.filter(p => p.main_category === 'Despensa');
+            console.log(`Products in Despensa: ${despensaProducts.length}`);
+            const lataProducts = products.filter(p => p.category && p.category.toLowerCase().includes('lata'));
+            console.log(`Products with 'lata' in category: ${lataProducts.length}`);
+            if (lataProducts.length > 0) {
+                console.log('Sample lata product:', lataProducts[0]);
+            }
+        }
     }, []);
 
-    // Obtener categorías únicas
-    const categories = ['all', ...new Set(products.map(p => p.category).filter(Boolean))];
+    // Obtener tiendas únicas
+    const stores = [...new Set(products.map(p => p.store_name).filter(Boolean))];
 
     // Filtrar y ordenar productos
     useEffect(() => {
         let filtered = [...products];
 
-        // Filtrar por categoría
-        if (selectedCategory !== 'all') {
-            filtered = filtered.filter(p => p.category === selectedCategory);
+        console.log('🔍 DEBUG Filtering:');
+        console.log('  Total products:', products.length);
+        console.log('  Selected main category:', selectedMainCategory);
+        console.log('  Selected subcategory:', selectedSubcategory);
+
+        // Filtrar por categoría principal
+        if (selectedMainCategory && selectedMainCategory !== 'all') {
+            filtered = filtered.filter(p => p.main_category === selectedMainCategory);
+            console.log('  After main category filter:', filtered.length);
+        }
+
+        // Filtrar por subcategoría (usar includes para búsqueda parcial)
+        if (selectedSubcategory && selectedSubcategory !== 'all') {
+            const beforeSubcat = filtered.length;
+            filtered = filtered.filter(p =>
+                p.category && p.category.toLowerCase().includes(selectedSubcategory.toLowerCase())
+            );
+            console.log(`  After subcategory filter (${selectedSubcategory}):`, filtered.length);
+            console.log('  Before:', beforeSubcat, '→ After:', filtered.length);
+
+            // Debug: mostrar algunos productos que pasaron el filtro
+            if (filtered.length > 0) {
+                console.log('  Sample filtered products:');
+                filtered.slice(0, 3).forEach(p => {
+                    console.log(`    - ${p.name} | category: "${p.category}" | main: "${p.main_category}"`);
+                });
+            } else {
+                console.log('  ❌ NO PRODUCTS MATCHED!');
+                // Mostrar algunos productos antes del filtro de subcategoría
+                const sampleBeforeFilter = products
+                    .filter(p => selectedMainCategory === 'all' || p.main_category === selectedMainCategory)
+                    .slice(0, 5);
+                console.log('  Sample products before subcategory filter:');
+                sampleBeforeFilter.forEach(p => {
+                    console.log(`    - ${p.name} | category: "${p.category}" | main: "${p.main_category}"`);
+                });
+            }
+        }
+
+        // Filtrar por tienda
+        if (selectedStore !== 'all') {
+            filtered = filtered.filter(p => p.store_name === selectedStore);
         }
 
         // Filtrar por búsqueda
@@ -71,7 +135,7 @@ const CatalogPage = () => {
 
         setFilteredProducts(filtered);
         setCurrentPage(1);
-    }, [products, selectedCategory, sortBy, searchTerm]);
+    }, [products, selectedMainCategory, selectedSubcategory, selectedStore, sortBy, searchTerm]);
 
     // Paginación
     const indexOfLastProduct = currentPage * productsPerPage;
@@ -152,11 +216,17 @@ const CatalogPage = () => {
                 <CatalogFilters
                     searchTerm={searchTerm}
                     setSearchTerm={setSearchTerm}
-                    selectedCategory={selectedCategory}
-                    setSelectedCategory={setSelectedCategory}
+                    selectedMainCategory={selectedMainCategory || 'all'}
+                    setSelectedMainCategory={setSelectedMainCategory}
+                    selectedSubcategory={selectedSubcategory}
+                    setSelectedSubcategory={setSelectedSubcategory}
+                    selectedStore={selectedStore}
+                    setSelectedStore={setSelectedStore}
                     sortBy={sortBy}
                     setSortBy={setSortBy}
-                    categories={categories}
+                    mainCategories={mainCategories}
+                    subcategories={subcategories}
+                    stores={stores}
                 />
 
                 {/* Results Count */}

@@ -33,11 +33,25 @@ function AppWithEffects() {
     } = useGlobalProducts();
 
     useEffect(() => {
+        // Versión de caché - cambiarla cuando modifiquemos el formato de datos
+        // IMPORTANTE: Incrementar este número después de cada cambio en la estructura de URLs
+        const CACHE_VERSION = "v7-improved-categories";
+        const cachedVersion = localStorage.getItem("products_version");
+
+        // Si la versión cambió, limpiar caché antiguo
+        if (cachedVersion !== CACHE_VERSION) {
+            localStorage.clear(); // Limpiar TODO el localStorage
+            localStorage.setItem("products_version", CACHE_VERSION);
+            console.log("🔄 Cache limpiado - Nueva versión:", CACHE_VERSION);
+        }
+
         if (products.length === 0 && !loadingProducts) {
             setLoadingProducts(true);
 
             ApiService.fetchProducts()
                 .then((data) => {
+                    console.log("📦 Productos cargados:", data.length);
+                    console.log("🖼️ Primera imagen:", data[0]?.image);
                     setProducts(data);
 
                     // Generar productos destacados y aleatorio
@@ -59,9 +73,7 @@ function AppWithEffects() {
                     setLoadingProducts(false);
                 });
         }
-    }, [products.length, loadingProducts, setProducts, setLoadingProducts, setErrorLoadingProducts, setFeaturedProducts, setRandomProduct]);
-
-    return <RouterProvider router={router} />;
+    }, [products.length, loadingProducts, setProducts, setLoadingProducts, setErrorLoadingProducts, setFeaturedProducts, setRandomProduct]); return <RouterProvider router={router} />;
 }
 
 const rootElement = document.getElementById('root');

@@ -3,6 +3,7 @@ from api.models import db, Product
 from sqlalchemy.orm import joinedload
 from sqlalchemy import or_
 import random
+from api.category_mapping import get_main_category, get_all_main_categories, get_subcategories_for_main
 
 products_bp = Blueprint('products', __name__)
 
@@ -14,6 +15,8 @@ def get_products():
     price_min = request.args.get('price_min', type=float)
     price_max = request.args.get('price_max', type=float)
     category = request.args.get('category')
+    main_category = request.args.get('main_category')
+    store_id = request.args.get('store_id', type=int)
 
     query = Product.query.options(joinedload(Product.store))
     
@@ -24,6 +27,22 @@ def get_products():
         query = query.filter(Product.price <= price_max)
     if category:
         query = query.filter(Product.category.ilike(f'%{category}%'))
+    if store_id:
+        query = query.filter(Product.store_id == store_id)
+    
+    # Filtro por categoría principal
+    if main_category:
+        main_cat = main_category.replace("-", " ").strip()
+        if main_cat == "Otros":
+            # Filtrar productos sin categoría mapeada
+            all_products = query.all()
+            products = [p for p in all_products if get_main_category(p.category) == "Otros"]
+            return jsonify([p.serialize() for p in products]), 200
+        else:
+            # Obtener subcategorías del grupo
+            subcats = get_subcategories_for_main(main_cat)
+            filters = [Product.category.ilike(f'%{subcat}%') for subcat in subcats]
+            query = query.filter(or_(*filters)) if filters else query
 
     products = query.order_by(Product.rate.desc()).all()
     return jsonify([p.serialize() for p in products]), 200
@@ -37,9 +56,66 @@ def get_product_by_id(product_id):
 
 @products_bp.route('/categories', methods=['GET'])
 def get_categories():
+    """Devuelve todas las subcategorías únicas"""
     categories = db.session.query(Product.category).distinct().all()
     category_list = [c[0] for c in categories if c[0]]
-    return jsonify(category_list), 200
+    return jsonify(sorted(category_list)), 200
+
+@products_bp.route('/main-categories', methods=['GET'])
+def get_main_categories():
+    """Devuelve las categorías principales agrupadas"""
+    main_cats = get_all_main_categories()
+    
+    # Contar productos por categoría principal
+    result = []
+    for main_cat in main_cats:
+        if main_cat == "Otros":
+            # Para "Otros", buscar todos los productos que no matchean ninguna categoría
+            all_products = Product.query.all()
+            count = sum(1 for p in all_products if get_main_category(p.category) == "Otros")
+        else:
+            # Buscar productos que pertenecen a esta categoría principal
+            subcats = get_subcategories_for_main(main_cat)
+            count = 0
+            for subcat in subcats:
+                count += Product.query.filter(Product.category.ilike(f'%{subcat}%')).count()
+        
+        if count > 0:  # Solo incluir categorías con productos
+            result.append({
+                "name": main_cat,
+                "count": count
+            })
+    
+    return jsonify(sorted(result, key=lambda x: x['count'], reverse=True)), 200
+
+@products_bp.route('/main-categories/<string:main_category>/subcategories', methods=['GET'])
+def get_subcategories_by_main(main_category):
+    """Devuelve las categorías reales de BD para una categoría principal"""
+    # Normalizar nombre
+    main_cat = main_category.replace("-", " ").strip()
+    
+    # Obtener todas las categorías únicas de la BD
+    all_categories = db.session.query(Product.category).distinct().all()
+    
+    result = []
+    for cat_tuple in all_categories:
+        category = cat_tuple[0]
+        if not category:
+            continue
+            
+        # Verificar si esta categoría pertenece a la categoría principal seleccionada
+        if main_cat == "Otros":
+            if get_main_category(category) == "Otros":
+                count = Product.query.filter(Product.category == category).count()
+                if count > 0:
+                    result.append({"name": category, "count": count})
+        else:
+            if get_main_category(category) == main_cat:
+                count = Product.query.filter(Product.category == category).count()
+                if count > 0:
+                    result.append({"name": category, "count": count})
+    
+    return jsonify(sorted(result, key=lambda x: x['count'], reverse=True)), 200
 
 @products_bp.route('/products/category/<string:category>', methods=['GET'])
 def get_products_by_category(category):

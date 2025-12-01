@@ -1,0 +1,632 @@
+[
+  {
+    "name": "Queso lonchas gouda de vaca Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/3c0bd3e0e3803f38df0677d86b8c8b43.jpg?fit=crop&h=300&w=300",
+    "price": "2.45",
+    "external_id": "50654",
+    "category": "General"
+  },
+  {
+    "name": "Galletas Cookies Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/8ce98b32ae942aa485f68c03e674f858.jpg?fit=crop&h=300&w=300",
+    "price": "1.55",
+    "external_id": "14212",
+    "category": "General"
+  },
+  {
+    "name": "Queso en polvo grana padano Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/d053faaab49fc2cde99875dffb3eaee9.jpg?fit=crop&h=300&w=300",
+    "price": "1.70",
+    "external_id": "51146",
+    "category": "General"
+  },
+  {
+    "name": "Queso rallado especial fundir mezcla Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/aa127a068121be5a0a5dfd543ddb2fa0.jpg?fit=crop&h=300&w=300",
+    "price": "2.30",
+    "external_id": "23622",
+    "category": "General"
+  },
+  {
+    "name": "Café molido natural Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/1bee5993195e32109b08b2742ca1452e.jpg?fit=crop&h=300&w=300",
+    "price": "5.30",
+    "external_id": "11178",
+    "category": "General"
+  },
+  {
+    "name": "Chorizo extra Hacendado lonchas",
+    "image": "https://prod-mercadona.imgix.net/images/a5a0595b40251d9d53807fc148e1e271.jpg?fit=crop&h=300&w=300",
+    "price": "2.00",
+    "external_id": "59086",
+    "category": "General"
+  },
+  {
+    "name": "Delicias del mar de surimi Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/d623993598fe86c08597b03a88e443cc.jpg?fit=crop&h=300&w=300",
+    "price": "1.90",
+    "external_id": "62503",
+    "category": "General"
+  },
+  {
+    "name": "Zumo de naranja recién exprimido Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/70bfb1fb2f725e0ba98259fa063e4f9f.jpg?fit=crop&h=300&w=300",
+    "price": "4.95",
+    "external_id": "3362",
+    "category": "General"
+  },
+  {
+    "name": "Salchichón extra Hacendado lonchas",
+    "image": "https://prod-mercadona.imgix.net/images/0ab7bf05db85cbd79b9f110a61230670.jpg?fit=crop&h=300&w=300",
+    "price": "2.00",
+    "external_id": "59085",
+    "category": "General"
+  },
+  {
+    "name": "Limones",
+    "image": "https://prod-mercadona.imgix.net/images/1d482fa781e179d28c83a714efe1beaa.jpg?fit=crop&h=300&w=300",
+    "price": "2.25",
+    "external_id": "3236",
+    "category": "General"
+  },
+  {
+    "name": "Kakis",
+    "image": "https://prod-mercadona.imgix.net/images/1ffca3326a5a527ab538b41f4673d174.jpg?fit=crop&h=300&w=300",
+    "price": "2.00",
+    "external_id": "3928",
+    "category": "General"
+  },
+  {
+    "name": "Granada",
+    "image": "https://prod-mercadona.imgix.net/images/e51fbd5638b241e5e21e7af11b8f03b7.jpg?fit=crop&h=300&w=300",
+    "price": "1.08",
+    "external_id": "3915",
+    "category": "General"
+  },
+  {
+    "name": "Castañas",
+    "image": "https://prod-mercadona.imgix.net/images/8bd8814de5f099ca01d1f7faa18ae912.jpg?fit=crop&h=300&w=300",
+    "price": "3.50",
+    "external_id": "5940",
+    "category": "General"
+  },
+  {
+    "name": "Media calabaza cacahuete",
+    "image": "https://prod-mercadona.imgix.net/images/dd206aa330fd0e0772f418126500fdd2.jpg?fit=crop&h=300&w=300",
+    "price": "1.56",
+    "external_id": "69853",
+    "category": "General"
+  },
+  {
+    "name": "Preparado de verdura para cocido",
+    "image": "https://prod-mercadona.imgix.net/images/f437c4278685ac5a209d01bb50849e50.jpg?fit=crop&h=300&w=300",
+    "price": "2.10",
+    "external_id": "69587",
+    "category": "General"
+  },
+  {
+    "name": "Caldo de cocido Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/fe02b6084454b04609e6c816623fe622.jpg?fit=crop&h=300&w=300",
+    "price": "0.90",
+    "external_id": "52768",
+    "category": "General"
+  },
+  {
+    "name": "Arreglo para cocido",
+    "image": "https://prod-mercadona.imgix.net/images/24f6697f31413514ae828ab6cca96ab9.jpg?fit=crop&h=300&w=300",
+    "price": "7.65",
+    "external_id": "35704",
+    "category": "General"
+  },
+  {
+    "name": "Arreglo para puchero vacuno, cerdo y pollo",
+    "image": "https://prod-mercadona.imgix.net/images/876a3e52b23c6ad5e1aeafec3c2af206.jpg?fit=crop&h=300&w=300",
+    "price": "6.50",
+    "external_id": "3497",
+    "category": "General"
+  },
+  {
+    "name": "Fumet caldo de pescado Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/83629f9f37126a2e5eb1a7063d225860.jpg?fit=crop&h=300&w=300",
+    "price": "3.00",
+    "external_id": "22081",
+    "category": "General"
+  },
+  {
+    "name": "Arreglo de marisco pelado",
+    "image": "https://prod-mercadona.imgix.net/images/872c79b037188297ba00e68bccae5820.jpg?fit=crop&h=300&w=300",
+    "price": "9.45",
+    "external_id": "87786",
+    "category": "General"
+  },
+  {
+    "name": "Kit Makeup Cloud Deliplus",
+    "image": "https://prod-mercadona.imgix.net/images/8fa79cf54c0251d75fcbefcb3e31cfb0.jpg?fit=crop&h=300&w=300",
+    "price": "14.50",
+    "external_id": "20340",
+    "category": "General"
+  },
+  {
+    "name": "Perfilador de labios Long Lasting Deliplus 15 canela claro",
+    "image": "https://prod-mercadona.imgix.net/images/f76dfce3e6cfcd690387f4ba104d3836.jpg?fit=crop&h=300&w=300",
+    "price": "2.50",
+    "external_id": "14440",
+    "category": "General"
+  },
+  {
+    "name": "Mascarilla facial Elfo Mask Deliplus con jengibre y canela",
+    "image": "https://prod-mercadona.imgix.net/images/d2c30eeb93ddac94797d217f3d764098.jpg?fit=crop&h=300&w=300",
+    "price": "2.00",
+    "external_id": "20929",
+    "category": "General"
+  },
+  {
+    "name": "Crema facial hidratante con color Skiny Glow Tint Deliplus con pigmentos encapsulados",
+    "image": "https://prod-mercadona.imgix.net/images/c8eb3a19f64d05a9a7f9a12c45ae6c47.jpg?fit=crop&h=300&w=300",
+    "price": "9.00",
+    "external_id": "21364",
+    "category": "General"
+  },
+  {
+    "name": "Lote infantil maquillaje Color Up! Magical Unicorn",
+    "image": "https://prod-mercadona.imgix.net/images/56169a7e74d50679f46dd86554678bb9.jpg?fit=crop&h=300&w=300",
+    "price": "13.00",
+    "external_id": "19921",
+    "category": "General"
+  },
+  {
+    "name": "Lote infantil Disney Frozen",
+    "image": "https://prod-mercadona.imgix.net/images/7be22b631817ffb647f7ab6e4da1bdfb.jpg?fit=crop&h=300&w=300",
+    "price": "10.50",
+    "external_id": "9929",
+    "category": "General"
+  },
+  {
+    "name": "Lote infantil Marvel Spiderman",
+    "image": "https://prod-mercadona.imgix.net/images/43243a8f67b15c7634348d0d91826a0a.jpg?fit=crop&h=300&w=300",
+    "price": "10.50",
+    "external_id": "9931",
+    "category": "General"
+  },
+  {
+    "name": "Lote hombre Borealia Shine",
+    "image": "https://prod-mercadona.imgix.net/images/b2e0cd668ae3867ec5f76e058a939728.jpg?fit=crop&h=300&w=300",
+    "price": "15.00",
+    "external_id": "19936",
+    "category": "General"
+  },
+  {
+    "name": "Lote hombre Como Tú Viento",
+    "image": "https://prod-mercadona.imgix.net/images/b375b728c0ba0d0fd2d93fba345556a0.jpg?fit=crop&h=300&w=300",
+    "price": "12.00",
+    "external_id": "19933",
+    "category": "General"
+  },
+  {
+    "name": "Lote hombre Como tú Fuerza",
+    "image": "https://prod-mercadona.imgix.net/images/7da7c63afc55e56023d716540a09e268.jpg?fit=crop&h=300&w=300",
+    "price": "10.00",
+    "external_id": "19934",
+    "category": "General"
+  },
+  {
+    "name": "Burgers vegetales Hacendado con calabaza",
+    "image": "https://prod-mercadona.imgix.net/images/26c04ee599092c750b83cb8f1563b228.jpg?fit=crop&h=300&w=300",
+    "price": "2.00",
+    "external_id": "15269",
+    "category": "General"
+  },
+  {
+    "name": "Bebida energética Zero Berries Energy drink",
+    "image": "https://prod-mercadona.imgix.net/images/634351bfb91cd1f05f53698e91310975.jpg?fit=crop&h=300&w=300",
+    "price": "1.00",
+    "external_id": "15311",
+    "category": "General"
+  },
+  {
+    "name": "Jamón bellota ibérico 100% La Hacienda del ibérico",
+    "image": "https://prod-mercadona.imgix.net/images/238ec81cd4191fe1bab6aee3639fa213.jpg?fit=crop&h=300&w=300",
+    "price": "250.00",
+    "external_id": "21536",
+    "category": "General"
+  },
+  {
+    "name": "Langostino cocido",
+    "image": "https://prod-mercadona.imgix.net/images/5ff0e3ecbe8a83365f7f979034f289d2.jpg?fit=crop&h=300&w=300",
+    "price": "9.75",
+    "external_id": "30096",
+    "category": "General"
+  },
+  {
+    "name": "Pavo 95% relleno La Carloteña asado al horno lonchas",
+    "image": "https://prod-mercadona.imgix.net/images/080e74a78551fac7e2f75998e2e9ca32.jpg?fit=crop&h=300&w=300",
+    "price": "2.75",
+    "external_id": "19995",
+    "category": "General"
+  },
+  {
+    "name": "Paleta de bellota ibérica 100% La Hacienda del Ibérico",
+    "image": "https://prod-mercadona.imgix.net/images/a1cef78854d06cce850827c60f8f55af.jpg?fit=crop&h=300&w=300",
+    "price": "90.00",
+    "external_id": "14258",
+    "category": "General"
+  },
+  {
+    "name": "Alcachofa",
+    "image": "https://prod-mercadona.imgix.net/images/a3ee18444d12fd8a6ac5567a32755eb7.jpg?fit=crop&h=300&w=300",
+    "price": "0.82",
+    "external_id": "69623",
+    "category": "General"
+  },
+  {
+    "name": "Gel-champú bebé para pieles atópicas Deliplus",
+    "image": "https://prod-mercadona.imgix.net/images/21cf2e881ea7e25ea6721910ab5875cb.jpg?fit=crop&h=300&w=300",
+    "price": "3.70",
+    "external_id": "46978",
+    "category": "General"
+  },
+  {
+    "name": "Mantel de papel decoración estrellas Navidad Bosque Verde textura tela",
+    "image": "https://prod-mercadona.imgix.net/images/e1e424179d5496a968e805fe06f5a9c0.jpg?fit=crop&h=300&w=300",
+    "price": "4.50",
+    "external_id": "19979",
+    "category": "General"
+  },
+  {
+    "name": "Mantel de papel decoración poinsettia Navidad Bosque Verde textura tela",
+    "image": "https://prod-mercadona.imgix.net/images/0b74e7f8fa1a7deeb342b78e8a370f43.jpg?fit=crop&h=300&w=300",
+    "price": "4.50",
+    "external_id": "19977",
+    "category": "General"
+  },
+  {
+    "name": "Bizcocho Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/0b8d292d9c7506e760668e3501134c6d.jpg?fit=crop&h=300&w=300",
+    "price": "1.75",
+    "external_id": "15165",
+    "category": "General"
+  },
+  {
+    "name": "Bandeja oro redonda Navidad Bosque Verde",
+    "image": "https://prod-mercadona.imgix.net/images/fd03527f8560b20178afc22979832a73.jpg?fit=crop&h=300&w=300",
+    "price": "2.50",
+    "external_id": "86473",
+    "category": "General"
+  },
+  {
+    "name": "Vasos decoración Navidad Bosque Verde reutilizables",
+    "image": "https://prod-mercadona.imgix.net/images/3f6f3eba09b6ef1262737f539d48f410.jpg?fit=crop&h=300&w=300",
+    "price": "2.40",
+    "external_id": "86351",
+    "category": "General"
+  },
+  {
+    "name": "Copas cava de plástico brillo Bosque Verde",
+    "image": "https://prod-mercadona.imgix.net/images/0abfc045ad0f046abbc6425f31b2f957.jpg?fit=crop&h=300&w=300",
+    "price": "2.90",
+    "external_id": "86349",
+    "category": "General"
+  },
+  {
+    "name": "Plato postre decorado Navidad Bosque Verde",
+    "image": "https://prod-mercadona.imgix.net/images/05af6b7e0b06e6e37faac6183180adba.jpg?fit=crop&h=300&w=300",
+    "price": "2.55",
+    "external_id": "22635",
+    "category": "General"
+  },
+  {
+    "name": "Plato decoración poinsettia Navidad Bosque Verde",
+    "image": "https://prod-mercadona.imgix.net/images/165caa2956869bf54f6b8f59b4f2a080.jpg?fit=crop&h=300&w=300",
+    "price": "2.80",
+    "external_id": "22634",
+    "category": "General"
+  },
+  {
+    "name": "Plato rojo Navidad Bosque Verde",
+    "image": "https://prod-mercadona.imgix.net/images/cbd967553b987031ce75bae6baf1e173.jpg?fit=crop&h=300&w=300",
+    "price": "2.80",
+    "external_id": "22633",
+    "category": "General"
+  },
+  {
+    "name": "Bandeja oro Navidad Bosque Verde",
+    "image": "https://prod-mercadona.imgix.net/images/809b72403d4b3d434313cb164e9fac19.jpg?fit=crop&h=300&w=300",
+    "price": "1.80",
+    "external_id": "11611",
+    "category": "General"
+  },
+  {
+    "name": "Bol oro Navidad Bosque Verde",
+    "image": "https://prod-mercadona.imgix.net/images/f7a6d04c2e651df10745600b5458c275.jpg?fit=crop&h=300&w=300",
+    "price": "1.80",
+    "external_id": "11610",
+    "category": "General"
+  },
+  {
+    "name": "Láminas sin corteza de pan de molde blanco Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/ff1c900b6f594bf26eea3868d5cef0ec.jpg?fit=crop&h=300&w=300",
+    "price": "2.00",
+    "external_id": "82717",
+    "category": "General"
+  },
+  {
+    "name": "Servilleta papel color Bosque Verde",
+    "image": "https://prod-mercadona.imgix.net/images/ae3eb71ae28e8c95be2cd85bd885b272.jpg?fit=crop&h=300&w=300",
+    "price": "1.70",
+    "external_id": "47058",
+    "category": "General"
+  },
+  {
+    "name": "Servilleta papel decoración Navidad Bosque Verde",
+    "image": "https://prod-mercadona.imgix.net/images/c0537d20ac7d238865f57a0a1f55b775.jpg?fit=crop&h=300&w=300",
+    "price": "2.00",
+    "external_id": "52763",
+    "category": "General"
+  },
+  {
+    "name": "Licor crema de pistacho Royal Swan",
+    "image": "https://prod-mercadona.imgix.net/images/2385a70bc8a257db6be4df31e1dad5a6.jpg?fit=crop&h=300&w=300",
+    "price": "6.35",
+    "external_id": "19881",
+    "category": "General"
+  },
+  {
+    "name": "Vino blanco crianza D.O Rioja Capricho de Uva",
+    "image": "https://prod-mercadona.imgix.net/images/66f09c612cf9165b84dd9fddf7c3d7cd.jpg?fit=crop&h=300&w=300",
+    "price": "6.00",
+    "external_id": "11938",
+    "category": "General"
+  },
+  {
+    "name": "Vino tinto D.O Rioja Pieza Rey",
+    "image": "https://prod-mercadona.imgix.net/images/c5ff27923a8f5542b3bf7efb33771ce4.jpg?fit=crop&h=300&w=300",
+    "price": "9.60",
+    "external_id": "52786",
+    "category": "General"
+  },
+  {
+    "name": "Peladillas Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/b5748277458de16de0286a157632e6e4.jpg?fit=crop&h=300&w=300",
+    "price": "1.85",
+    "external_id": "36434",
+    "category": "General"
+  },
+  {
+    "name": "Vino blanco dulce Moscato espumoso Cueva Peccato",
+    "image": "https://prod-mercadona.imgix.net/images/1c534c17e8a441ec8af91335f0f33c6e.jpg?fit=crop&h=300&w=300",
+    "price": "3.50",
+    "external_id": "66675",
+    "category": "General"
+  },
+  {
+    "name": "Cava semi seco Señorío De Requena",
+    "image": "https://prod-mercadona.imgix.net/images/7a9c9d5ea46912b9b4de7b6e195ecd58.jpg?fit=crop&h=300&w=300",
+    "price": "3.55",
+    "external_id": "28951",
+    "category": "General"
+  },
+  {
+    "name": "Cava brut Señorío De Requena",
+    "image": "https://prod-mercadona.imgix.net/images/becbd1117da2631a6980c6e819cab76b.jpg?fit=crop&h=300&w=300",
+    "price": "3.55",
+    "external_id": "28949",
+    "category": "General"
+  },
+  {
+    "name": "Cava brut Freixenet",
+    "image": "https://prod-mercadona.imgix.net/images/2dc1e4877ea10f8f9f5b076abc431baa.jpg?fit=crop&h=300&w=300",
+    "price": "6.95",
+    "external_id": "28005",
+    "category": "General"
+  },
+  {
+    "name": "Marquesas Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/6133f55d80cc093ffa909d22f4506a2e.jpg?fit=crop&h=300&w=300",
+    "price": "3.60",
+    "external_id": "82838",
+    "category": "General"
+  },
+  {
+    "name": "Cava brut nature Jaume Serra",
+    "image": "https://prod-mercadona.imgix.net/images/30f76c69ce6ebc17e94d7d6a1d69a671.jpg?fit=crop&h=300&w=300",
+    "price": "3.95",
+    "external_id": "28908",
+    "category": "General"
+  },
+  {
+    "name": "Sidra El Gaitero",
+    "image": "https://prod-mercadona.imgix.net/images/05964eec6bc5edaa1237c07276d28dac.jpg?fit=crop&h=300&w=300",
+    "price": "2.70",
+    "external_id": "28811",
+    "category": "General"
+  },
+  {
+    "name": "Sidra extra El Gaitero",
+    "image": "https://prod-mercadona.imgix.net/images/3a15ea6eb0f89f6a5a93fb9d1baf6f15.jpg?fit=crop&h=300&w=300",
+    "price": "3.50",
+    "external_id": "28801",
+    "category": "General"
+  },
+  {
+    "name": "Cigala cruda grande Hacendado ultracongelado",
+    "image": "https://prod-mercadona.imgix.net/images/9b22ce87f7f0068d5f267b56b7e30ab4.jpg?fit=crop&h=300&w=300",
+    "price": "16.95",
+    "external_id": "62323",
+    "category": "General"
+  },
+  {
+    "name": "Bebida zumo de frutas con gas Magic sin alcohol",
+    "image": "https://prod-mercadona.imgix.net/images/8661cb044ef39f906a9e26f9684e5377.jpg?fit=crop&h=300&w=300",
+    "price": "2.50",
+    "external_id": "39702",
+    "category": "General"
+  },
+  {
+    "name": "Vieira Hacendado ultracongelada",
+    "image": "https://prod-mercadona.imgix.net/images/856e2a64babd0aa370286f3e8d4c22c5.jpg?fit=crop&h=300&w=300",
+    "price": "2.35",
+    "external_id": "62306",
+    "category": "General"
+  },
+  {
+    "name": "Mini tartaletas Confiletas",
+    "image": "https://prod-mercadona.imgix.net/images/1f9c2ab38e5606a05bbd9a35e01b5645.jpg?fit=crop&h=300&w=300",
+    "price": "1.75",
+    "external_id": "82907",
+    "category": "General"
+  },
+  {
+    "name": "Mini volovanes Confiletas",
+    "image": "https://prod-mercadona.imgix.net/images/5bcb23ffb7633dc97c6f37122c254e2d.jpg?fit=crop&h=300&w=300",
+    "price": "1.75",
+    "external_id": "82902",
+    "category": "General"
+  },
+  {
+    "name": "Volovanes Confiletas",
+    "image": "https://prod-mercadona.imgix.net/images/c73530415c5a3aed0c34e5917e43c9fc.jpg?fit=crop&h=300&w=300",
+    "price": "1.95",
+    "external_id": "82901",
+    "category": "General"
+  },
+  {
+    "name": "Pan tostado de maíz y pipas Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/c011e2fd7ecc0578e8f719a353c921ee.jpg?fit=crop&h=300&w=300",
+    "price": "1.15",
+    "external_id": "20875",
+    "category": "General"
+  },
+  {
+    "name": "Paletilla de cochinillo congelada",
+    "image": "https://prod-mercadona.imgix.net/images/0437410731d0a8246224851601cb7e3e.jpg?fit=crop&h=300&w=300",
+    "price": "16.63",
+    "external_id": "5270",
+    "category": "General"
+  },
+  {
+    "name": "Medio cochinillo congelado",
+    "image": "https://prod-mercadona.imgix.net/images/07339db3baeb4e11700b6479ff8f22fb.jpg?fit=crop&h=300&w=300",
+    "price": "45.90",
+    "external_id": "2120",
+    "category": "General"
+  },
+  {
+    "name": "Tarta delicia de fresa Hacendado congelada",
+    "image": "https://prod-mercadona.imgix.net/images/a49e6ed10cc95d429dff5ffd7a9c0f3a.jpg?fit=crop&h=300&w=300",
+    "price": "11.50",
+    "external_id": "20356",
+    "category": "General"
+  },
+  {
+    "name": "Piñones Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/f36ae71b6c8a0d69b02eef0ce8ee8953.jpg?fit=crop&h=300&w=300",
+    "price": "5.90",
+    "external_id": "86843",
+    "category": "General"
+  },
+  {
+    "name": "Fideos orientales sabor gamba Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/9478a2adcc7936bf413d30a9c0a198c1.jpg?fit=crop&h=300&w=300",
+    "price": "0.65",
+    "external_id": "19949",
+    "category": "General"
+  },
+  {
+    "name": "Orejones albaricoque Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/1bd2a02ab94af3ea2d6abc653abcdbd3.jpg?fit=crop&h=300&w=300",
+    "price": "4.40",
+    "external_id": "13877",
+    "category": "General"
+  },
+  {
+    "name": "Preparado lácteo con cereales y frutas Peques 3 Puleva",
+    "image": "https://prod-mercadona.imgix.net/images/63e1a9ed7f401ced05f952e506875bec.jpg?fit=crop&h=300&w=300",
+    "price": "2.00",
+    "external_id": "20321",
+    "category": "General"
+  },
+  {
+    "name": "Secreto de cerdo",
+    "image": "https://prod-mercadona.imgix.net/images/661e35269c669be98c87843265232019.jpg?fit=crop&h=300&w=300",
+    "price": "4.28",
+    "external_id": "13046",
+    "category": "General"
+  },
+  {
+    "name": "Filetes lomo de cerdo corte fino",
+    "image": "https://prod-mercadona.imgix.net/images/d1d8fe8e03738aa9cd3267bca96b06d3.jpg?fit=crop&h=300&w=300",
+    "price": "4.07",
+    "external_id": "86395",
+    "category": "General"
+  },
+  {
+    "name": "Chuletas lomo de cerdo finas",
+    "image": "https://prod-mercadona.imgix.net/images/9d75b9c7cefcede381c5cc40bcccab72.jpg?fit=crop&h=300&w=300",
+    "price": "3.66",
+    "external_id": "12792",
+    "category": "General"
+  },
+  {
+    "name": "Entrecot aguja de cerdo Duroc",
+    "image": "https://prod-mercadona.imgix.net/images/21f5a86973def639aa986031aab20081.jpg?fit=crop&h=300&w=300",
+    "price": "5.12",
+    "external_id": "86928",
+    "category": "General"
+  },
+  {
+    "name": "Filetes secreto de cerdo",
+    "image": "https://prod-mercadona.imgix.net/images/149f82ef7720bdb5e5037e38dd57cb72.jpg?fit=crop&h=300&w=300",
+    "price": "3.24",
+    "external_id": "12793",
+    "category": "General"
+  },
+  {
+    "name": "Jamón de cebo de campo ibérico 50% Montesierra",
+    "image": "https://prod-mercadona.imgix.net/images/f62dc4e04d0418a084ac69732209e3f6.jpg?fit=crop&h=300&w=300",
+    "price": "185.00",
+    "external_id": "21419",
+    "category": "General"
+  },
+  {
+    "name": "Presa de bellota ibérica La Hacienda del Ibérico",
+    "image": "https://prod-mercadona.imgix.net/images/fc0e81e4558a160d284e089696372dd2.jpg?fit=crop&h=300&w=300",
+    "price": "29.40",
+    "external_id": "5840",
+    "category": "General"
+  },
+  {
+    "name": "Huevo hilado",
+    "image": "https://prod-mercadona.imgix.net/images/cc980ac4946abde95de303a323411804.jpg?fit=crop&h=300&w=300",
+    "price": "3.55",
+    "external_id": "87102",
+    "category": "General"
+  },
+  {
+    "name": "Floretas de coliflor para microondas Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/bc351aee28e11493329eb5fbcdbd8874.jpg?fit=crop&h=300&w=300",
+    "price": "1.60",
+    "external_id": "69392",
+    "category": "General"
+  },
+  {
+    "name": "Paté con perdiz, dátiles y gelée de tomate Real Carolina",
+    "image": "https://prod-mercadona.imgix.net/images/847b38c487397ba799f30f34b73f9ac8.jpg?fit=crop&h=300&w=300",
+    "price": "3.95",
+    "external_id": "19906",
+    "category": "General"
+  },
+  {
+    "name": "Servilleta papel decorada Resistente Bosque Verde",
+    "image": "https://prod-mercadona.imgix.net/images/be92c287be9f035ad4938c6280743b42.jpg?fit=crop&h=300&w=300",
+    "price": "2.05",
+    "external_id": "49710",
+    "category": "General"
+  },
+  {
+    "name": "Surtido paté de pato Hacendado",
+    "image": "https://prod-mercadona.imgix.net/images/f0052fdff4ca214049d280d678bb9480.jpg?fit=crop&h=300&w=300",
+    "price": "4.85",
+    "external_id": "59913",
+    "category": "General"
+  }
+]

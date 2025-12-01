@@ -27,7 +27,6 @@ export const initialStore = () => {
     featuredProducts: [],
     randomProduct: null,
     filters: {
-      category: "",
       price_min: 0,
       price_max: 100000,
       searchQuery: "",
