@@ -2,6 +2,8 @@
 
 A smart product price comparison platform that allows users to search, compare, and manage products from multiple stores in one place.
 
+> **Latest Update**: Application optimized with intelligent category mapping and unified search experience (Feb 2026)
+
 ## 🚀 Key Features
 
 - **🔍 Advanced Search**: Search system with filters by category, price, and store
