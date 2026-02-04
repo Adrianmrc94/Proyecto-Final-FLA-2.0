@@ -86,6 +86,7 @@ CATEGORY_GROUPS = {
         "Conserva", "Lata", "Conservas verdura", "Tomate frito", 
         "Tomate triturado", "Sofrito", "Platos de cuchara",
         "Aceitunas verdes", "Aceitunas negras", "Pepinillos", "Encurtidos",
+        "Cremas y puré", "Crema de verduras", "Puré",
         # Salsas
         "Salsa", "Mayonesa", "Ketchup", "Mostaza", "Allioli", "Otras salsas",
         # Caldos
@@ -117,6 +118,8 @@ CATEGORY_GROUPS = {
         # Preparados
         "Congelado", "Pizza congelada", "Lasaña congelada", "Croqueta",
         "Empanadilla", "Nugget", "San jacobo", "Varitas", "Fingers",
+        "Canelones de carne", "Lasaña", "Lasaña boloñesa", "Lasaña de atún",
+        "Pasta con pollo", "ultracongelada", "ultracongelado",
         # Ingredientes
         "Verdura congelada", "Pescado congelado", "Marisco congelado",
         "Patata congelada", "Fruta congelada",
@@ -198,6 +201,7 @@ CATEGORY_GROUPS = {
         "Perfilador de ojos", "Correctores", "Laca de uñas",
         "Brillos", "Mate", "Prebase", "Base", "Rímel", "Máscara",
         "Desmaquillante", "Limpieza de cara", "Mascarilla facial",
+        "Colorete", "Blush",
         # Higiene femenina
         "Compresas", "Tampón", "Salvaslip", "Protegeslips",
         # Accesorios
@@ -232,15 +236,26 @@ EXACT_MATCHES = {
     "Patatas fritas": "Snacks y Dulces",
     "Frutos secos": "Snacks y Dulces",
     "Bebidas vegetales": "Lácteos y Huevos",
+    "Colorete": "Higiene y Belleza",
+    "Cremas y puré": "Despensa",
+    "Cremas": "Despensa",
+    "Cremas de untar": "Despensa",
+    "Gel": "Higiene y Belleza",
+    "Carne congelada": "Congelados",
+    "Empanados y rebozados congelados": "Congelados",
+    "Pasta": "Despensa",  # Por defecto Despensa, a menos que sea ultracongelado
+    "Arroz": "Despensa",  # Por defecto Despensa, a menos que sea ultracongelado
 }
 
-def get_main_category(subcategory):
+def get_main_category(subcategory, product_name=None):
     """
     Devuelve la categoría principal para una subcategoría dada
     Usa matching prioritario: primero coincidencias exactas, luego substring
+    Con lógica mejorada para productos ambiguos usando el nombre del producto
     
     Args:
         subcategory: Nombre de la subcategoría
+        product_name: Nombre del producto (opcional, para resolución de ambigüedad)
         
     Returns:
         Nombre de la categoría principal o "Otros" si no se encuentra
@@ -248,13 +263,34 @@ def get_main_category(subcategory):
     if not subcategory:
         return "Otros"
     
-    # 1. Buscar coincidencia exacta (case insensitive)
     subcategory_normalized = subcategory.strip()
+    subcategory_lower = subcategory_normalized.lower()
+    
+    # 1. PRIORIDAD MÁXIMA: Lógica especial para productos ultracongelados (antes de EXACT_MATCHES)
+    if product_name:
+        product_name_lower = product_name.lower()
+        
+        # Si la subcategoría es "Pasta" o "Arroz" y el producto está ultracongelado
+        if subcategory_lower in ['pasta', 'arroz']:
+            if 'ultracongelad' in product_name_lower or 'congelad' in product_name_lower:
+                return "Congelados"
+        
+        # Si la subcategoría es genérica pero el producto tiene palabras clave de congelados
+        congelado_keywords = ['ultracongelad', 'congelad', 'helad']
+        if any(keyword in product_name_lower for keyword in congelado_keywords):
+            # Verificar si no hay ya una categoría más específica de congelados
+            if subcategory_lower not in ['helado', 'tarrina', 'polo', 'sorbete', 
+                                         'empanados y rebozados congelados',
+                                         'verdura congelada', 'pescado congelado',
+                                         'marisco congelado', 'pasta de dientes']:
+                return "Congelados"
+    
+    # 2. Buscar coincidencia exacta (case insensitive)
     for exact_key, main_cat in EXACT_MATCHES.items():
-        if subcategory_normalized.lower() == exact_key.lower():
+        if subcategory_lower == exact_key.lower():
             return main_cat
     
-    # 2. Buscar por substring (orden prioritario: coincidencias más específicas primero)
+    # 3. Buscar por substring (orden prioritario: coincidencias más específicas primero)
     subcategory_lower = subcategory_normalized.lower()
     
     # Crear lista de coincidencias con longitud de la subcategoría mapeada
@@ -262,9 +298,22 @@ def get_main_category(subcategory):
     for main_category, subcategories in CATEGORY_GROUPS.items():
         for sub in subcategories:
             sub_lower = sub.lower()
-            # Coincidencia bidireccional
-            if sub_lower in subcategory_lower or subcategory_lower in sub_lower:
-                matches.append((main_category, len(sub)))
+            
+            # Evitar falsos positivos: "gel" no debe matchear "congelada"
+            # Solo matchear si:
+            # 1. La subcategoría contiene la palabra completa del mapping
+            # 2. O es una coincidencia exacta (ya manejada arriba)
+            
+            # Coincidencia bidireccional con palabras completas
+            if sub_lower in subcategory_lower:
+                # Verificar que sea palabra completa o parte de una frase
+                # "gel" no debe matchear dentro de "congelada"
+                if sub_lower == subcategory_lower or ' ' + sub_lower in ' ' + subcategory_lower + ' ' or subcategory_lower.startswith(sub_lower + ' ') or subcategory_lower.endswith(' ' + sub_lower):
+                    matches.append((main_category, len(sub)))
+            elif subcategory_lower in sub_lower:
+                # La subcategoría está contenida en el mapping
+                if subcategory_lower == sub_lower or ' ' + subcategory_lower in ' ' + sub_lower + ' ' or sub_lower.startswith(subcategory_lower + ' ') or sub_lower.endswith(' ' + subcategory_lower):
+                    matches.append((main_category, len(sub)))
     
     # Si hay coincidencias, devolver la que tiene la subcategoría más larga (más específica)
     if matches:

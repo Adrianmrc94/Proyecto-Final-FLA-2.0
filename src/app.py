@@ -46,6 +46,16 @@ else:
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Configuración específica para SQLite para soportar multi-threading
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'connect_args': {
+        'check_same_thread': False,  # Permite usar SQLite desde múltiples threads
+        'timeout': 30  # Timeout de 30 segundos para locks
+    },
+    'pool_pre_ping': True,  # Verifica conexiones antes de usarlas
+    'pool_recycle': 3600,  # Recicla conexiones cada hora
+}
+
 # ===== CONFIGURACIÓN DE EMAIL =====
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587

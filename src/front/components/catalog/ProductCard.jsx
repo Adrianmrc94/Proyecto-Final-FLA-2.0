@@ -3,7 +3,7 @@ import React from 'react';
 const ProductCard = ({ product, isFavorite, onToggleFavorite, onViewComparisons }) => {
     // Construir URL de imagen completa para el proxy
     const getImageUrl = (image) => {
-        if (!image) return 'https://via.placeholder.com/300';
+        if (!image) return 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2UwZTBlMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5TaW4gSW1hZ2VuPC90ZXh0Pjwvc3ZnPg==';
 
         // Si la imagen es una ruta relativa (del proxy), agregarle el backend URL
         if (image.startsWith('/api/image-proxy')) {
@@ -37,14 +37,26 @@ const ProductCard = ({ product, isFavorite, onToggleFavorite, onViewComparisons 
                     className="card-img-top"
                     onError={(e) => {
                         console.error('❌ Error loading image:', imageUrl);
-                        e.target.src = 'https://via.placeholder.com/300?text=No+Image';
+                        e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iI2UwZTBlMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5TaW4gSW1hZ2VuPC90ZXh0Pjwvc3ZnPg==';
                     }}
                 />
             </div>
 
             {/* Product Info */}
             <div className="card-body d-flex flex-column">
-                <h6 className="card-title text-truncate mb-2" title={product.name}>
+                <h6
+                    className="card-title mb-2"
+                    title={product.name}
+                    style={{
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        minHeight: '2.5em',
+                        lineHeight: '1.25em'
+                    }}
+                >
                     {product.name}
                 </h6>
 

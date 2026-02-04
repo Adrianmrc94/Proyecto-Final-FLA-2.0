@@ -169,7 +169,7 @@ const FavoriteComparisonCard = ({ comparison, onDelete, onUpdate }) => {
                                                     height: '40px',
                                                     objectFit: 'cover'
                                                 }}
-                                                onError={(e) => e.target.src = 'https://via.placeholder.com/40'}
+                                                onError={(e) => e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZTBlMGUwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPj88L3RleHQ+PC9zdmc+'}
                                             />
                                             <div className="flex-grow-1" style={{ minWidth: 0 }}>
                                                 <p className="mb-0 small text-truncate" title={product.name}>
@@ -248,7 +248,7 @@ const FavoriteComparisonCard = ({ comparison, onDelete, onUpdate }) => {
                                                                     alt={p1.name}
                                                                     className="img-fluid rounded shadow-sm"
                                                                     style={{ width: "200px", height: "200px", objectFit: "cover" }}
-                                                                    onError={(e) => e.target.src = "https://via.placeholder.com/200"}
+                                                                    onError={(e) => e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2UwZTBlMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5TaW4gSW1hZ2VuPC90ZXh0Pjwvc3ZnPg=='}
                                                                 />
                                                             </div>
                                                             <h6 className="card-title fw-bold text-primary mb-2">{p1.name}</h6>
@@ -285,7 +285,7 @@ const FavoriteComparisonCard = ({ comparison, onDelete, onUpdate }) => {
                                                                     alt={p2.name}
                                                                     className="img-fluid rounded shadow-sm"
                                                                     style={{ width: "200px", height: "200px", objectFit: "cover" }}
-                                                                    onError={(e) => e.target.src = "https://via.placeholder.com/200"}
+                                                                    onError={(e) => e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2UwZTBlMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5TaW4gSW1hZ2VuPC90ZXh0Pjwvc3ZnPg=='}
                                                                 />
                                                             </div>
                                                             <h6 className="card-title fw-bold text-primary mb-2">{p2.name}</h6>

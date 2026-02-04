@@ -43,6 +43,15 @@ const UserPage = () => {
         toast.success('Contraseña actualizada correctamente');
     };
 
+    const handleUserDataUpdate = async () => {
+        try {
+            const data = await ApiService.getUserProfile();
+            setUserData(data);
+        } catch (error) {
+            console.error('Error refreshing user data:', error);
+        }
+    };
+
     const handleDeleteAccountAttempt = (e) => {
         e.preventDefault();
         setDeleteError('');
@@ -138,7 +147,7 @@ const UserPage = () => {
             {/* Tab Content */}
             <div className="user-content-card">
                 <div className={`tab-content-wrapper ${activeTab}`}>
-                    {activeTab === 'info' && <UserInfo userData={userData} />}
+                    {activeTab === 'info' && <UserInfo userData={userData} onUserDataUpdate={handleUserDataUpdate} />}
                     {activeTab === 'changePassword' && (
                         <PasswordResetForm onPasswordChangeSuccess={handlePasswordChangeSuccess} />
                     )}

@@ -13,8 +13,8 @@ export const Navbar = () => {
   const isAuthenticated = store.isAuthenticated;
   const user = store.user;
 
-  // Ocultar SearchBar en la página de búsqueda y en el catálogo
-  const showSearchBar = location.pathname !== '/search' && location.pathname !== '/catalog';
+  // Ocultar SearchBar solo en la página de búsqueda (que será eliminada)
+  const showSearchBar = location.pathname !== '/search';
 
   const handleLogout = useCallback(() => {
     dispatch({ type: "LOGOUT" });

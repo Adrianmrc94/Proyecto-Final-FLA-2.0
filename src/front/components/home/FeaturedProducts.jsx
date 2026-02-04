@@ -69,7 +69,9 @@ export default function FeaturedProducts({ featured, onProductClick, loading = f
                                     }}
                                     loading="lazy"
                                     onError={(e) => {
-                                        e.target.src = 'https://via.placeholder.com/200x200?text=Sin+Imagen';
+                                        e.target.style.display = 'none';
+                                        e.target.parentElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                                        e.target.parentElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:200px;color:white;font-size:14px;font-weight:500;">Sin Imagen</div>';
                                     }}
                                 />
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import ApiService from '../services/api';
 import useGlobalProducts from '../hooks/useGlobalProducts';
@@ -7,13 +7,16 @@ import useDarkMode from '../hooks/useDarkMode';
 import CatalogFilters from '../components/catalog/CatalogFilters';
 import ProductCard from '../components/catalog/ProductCard';
 import CatalogPagination from '../components/catalog/CatalogPagination';
+import ComparativeModal3 from '../components/modales/ComparativeModal3';
 import { toast } from 'react-toastify';
+import StoreContext from '../context/StoreContext';
 import '../styles/CatalogPage.css';
 
 const CatalogPage = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const { darkMode } = useDarkMode();
+    const { store } = useContext(StoreContext);
     const { products, loadingProducts } = useGlobalProducts();
     const { mainCategories, subcategories, selectedMainCategory, setSelectedMainCategory } = useMainCategories();
     const [filteredProducts, setFilteredProducts] = useState([]);
@@ -23,13 +26,24 @@ const CatalogPage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [favoriteIds, setFavoriteIds] = useState(new Set());
     const [currentPage, setCurrentPage] = useState(1);
+    const [showComparativeModal, setShowComparativeModal] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
     const productsPerPage = 12;
 
-    // Detectar categoría principal de URL
+    // Detectar parámetros de URL (categoría y búsqueda)
     useEffect(() => {
         const mainCat = searchParams.get('main_category');
+        const searchQuery = searchParams.get('search');
+
         if (mainCat) {
             setSelectedMainCategory(mainCat);
+        }
+
+        if (searchQuery) {
+            setSearchTerm(searchQuery);
+            // Si hay búsqueda, resetear la categoría principal para buscar en todo
+            setSelectedMainCategory(null);
+            setSelectedSubcategory('all');
         }
     }, [searchParams, setSelectedMainCategory]);
 
@@ -38,7 +52,12 @@ const CatalogPage = () => {
         const loadFavorites = async () => {
             try {
                 const favorites = await ApiService.fetchFavorites();
-                setFavoriteIds(new Set(favorites.map(fav => fav.product.id)));
+                // Filtrar favoritos válidos (que tengan product y product.id)
+                setFavoriteIds(new Set(
+                    favorites
+                        .filter(fav => fav.product && fav.product.id)
+                        .map(fav => fav.product.id)
+                ));
             } catch (error) {
                 console.error('Error loading favorites:', error);
             }
@@ -180,12 +199,14 @@ const CatalogPage = () => {
     };
 
     const handleViewComparisons = (product) => {
-        navigate('/search', {
-            state: {
-                applyCategoryFilter: product.category,
-                selectedProductForComparison: product
-            }
-        });
+        // Abrir modal de comparativas con el producto seleccionado
+        setSelectedProduct(product);
+        setShowComparativeModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowComparativeModal(false);
+        setSelectedProduct(null);
     };
 
     if (loadingProducts) {
@@ -210,6 +231,38 @@ const CatalogPage = () => {
                     <p className="lead text-muted">
                         Explora nuestra colección de {products.length} productos
                     </p>
+
+                    {/* Info: Filtrado por código postal */}
+                    {store.user && store.user.postal_code && (
+                        <div className="alert alert-info d-flex align-items-center justify-content-center mt-3 mx-auto"
+                            style={{ maxWidth: '600px' }}
+                            role="alert">
+                            <i className="bi bi-geo-alt-fill me-2"></i>
+                            <div>
+                                Mostrando productos disponibles para el código postal <strong>{store.user.postal_code}</strong>
+                                <br />
+                                <small>
+                                    Puedes cambiar tu código postal desde tu <a href="/user" className="alert-link">perfil de usuario</a>
+                                </small>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Warning: Sin código postal */}
+                    {store.user && !store.user.postal_code && (
+                        <div className="alert alert-warning d-flex align-items-center justify-content-center mt-3 mx-auto"
+                            style={{ maxWidth: '600px' }}
+                            role="alert">
+                            <i className="bi bi-exclamation-triangle-fill me-2"></i>
+                            <div>
+                                No has configurado tu código postal
+                                <br />
+                                <small>
+                                    <a href="/user" className="alert-link">Configúralo en tu perfil</a> para ver productos disponibles en tu área
+                                </small>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Filters Bar */}
@@ -266,6 +319,15 @@ const CatalogPage = () => {
                     </div>
                 )}
             </div>
+
+            {/* Modal de Comparativas */}
+            {showComparativeModal && selectedProduct && (
+                <ComparativeModal3
+                    isOpen={showComparativeModal}
+                    onClose={handleCloseModal}
+                    product={selectedProduct}
+                />
+            )}
         </div>
     );
 };

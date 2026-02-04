@@ -102,41 +102,12 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
           normalizedCategory = normalizedCategory.replace(/-/g, " ").trim().toLowerCase();
         }
 
-        // Estrategia mejorada: Usar productos globales primero
+        // Estrategia: Usar API PRIMERO para obtener productos filtrados por CP
         let similar = null;
         let otherProductsInCategory = [];
 
-        // 1. Buscar en productos globales en memoria (más confiable)
-        if (allProducts && allProducts.length > 0) {
-          const productsInCategory = allProducts.filter(p => {
-            // Comparación más flexible de categorías
-            let pCat = (p.category || '').trim().toLowerCase();
-            let prodCat = (product.category || '').trim().toLowerCase();
-
-            // Normalizar guiones, espacios y underscores
-            pCat = pCat.replace(/[-_]/g, ' ');
-            prodCat = prodCat.replace(/[-_]/g, ' ');
-
-            return pCat === prodCat;
-          });
-
-          otherProductsInCategory = productsInCategory.filter(p => p.id !== product.id);
-
-          console.log(`🔍 Categoría: "${product.category}"`);
-          console.log(`🔍 Total productos en categoría (memoria):`, productsInCategory.length);
-          console.log(`🔍 Productos disponibles para comparar:`, otherProductsInCategory.length);
-
-          // Guardar todos los productos de la categoría para navegación
-          setCategoryProducts(otherProductsInCategory);
-          setCurrentComparisonIndex(0);
-
-          if (otherProductsInCategory.length > 0) {
-            similar = otherProductsInCategory[0];
-          }
-        }
-
-        // 2. Si no se encontró en memoria, buscar por API (fallback)
-        if (!similar) {
+        // 1. SIEMPRE buscar por API primero (productos filtrados por código postal)
+        try {
           const searchRes = await fetch(
             `${BACKEND_URL}/api/search?query=&category=${encodeURIComponent(product.category)}`,
             { headers: { Authorization: `Bearer ${token}` } }
@@ -156,6 +127,7 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
 
             otherProductsInCategory = productsInCategory.filter(p => p.id !== product.id);
 
+            console.log(`🔍 Categoría: "${product.category}"`);
             console.log(`🔍 Productos encontrados vía API:`, otherProductsInCategory.length);
 
             setCategoryProducts(otherProductsInCategory);
@@ -164,6 +136,30 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
             if (otherProductsInCategory.length > 0) {
               similar = otherProductsInCategory[0];
             }
+          }
+        } catch (error) {
+          console.error('❌ Error buscando productos en API:', error);
+        }
+
+        // 2. Fallback: Si no se encontró nada en API, buscar en memoria
+        if (!similar && allProducts && allProducts.length > 0) {
+          const productsInCategory = allProducts.filter(p => {
+            let pCat = (p.category || '').trim().toLowerCase();
+            let prodCat = (product.category || '').trim().toLowerCase();
+            pCat = pCat.replace(/[-_]/g, ' ');
+            prodCat = prodCat.replace(/[-_]/g, ' ');
+            return pCat === prodCat;
+          });
+
+          otherProductsInCategory = productsInCategory.filter(p => p.id !== product.id);
+
+          console.log(`🔍 Fallback - Productos en memoria:`, otherProductsInCategory.length);
+
+          setCategoryProducts(otherProductsInCategory);
+          setCurrentComparisonIndex(0);
+
+          if (otherProductsInCategory.length > 0) {
+            similar = otherProductsInCategory[0];
           }
         }
 
@@ -541,7 +537,7 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
                         alt={p1.name}
                         className="img-fluid rounded shadow-sm"
                         style={{ width: "200px", height: "200px", objectFit: "contain", padding: "10px" }}
-                        onError={(e) => e.target.src = "https://via.placeholder.com/200x200?text=No+Image"}
+                        onError={(e) => e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2UwZTBlMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5TaW4gSW1hZ2VuPC90ZXh0Pjwvc3ZnPg=='}
                       />
                     </div>
                     <h6 className="card-title fw-bold text-primary mb-2">{p1.name}</h6>
@@ -575,7 +571,7 @@ const ComparativeModal3 = ({ isOpen, onClose, product }) => {
                         alt={p2.name}
                         className="img-fluid rounded shadow-sm"
                         style={{ width: "200px", height: "200px", objectFit: "contain", padding: "10px" }}
-                        onError={(e) => e.target.src = "https://via.placeholder.com/200x200?text=No+Image"}
+                        onError={(e) => e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2UwZTBlMCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5TaW4gSW1hZ2VuPC90ZXh0Pjwvc3ZnPg=='}
                       />
                     </div>
                     <h6 className="card-title fw-bold text-primary mb-2">{p2.name}</h6>

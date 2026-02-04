@@ -88,11 +88,8 @@ class Product(db.Model):
         from urllib.parse import quote_plus
         from api.category_mapping import get_main_category
         
-        # Si la imagen es de Mercadona, usar el proxy para evitar CORS
+        # Usar imagen directamente (el proxy ya no es necesario con CORS configurado)
         image_url = self.image
-        if image_url and 'mercadona.imgix.net' in image_url:
-            # Usar quote_plus que es más compatible con URLs en parámetros GET
-            image_url = f"/api/image-proxy?url={quote_plus(image_url)}"
         
         return {
             "id": self.id,
@@ -102,7 +99,7 @@ class Product(db.Model):
             "image": image_url,
             "rate": self.rate,
             "category": self.category,
-            "main_category": get_main_category(self.category),
+            "main_category": get_main_category(self.category, self.name),
             "created_at": self.created_at,
             "stock": self.stock,
             "description": self.description,

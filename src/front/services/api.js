@@ -12,7 +12,9 @@ class ApiService {
    //Obtiene todos los productos
   static async fetchProducts() {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/products`);
+      const response = await fetch(`${API_BASE_URL}/api/products`, {
+        headers: this.getAuthHeaders(),
+      });
 
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -190,63 +192,11 @@ class ApiService {
 
       return await response.json();
     } catch (error) {
-      console.error("Error obteniendo perfil de usuario:", error);
-      throw new Error("No se pudo cargar el perfil de usuario");
-    }
-  }
-
-  //  Cambiar contraseña
-  static async changePassword(oldPassword, newPassword) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/user/change-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...this.getAuthHeaders(),
-        },
-        body: JSON.stringify({
-          old_password: oldPassword,
-          new_password: newPassword,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.msg || "Error al cambiar contraseña");
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error cambiando contraseña:", error);
+      console.error("Error en getUserProfile:", error);
       throw error;
     }
   }
 
-  //  Eliminar cuenta de usuario
-  static async deleteAccount(password) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/user/delete-account`, {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          ...this.getAuthHeaders(),
-        },
-        body: JSON.stringify({ password }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.msg || "Error al eliminar cuenta");
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error eliminando cuenta:", error);
-      throw error;
-    }
-  }
-
-  //  Solicitar recuperación de contraseña
   static async forgotPassword(email) {
     try {
       const response = await fetch(`${API_BASE_URL}/api/forgot-password`, {
@@ -398,6 +348,54 @@ class ApiService {
     } catch (error) {
       console.error("Error obteniendo productos por categoría:", error);
       throw new Error("Error al obtener productos de la categoría");
+    }
+  }
+
+  // Ejecutar scraping de código postal (SÍNCRONO)
+  static async scrapePostalCode(postalCode) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/user/scrape-postal-code`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...this.getAuthHeaders(),
+        },
+        body: JSON.stringify({ postal_code: postalCode }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || `Error ${response.status}: ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error en scraping de código postal:", error);
+      throw error;
+    }
+  }
+
+  // Actualizar código postal del usuario
+  static async updatePostalCode(postalCode) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/user/update-postal-code`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...this.getAuthHeaders(),
+        },
+        body: JSON.stringify({ postal_code: postalCode }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || `Error ${response.status}: ${response.statusText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error actualizando código postal:", error);
+      throw error;
     }
   }
 }

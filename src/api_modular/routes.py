@@ -27,7 +27,7 @@ def register_modular_blueprints(app):
         print("📋 Módulos disponibles:")
         print("   🔐 Auth: /api/login, /api/register, /api/forgot-password, /api/reset-password")
         print("   📦 Products: /api/products, /api/categories, /api/search, /api/random-product")
-        print("   👤 Users: /api/user/profile, /api/user/change-password, /api/user/delete-account")
+        print("   👤 Users: /api/user/profile, /api/user/change-password, /api/user/delete-account, /api/user/scrape-postal-code, /api/scraping/status/<job_id>")
         print("   ❤️  Favorites: /api/favorites")
         print("   🔀 Comparisons: /api/favorite-comparisons")
         print("   🖼️  Images: /api/image-proxy")

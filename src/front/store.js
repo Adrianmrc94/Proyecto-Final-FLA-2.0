@@ -12,6 +12,7 @@ export const actionTypes = {
   LOGOUT: "LOGOUT",
   SET_USER: "SET_USER",
   SET_TOKEN: "SET_TOKEN",
+  UPDATE_USER_POSTAL_CODE: "UPDATE_USER_POSTAL_CODE",
 };
 
 // --- Estado inicial ---
@@ -102,10 +103,23 @@ export default function storeReducer(store, action) {
       };
 
     case actionTypes.SET_USER:
+      // Actualizar también en localStorage
+      if (action.payload) {
+        localStorage.setItem('user', JSON.stringify(action.payload));
+      }
       return { ...store, user: action.payload };
 
     case actionTypes.SET_TOKEN:
       return { ...store, token: action.payload };
+
+    case actionTypes.UPDATE_USER_POSTAL_CODE:
+      const updatedUser = {
+        ...store.user,
+        postal_code: action.payload
+      };
+      // Actualizar en localStorage
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return { ...store, user: updatedUser };
 
     default:
       console.error(`❌ Acción desconocida: ${action.type}`);

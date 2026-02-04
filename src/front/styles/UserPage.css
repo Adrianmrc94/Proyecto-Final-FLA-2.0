@@ -207,6 +207,42 @@
     hyphens: auto;
 }
 
+/* Postal Code Edit */
+.postal-code-edit {
+    width: 100%;
+}
+
+.postal-code-edit .form-control {
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.postal-code-edit .form-control:focus {
+    outline: none;
+    border-color: #764ba2;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.postal-code-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.postal-code-display button {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.postal-code-display button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
 /* Activity Summary */
 .activity-summary {
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);

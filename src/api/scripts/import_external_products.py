@@ -72,11 +72,27 @@ def import_products(app):
                 if len(name) > 120:
                     name = name[:120]
                 
+                # Normalizar URL de imagen (eliminar duplicaciones)
+                image_raw = p.get("image", "")
+                if image_raw and image_raw.startswith("http"):
+                    import re
+                    # Buscar SIEMPRE la primera URL válida de Mercadona (con hash alfanumérico case-insensitive)
+                    match = re.search(r'https://prod-mercadona\.imgix\.net/images/([a-fA-F0-9]+)\.jpg(?:\?fit=crop&h=300&w=300)?', image_raw)
+                    if match:
+                        # Reconstruir URL limpia con parámetros estándar
+                        image_url = f"https://prod-mercadona.imgix.net/images/{match.group(1)}.jpg?fit=crop&h=300&w=300"
+                    else:
+                        # Si no matchea el patrón esperado, usar tal cual
+                        image_url = image_raw
+                else:
+                    # Es solo un hash/ID, construir URL completa
+                    image_url = f"https://prod-mercadona.imgix.net/images/{image_raw}.jpg?fit=crop&h=300&w=300" if image_raw else ""
+                
                 product = Product(
                     external_id=external_id,
                     name=name,
                     price=float(p.get("price", 0)),
-                    image=p.get("image", ""),
+                    image=image_url,
                     category=p.get("category", "General"),
                     rate=4.5,  # Rating por defecto para Mercadona
                     stock=100,

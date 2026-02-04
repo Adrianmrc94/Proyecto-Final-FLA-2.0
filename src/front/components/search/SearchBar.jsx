@@ -81,31 +81,11 @@ export default function SearchBar() {
     setActiveIdx(-1);
 
     if (result.type === "product") {
-      // Calcular en qué página está el producto dentro de su categoría
-      const categoryProducts = products
-        .filter(p => p.category === result.category)
-        .sort((a, b) => a.name.localeCompare(b.name)); // Ordenar igual que en SearchPage
-
-      const productIndex = categoryProducts.findIndex(p => p.id === result.product.id);
-      const productsPerPage = 12;
-      const pageNumber = Math.floor(productIndex / productsPerPage) + 1;
-
-      // Navegar a búsqueda con categoría, página y producto seleccionado
-      navigate("/search", {
-        state: {
-          applyCategoryFilter: result.category,
-          selectedProductForComparison: result.product,
-          initialPage: pageNumber
-        }
-      });
+      // Navegar a catálogo con búsqueda del producto
+      navigate(`/catalog?search=${encodeURIComponent(result.name)}`);
     } else if (result.type === "category") {
-      console.log("Navigating with category filter:", result.categoryName); // Debug
-      // Navegar a búsqueda y aplicar filtro de categoría
-      navigate("/search", {
-        state: {
-          applyCategoryFilter: result.categoryName
-        }
-      });
+      // Navegar a catálogo con búsqueda de la categoría
+      navigate(`/catalog?search=${encodeURIComponent(result.categoryName)}`);
     }
   };
 
@@ -125,13 +105,10 @@ export default function SearchBar() {
         handleSelect(results[activeIdx]);
       } else if (query.trim()) {
         // Si no hay selección específica, hacer búsqueda general
+        const searchTerm = query.trim();
         setQuery("");
         setResults([]);
-        navigate("/search", {
-          state: {
-            searchQuery: query
-          }
-        });
+        navigate(`/catalog?search=${encodeURIComponent(searchTerm)}`);
       }
     } else if (e.key === "Escape") {
       setResults([]);
@@ -152,13 +129,10 @@ export default function SearchBar() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (query.trim()) {
+      const searchTerm = query.trim();
       setResults([]);
-      navigate("/search", {
-        state: {
-          searchQuery: query
-        }
-      });
       setQuery("");
+      navigate(`/catalog?search=${encodeURIComponent(searchTerm)}`);
     }
   };
 
