@@ -7,5 +7,7 @@ npm run build
 
 pip install -r requirements.txt
 
-# Run migrations from src directory
-cd src && python -c "from api.extensions import db; from app import app; from flask_migrate import upgrade; app.app_context().push(); upgrade()" || echo "Skipping migrations"
+# Run migrations
+cd src
+flask db upgrade || echo "Migration failed, creating tables manually..."
+python -c "from app import app, db; app.app_context().push(); db.create_all(); print('✅ Tables created')"
