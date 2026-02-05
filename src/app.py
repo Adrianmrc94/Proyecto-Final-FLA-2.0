@@ -1,5 +1,4 @@
 import os
-import threading
 from datetime import timedelta
 
 from flask import Flask, jsonify, send_from_directory
@@ -13,7 +12,6 @@ from api.models import db, Product
 from api.admin import setup_admin
 from api.commands import setup_commands
 from extensions import mail
-from api.scripts.import_external_products import import_products
 
 # ===== IMPORTACIÓN MODULAR =====
 
@@ -140,22 +138,6 @@ def api_health():
         'architecture': api_type.lower(),
         'environment': ENV
     }), 200
-
-# ===== IMPORTACIÓN AUTOMÁTICA DE PRODUCTOS =====
-products_imported = threading.Event()
-
-@app.before_request
-def auto_import_products():
-    if not products_imported.is_set():
-        try:
-            if Product.query.count() == 0:
-                print("Base de datos vacía. Importando productos externos...")
-                import_products(app)
-        except Exception as e:
-            # Ignorar errores si las tablas no existen aún (durante migraciones)
-            pass
-        finally:
-            products_imported.set()
 
 # ===== PUNTO DE ENTRADA =====
 if __name__ == '__main__':
