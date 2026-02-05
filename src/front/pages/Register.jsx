@@ -59,7 +59,7 @@ const Register = () => {
             toast.success('Usuario registrado correctamente');
             navigate('/login');
         } catch (error) {
-            setError(error.message || 'Error al registrar usuario');
+            setError(error.message || 'Error al registrar usuario, ya existe una cuenta con ese email');
         }
     };
 

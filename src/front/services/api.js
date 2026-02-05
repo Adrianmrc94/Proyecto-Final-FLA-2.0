@@ -148,7 +148,7 @@ class ApiService {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || "Error al registrar usuario");
+        throw new Error(error.error || "Error al registrar usuario, ya existe una cuenta con ese email");
       }
 
       return await response.json();
