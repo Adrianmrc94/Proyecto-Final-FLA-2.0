@@ -69,3 +69,24 @@ def setup_commands(app):
         print(f"🎨 Iniciando generación de tiendas y productos simulados (CP: {postal_code})...")
         generate_simulated_products(postal_code=postal_code)
         print("✅ Generación de productos simulados completada!")
+
+    @app.cli.command("import-dia-complete")
+    @click.option("--postal-code", "-p", default="28020", help="Código postal para DIA")
+    def import_dia_complete_command(postal_code):
+        """Importa productos reales de DIA usando el scraper completo
+        
+        Este comando ejecuta el scraper que obtiene ~1,140 productos de DIA
+        desde su API oficial navegando por todas las categorías.
+        
+        Ejemplos:
+        flask import-dia-complete                   # Madrid (28020)
+        flask import-dia-complete -p 28001          # Madrid centro
+        flask import-dia-complete -p 08001          # Barcelona
+        """
+        from api.scripts.scrape_dia_complete import scrape_and_import_dia_complete
+        print(f"🛒 Iniciando importación completa de productos de DIA (CP: {postal_code})...")
+        result = scrape_and_import_dia_complete(postal_code=postal_code)
+        if result:
+            print("✅ Importación completa de DIA finalizada!")
+        else:
+            print("❌ Error en la importación de DIA")
