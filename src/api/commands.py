@@ -1,7 +1,6 @@
 
 import click
 from api.models import db, User
-from api.scripts.import_external_products import import_products
 
 """
 In this file, you can add as many commands as you want using the @app.cli.command decorator
@@ -34,13 +33,6 @@ def setup_commands(app):
     def insert_test_data():
         pass
 
-    @app.cli.command("import-products")
-    def import_products_command():
-        """Importa productos desde APIs externas (DummyJSON y FakeStore)"""
-        print("🚀 Iniciando importación de productos...")
-        import_products(app)
-        print("✅ Importación completada exitosamente!")
-
     @app.cli.command("import-mercadona")
     @click.option("--postal-code", "-p", default="28020", help="Código postal para la búsqueda de productos")
     @click.option("--limit", "-l", default=None, type=int, help="Límite de categorías a procesar (recomendado 5-10 para pruebas)")
@@ -59,22 +51,6 @@ def setup_commands(app):
             print(f"📊 Procesando solo {limit} categorías")
         import_mercadona_products(postal_code=postal_code, limit_categories=limit)
         print("✅ Importación de Mercadona completada!")
-
-    @app.cli.command("import-carrefour")
-    @click.option("--postal-code", "-p", default="28020", help="Código postal para la búsqueda de productos")
-    @click.option("--limit", "-l", default=20, type=int, help="Productos por categoría (default: 20)")
-    def import_carrefour_command(postal_code, limit):
-        """Importa productos desde Carrefour
-        
-        Ejemplos:
-        flask import-carrefour                          # Madrid (28020), 20 productos/categoría
-        flask import-carrefour -p 28001 -l 10          # Madrid centro, 10 productos/categoría
-        flask import-carrefour -p 08001                 # Barcelona
-        """
-        from api.scripts.import_carrefour_products import import_carrefour_products
-        print(f"🛒 Iniciando importación de productos de Carrefour (CP: {postal_code})...")
-        import_carrefour_products(postal_code=postal_code, limit_per_category=limit)
-        print("✅ Importación de Carrefour completada!")
 
     @app.cli.command("import-simulated-stores")
     @click.option("--postal-code", "-p", default="28020", help="Código postal para las tiendas simuladas")
