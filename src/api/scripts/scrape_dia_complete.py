@@ -1,6 +1,8 @@
 """
 Scraper completo para DIA usando las APIs PLP descubiertas
 Basado en: https://www.dia.es/api/v1/plp-insight/initial_analytics/l1/{category_id}
+
+ACTUALIZADO: Incluye todas las subcategorías (L1xx + L2xxx)
 """
 import requests
 import json
@@ -23,31 +25,123 @@ HEADERS = {
     "Referer": "https://www.dia.es/"
 }
 
-# Categorías principales de DIA (Level 1)
-DIA_MAIN_CATEGORIES = [
-    ("L101", "Charcutería y quesos"),
-    ("L102", "Carnes"),
-    ("L103", "Pescados y mariscos"),
-    ("L104", "Verduras"),
-    ("L105", "Frutas"),
-    ("L106", "Arroz pastas y legumbres"),
-    ("L107", "Aceites salsas y especias"),
-    ("L108", "Huevos leche y mantequilla"),
-    ("L109", "Café cacao e infusiones"),
-    ("L110", "Azúcar chocolates y caramelos"),
-    ("L111", "Galletas bollos y cereales"),
-    ("L112", "Panadería"),
-    ("L113", "Yogures y postres"),
-    ("L114", "Conservas caldos y cremas"),
-    ("L115", "Aperitivos y frutos secos"),
-    ("L116", "Platos preparados y pizzas"),
-    ("L117", "Agua refrescos y zumos"),
-    ("L118", "Cervezas vinos y bebidas con alcohol"),
-    ("L119", "Congelados"),
-    ("L120", "Bebé"),
-    ("L121", "Perfumería higiene salud"),
-    ("L122", "Limpieza y hogar"),
-    ("L123", "Mascotas"),
+# TODAS las categorías de DIA (principales + subcategorías)
+DIA_ALL_CATEGORIES = [
+    # Freidora de aire - Airfryer (L125)
+    ("L125", "Freidora de aire - Airfryer"), ("L2231", "Patatas Airfryer"), ("L2232", "Rebozados Airfryer"),
+    ("L2233", "Verduras Airfryer"), ("L2234", "Pescados y mariscos Airfryer"), ("L2235", "Carne Airfryer"),
+    ("L2236", "Comida preparada Airfryer"), ("L2237", "Accesorios Airfryer"),
+    # Sin gluten (L126)
+    ("L126", "Sin gluten"), ("L2240", "Desayunos sin gluten"), ("L2241", "Panadería sin gluten"),
+    ("L2242", "Repostería sin gluten"), ("L2243", "Platos sin gluten"), ("L2244", "Bebidas sin gluten"),
+    ("L2245", "Productos infantiles sin gluten"),
+    # Frutas (L105)
+    ("L105", "Frutas"), ("L2033", "Plátanos y bananas"), ("L2032", "Manzanas y peras"),
+    ("L2196", "Naranjas, mandarinas y limones"), ("L2267", "Melón y sandía"), ("L2035", "Uvas"),
+    ("L2039", "Frutas tropicales"), ("L2038", "Frutos rojos y del bosque"), ("L2268", "Frutas congeladas"),
+    # Verduras (L104)
+    ("L104", "Verduras"), ("L2027", "Lechugas y hojas verdes"), ("L2023", "Tomates, pimientos y pepinos"),
+    ("L2022", "Ajos, cebollas y puerros"), ("L2181", "Calabacín, calabaza y berenjena"), ("L2028", "Patatas y zanahorias"),
+    ("L2024", "Brócoli, coliflor y judías verdes"), ("L2029", "Setas y champiñones"), ("L2031", "Hierbas aromáticas"),
+    ("L2030", "Ensaladas y verduras preparadas"), ("L2025", "Verduras congeladas y al vapor"), ("L2026", "Conservas de verduras"),
+    # Carnes (L102)
+    ("L102", "Carnes"), ("L2202", "Pollo"), ("L2013", "Vacuno"), ("L2014", "Cerdo"), ("L2015", "Pavo"),
+    ("L2016", "Conejo"), ("L2017", "Hamburguesas, carne picada y albóndigas"), ("L2265", "Empanados y elaborados"),
+    ("L2266", "Arreglos y despieces"),
+    # Pescados y mariscos (L103)
+    ("L103", "Pescados y mariscos"), ("L2019", "Pescados y mariscos frescos"), ("L2249", "Merluza y bacalao congelados"),
+    ("L2250", "Salmón, atún y pescado blanco congelados"), ("L2204", "Calamar y sepia congelados"),
+    ("L2251", "Pescados rebozados"), ("L2252", "Marisco de concha congelado"), ("L2253", "Gambas y langostinos congelados"),
+    ("L2020", "Ahumados y salazones"), ("L2021", "Surimi y otros elaborados"),
+    # Charcutería y quesos (L101)
+    ("L101", "Charcutería y quesos"), ("L2001", "Jamón cocido, pavo y pollo"), ("L2004", "Jamón curado y paleta"),
+    ("L2005", "Lomo, chorizo, fuet y salchichón"), ("L2206", "Salchichas y bacon"), ("L2259", "Chopped y mortadela"),
+    ("L2012", "Paté, foie y sobrasada"), ("L2007", "Queso curado, semi y tierno"), ("L2205", "Quesos en lonchas y rallado"),
+    ("L2010", "Quesos untables y fundidos"), ("L2008", "Queso fresco"), ("L2009", "Queso azul, roquefort y cabra"),
+    ("L2011", "Quesos internacionales"), ("L2260", "Quesos altos en proteínas"),
+    # Huevos, leche y mantequilla (L108)
+    ("L108", "Huevos, leche y mantequilla"), ("L2055", "Huevos"), ("L2051", "Leche"),
+    ("L2261", "Leche sin lactosa y enriquecidas"), ("L2052", "Bebidas vegetales"), ("L2262", "Leche infantil"),
+    ("L2053", "Batidos, cafés fríos y horchatas"), ("L2263", "Batidos altos en proteínas"),
+    ("L2264", "Leche condensada y evaporada"), ("L2056", "Mantequilla y margarina"), ("L2054", "Nata"),
+    # Panadería (L112)
+    ("L112", "Panadería"), ("L2070", "Pan recién horneado"), ("L2069", "Pan de molde y especiales"),
+    ("L2073", "Pan para hamburguesas y perritos"), ("L2074", "Tortillas de trigo y pitas"), ("L2200", "Pan sin gluten"),
+    ("L2072", "Pan tostado, rallado y picatostes"), ("L2071", "Picos y crackers"), ("L2076", "Masas y hojaldres"),
+    ("L2075", "Harinas y levaduras"),
+    # Yogures y postres (L113)
+    ("L113", "Yogures y postres"), ("L2079", "Yogures naturales y desnatados"), ("L2081", "Yogures de sabores y frutas"),
+    ("L2082", "Yogures griegos"), ("L2248", "Yogures líquidos"), ("L2078", "Yogures bífidus y colesterol"),
+    ("L2085", "Kéfir y fermentados"), ("L2229", "Postres proteicos y vegetales"), ("L2083", "Yogures y postres infantiles"),
+    ("L2087", "Postres tradicionales"), ("L2088", "Natillas, flan y arroz con leche"), ("L2089", "Gelatinas y cuajadas"),
+    # Congelados (L119)
+    ("L119", "Congelados"), ("L2130", "Helados y hielo"), ("L2131", "Pizzas, bases y masas"),
+    ("L2132", "Pescado y marisco"), ("L2133", "Carne y pollo"), ("L2210", "Verduras, hortalizas y salteados"),
+    ("L2213", "Patatas fritas"), ("L2135", "Croquetas y rebozados"), ("L2136", "Churros y postres"),
+    ("L2137", "Lasañas y pasta"),
+    # Arroz, pastas y legumbres (L106)
+    ("L106", "Arroz, pastas y legumbres"), ("L2042", "Arroz"), ("L2270", "Fideos"),
+    ("L2044", "Macarrones, espaguetis y pastas secas"), ("L2271", "Pastas rellenas"), ("L2272", "Lasaña y canelones"),
+    ("L2273", "Noodles"), ("L2274", "Pastas sin gluten"), ("L2191", "Garbanzos y alubias"), ("L2193", "Lentejas"),
+    ("L2043", "Quinoa, couscous y soja"),
+    # Aceites, salsas y especias (L107)
+    ("L107", "Aceites, salsas y especias"), ("L2046", "Aceites"), ("L2047", "Vinagres y aliños"),
+    ("L2208", "Tomate"), ("L2050", "Mayonesa, ketchup y otras salsas"), ("L2048", "Sal y especias"),
+    # Conservas, caldos y cremas (L114)
+    ("L114", "Conservas, caldos y cremas"), ("L2179", "Atún, bonito y caballa"), ("L2180", "Berberechos"),
+    ("L2195", "Mejillones"), ("L2207", "Sardinas y sardinillas"), ("L2197", "Otras conservas de pescado"),
+    ("L2092", "Conservas vegetales"), ("L2093", "Sopas, caldos y purés deshidratados"),
+    ("L2094", "Cremas y caldos líquidos"),
+    # Azúcar, chocolates y caramelos (L110)
+    ("L110", "Azúcar, chocolates y caramelos"), ("L2060", "Azúcar y edulcorantes"), ("L2061", "Miel"),
+    ("L2062", "Mermeladas y frutas en almibar"), ("L2228", "Cremas de cacao"), ("L2077", "Preparados para postres"),
+    ("L2063", "Chocolates y bombones"), ("L2064", "Caramelos, chicles y golosinas"),
+    # Café, cacao e infusiones (L109)
+    ("L109", "Café, cacao e infusiones"), ("L2057", "Cápsulas compatibles Nespresso"),
+    ("L2275", "Cápsulas compatibles Dolce Gusto"), ("L2276", "Otras cápsulas compatibles"), ("L2277", "Café molido"),
+    ("L2278", "Café soluble"), ("L2279", "Café en grano"), ("L2280", "Cafés fríos"),
+    ("L2058", "Cacao y chocolate a la taza"), ("L2059", "Infusiones"), ("L2281", "Té"),
+    # Galletas, bollos y cereales (L111)
+    ("L111", "Galletas, bollos y cereales"), ("L2065", "Galletas"), ("L2066", "Galletas saladas"),
+    ("L2067", "Bollería"), ("L2068", "Cereales"), ("L2216", "Tortitas"),
+    # Platos preparados y pizzas (L116)
+    ("L116", "Platos preparados y pizzas"), ("L2102", "Listos para comer"), ("L2105", "Tortillas y empanadas"),
+    ("L2101", "Pizzas refrigeradas"), ("L2246", "Pizzas congeladas"), ("L2104", "Sándwiches, hamburguesas y horno"),
+    ("L2247", "Platos precocinados"), ("L2103", "Comida internacional"), ("L2106", "Gazpachos y salmorejos"),
+    ("L2269", "Hummus y guacamoles"),
+    # Aperitivos y frutos secos (L115)
+    ("L115", "Aperitivos y frutos secos"), ("L2098", "Patatas fritas"), ("L2282", "Snacks salados"),
+    ("L2097", "Frutos secos"), ("L2283", "Mix de frutos secos"), ("L2096", "Aceitunas"), ("L2284", "Encurtidos"),
+    ("L2285", "Snacks vegetales"), ("L2041", "Frutas deshidratadas"),
+    # Agua, refrescos y zumos (L117)
+    ("L117", "Agua, refrescos y zumos"), ("L2107", "Agua"), ("L2108", "Cola"), ("L2212", "Naranja"),
+    ("L2109", "Limón, lima limón"), ("L2111", "Tés fríos, cafés frios"), ("L2112", "Tónicas"), ("L2192", "Gaseosa"),
+    ("L2217", "Bebidas energéticas"), ("L2114", "Bebidas isotónicas"), ("L2113", "Zumos"), ("L2110", "Otras bebidas"),
+    # Cervezas, vinos y bebidas con alcohol (L118)
+    ("L118", "Cervezas, vinos y bebidas con alcohol"), ("L2115", "Cervezas"), ("L2117", "Cervezas especiales"),
+    ("L2182", "Cervezas con limón"), ("L2118", "Cervezas sin alcohol"), ("L2119", "Tinto de verano y sangría"),
+    ("L2120", "Vino tinto"), ("L2121", "Vino blanco"), ("L2124", "Vino rosado"), ("L2122", "Cavas y sidra"),
+    ("L2125", "Ginebra y vodka"), ("L2128", "Ron y whisky"), ("L2127", "Vermouth"), ("L2129", "Cremas y licores"),
+    ("L2126", "Brandy"),
+    # Limpieza y hogar (L122)
+    ("L122", "Limpieza y hogar"), ("L2170", "Cuidado de la ropa"), ("L2167", "Lavavajillas"),
+    ("L2168", "Papel higiénico, de cocina, servilletas"), ("L2159", "Utensilios de limpieza"), ("L2160", "Bolsas de basura"),
+    ("L2161", "Lejía y otros químicos"), ("L2162", "Cristales y suelos"), ("L2163", "Limpia muebles y multiusos"),
+    ("L2164", "Limpieza baño y WC"), ("L2166", "Limpieza cocina y vitrocerámica"),
+    ("L2169", "Papel de aluminio, horno y film"), ("L2173", "Insecticidas"), ("L2226", "Ambientadores"),
+    ("L2171", "Calzado"), ("L2209", "Útiles del hogar, pilas, bombillas"),
+    # Perfumería, higiene, salud (L121)
+    ("L121", "Perfumería, higiene, salud"), ("L2153", "Hidratación corporal"), ("L2211", "Gel de ducha y esponjas"),
+    ("L2151", "Cuidado bucal"), ("L2154", "Desodorantes"), ("L2144", "Champú"),
+    ("L2145", "Acondicionadores y mascarillas"), ("L2146", "Espumas y fijadores"), ("L2147", "Tintes"),
+    ("L2148", "Limpieza facial, crema facial"), ("L2186", "Quitaesmalte"), ("L2150", "Afeitado"),
+    ("L2188", "Depilación"), ("L2155", "Colonias"), ("L2156", "Jabón de manos"), ("L2227", "Cremas solares"),
+    ("L2158", "Compresas y cuidado íntimo"), ("L2183", "Complementos nutricionales"), ("L2184", "Parafarmacia"),
+    # Bebé (L120)
+    ("L120", "Bebé"), ("L2138", "Papilla"), ("L2139", "Leche para bebés"), ("L2141", "Potitos y tarritos"),
+    ("L2140", "Yogures, bolsitas de frutas y snacks"), ("L2142", "Pañales y toallitas"), ("L2143", "Cuidado del bebé"),
+    # Mascotas (L123)
+    ("L123", "Mascotas"), ("L2174", "Perros"), ("L2175", "Gatos"), ("L2176", "Otros animales"),
 ]
 
 
@@ -161,11 +255,14 @@ def fetch_all_dia_products():
     except Exception as e:
         print(f"   Error en home: {e}")
     
-    # Ahora navegar por categorías principales
-    print(f"\n2. Navegando por {len(DIA_MAIN_CATEGORIES)} categorias principales...\n")
+    # Navegar solo por categorías principales (las subcategorías ya están incluidas en las respuestas)
+    # Las categorías principales (L1xx) contienen las subcategorías (L2xxx) en sus respuestas
+    main_categories = [cat for cat in DIA_ALL_CATEGORIES if cat[0].startswith('L1')]
+    print(f"\n2. Navegando por {len(main_categories)} categorias principales...\n")
+    print("   (Las subcategorias estan incluidas automaticamente en cada respuesta)\n")
     
-    for i, (cat_id, cat_name) in enumerate(DIA_MAIN_CATEGORIES, 1):
-        print(f"\n[{i}/{len(DIA_MAIN_CATEGORIES)}] {cat_name} - ID: {cat_id}")
+    for i, (cat_id, cat_name) in enumerate(main_categories, 1):
+        print(f"\n[{i}/{len(main_categories)}] {cat_name} - ID: {cat_id}")
         try:
             category_products = fetch_dia_category_products(cat_id, cat_name)
             
@@ -178,7 +275,7 @@ def fetch_all_dia_products():
             print(f"   Total acumulado: {len(all_products)} productos unicos")
             
             # Delay entre categorías para evitar rate limiting
-            if i < len(DIA_MAIN_CATEGORIES):
+            if i < len(main_categories):
                 time.sleep(2)  # 2 segundos entre categorías
             
         except Exception as e:
