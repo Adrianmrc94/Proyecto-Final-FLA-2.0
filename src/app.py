@@ -39,22 +39,26 @@ db_url = os.getenv("DATABASE_URL")
 if db_url is not None:
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url.replace(
         "postgres://", "postgresql://")
+    # Configuración para PostgreSQL
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_pre_ping': True,
+        'pool_recycle': 3600,
+    }
 else:
     # Usar ruta relativa para SQLite en desarrollo
     basedir = os.path.abspath(os.path.dirname(__file__))
     app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(basedir, '..', 'instance', 'database.db')}"
+    # Configuración específica para SQLite
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'connect_args': {
+            'check_same_thread': False,
+            'timeout': 30
+        },
+        'pool_pre_ping': True,
+        'pool_recycle': 3600,
+    }
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Configuración específica para SQLite para soportar multi-threading
-app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    'connect_args': {
-        'check_same_thread': False,  # Permite usar SQLite desde múltiples threads
-        'timeout': 30  # Timeout de 30 segundos para locks
-    },
-    'pool_pre_ping': True,  # Verifica conexiones antes de usarlas
-    'pool_recycle': 3600,  # Recicla conexiones cada hora
-}
 
 # ===== CONFIGURACIÓN DE EMAIL =====
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
