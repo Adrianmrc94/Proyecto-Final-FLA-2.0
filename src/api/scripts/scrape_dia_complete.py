@@ -193,7 +193,7 @@ def fetch_dia_category_products(category_id, category_name="", level=1):
                                     "brand": product_data.get("item_brand", ""),
                                     "category": product_data.get("item_category", category_name),
                                     "category2": product_data.get("item_category2", ""),
-                                    "stock": product_data.get("stock_availability", True),
+                                    "stock": 1 if product_data.get("stock_availability", True) else 0,
                                     "image": ""
                                 }
                                 
@@ -246,7 +246,7 @@ def fetch_all_dia_products():
                         "brand": product_data.get("item_brand", ""),
                         "category": product_data.get("item_category", "General"),
                         "category2": product_data.get("item_category2", ""),
-                        "stock": product_data.get("stock_availability", True),
+                        "stock": 1 if product_data.get("stock_availability", True) else 0,
                         "image": f"https://www.dia.es/product_images/{prod_id}/{prod_id}_ISO_0_ES.jpg?imwidth=392"
                     }
                     
