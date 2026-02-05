@@ -197,9 +197,10 @@ def fetch_dia_category_products(category_id, category_name="", level=1):
                                     "image": ""
                                 }
                                 
-                                # Generar URL de imagen
+                                # Generar URL de imagen directa (más confiable)
                                 if product_info["id"]:
-                                    product_info["image"] = f"https://www.dia.es/_next/image?url=https%3A%2F%2Ffront-cms.dia.es%2Fassets%2F{product_info['id']}.jpg&w=640&q=75"
+                                    # Formato directo: https://www.dia.es/product_images/262861/262861_ISO_0_ES.jpg?imwidth=392
+                                    product_info["image"] = f"https://www.dia.es/product_images/{product_info['id']}/{product_info['id']}_ISO_0_ES.jpg?imwidth=392"
                                 
                                 if product_info["name"] and product_info["price"] > 0:
                                     products.append(product_info)
@@ -237,15 +238,16 @@ def fetch_all_dia_products():
         if "carousel_analytics" in data:
             for carousel_name, products_dict in data["carousel_analytics"].items():
                 for product_id, product_data in products_dict.items():
+                    prod_id = product_data.get("item_id", product_id)
                     product_info = {
-                        "id": product_data.get("item_id", product_id),
+                        "id": prod_id,
                         "name": product_data.get("item_name", ""),
                         "price": product_data.get("price", 0),
                         "brand": product_data.get("item_brand", ""),
                         "category": product_data.get("item_category", "General"),
                         "category2": product_data.get("item_category2", ""),
                         "stock": product_data.get("stock_availability", True),
-                        "image": f"https://www.dia.es/_next/image?url=https%3A%2F%2Ffront-cms.dia.es%2Fassets%2F{product_data.get('item_id', '')}.jpg&w=640&q=75"
+                        "image": f"https://www.dia.es/product_images/{prod_id}/{prod_id}_ISO_0_ES.jpg?imwidth=392"
                     }
                     
                     if product_info["name"] and product_info["price"] > 0:
@@ -292,8 +294,11 @@ def fetch_all_dia_products():
 
 def import_to_database(products, postal_code="28020"):
     """Importa los productos de DIA a la base de datos"""
-    if not IN_FLASK:
-        print("\nNo se puede importar a BD (no esta en contexto Flask)")
+    # Siempre intenta importar
+    try:
+        from api.models import db, Product, Store
+    except ImportError:
+        print("\nNo se puede importar a BD (error de importación)")
         return
     
     try:
@@ -407,7 +412,12 @@ def scrape_and_import_dia_complete(postal_code="28020"):
 
 
 if __name__ == "__main__":
-    # Modo standalone
+    # Modo standalone - scrape e importa a BD
+    import sys
+    import os
+    # Añadir directorio src al path
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..'))
+    
     products = fetch_all_dia_products()
     if products:
         save_to_json(products)
@@ -416,3 +426,11 @@ if __name__ == "__main__":
             print(f"\n{i}. {product['name']}")
             print(f"   Precio: {product['price']} EUR")
             print(f"   Categoria: {product['category']}")
+        
+        # Importar a base de datos
+        print("\n" + "="*80)
+        print("IMPORTANDO A BASE DE DATOS...")
+        print("="*80)
+        from app import app
+        with app.app_context():
+            import_to_database(products, "28020")
